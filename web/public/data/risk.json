@@ -8,10 +8,10 @@
     "start_price_8g": 363400.0,
     "start_source": "latest stored Pettah quote",
     "quote_date": "2026-05-06",
-    "market_date": "2026-10-26",
+    "market_date": "2026-10-27",
     "daily_vol": {
-      "world": 0.011622284521720226,
-      "fx": 0.007502622468227344
+      "world": 0.01144413253360576,
+      "fx": 0.00794654009589918
     },
     "range_8g": null,
     "stock_1kg_lkr": null,
@@ -34,10 +34,10 @@
     "start_price_8g": 363400.0,
     "start_source": "latest stored Pettah quote",
     "quote_date": "2026-05-06",
-    "market_date": "2026-10-26",
+    "market_date": "2026-10-27",
     "daily_vol": {
-      "world": 0.011622284521720226,
-      "fx": 0.007502622468227344
+      "world": 0.01144413253360576,
+      "fx": 0.00794654009589918
     },
     "range_8g": null,
     "stock_1kg_lkr": null,

@@ -1,0 +1,100 @@
+/* ==========================================================================
+   SKEUOMORPHIC CONTROLS, BUTTONS & INDICATORS
+   ========================================================================== */
+
+/* Tactile 3D Physical Push Button */
+.skeuo-btn {
+  background: linear-gradient(180deg, #252e3d 0%, #171d27 100%);
+  border: 1px solid #38455b;
+  border-top-color: #516382;
+  border-bottom-color: #0b0f15;
+  border-radius: 6px;
+  color: #e2e8f0;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.6),
+    0 2px 4px -2px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.15s ease;
+  user-select: none;
+  cursor: pointer;
+}
+
+.skeuo-btn:hover {
+  background: linear-gradient(180deg, #2b3648 0%, #1c232f 100%);
+  border-top-color: #63799e;
+}
+
+.skeuo-btn:active, .skeuo-btn.active {
+  background: linear-gradient(180deg, #11151e 0%, #19212c 100%);
+  border-color: #212a38;
+  box-shadow: 
+    inset 0 3px 6px rgba(0, 0, 0, 0.85),
+    0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(1px);
+}
+
+/* Polished Gold Action Button */
+.skeuo-btn-gold {
+  background: linear-gradient(180deg, #f0c960 0%, #c99a2a 50%, #996e14 100%);
+  border: 1px solid #d4af37;
+  border-top-color: #fff1a8;
+  border-bottom-color: #5e4105;
+  border-radius: 6px;
+  color: #1a1202;
+  font-weight: 700;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.7),
+    0 0 15px rgba(212, 175, 55, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.skeuo-btn-gold:hover {
+  background: linear-gradient(180deg, #f7d678 0%, #d6a836 50%, #aa7c19 100%);
+  box-shadow: 
+    0 5px 14px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(212, 175, 55, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+}
+
+.skeuo-btn-gold:active {
+  transform: translateY(1px);
+  background: linear-gradient(180deg, #996e14 0%, #c49626 100%);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.85);
+}
+
+/* Physical Gem Jewel Indicators */
+.led-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #090c12;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.led-green {
+  background: radial-gradient(circle at 35% 35%, #86efac 0%, #22c55e 60%, #14532d 100%);
+  box-shadow: 0 0 10px #22c55e, inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+.led-red {
+  background: radial-gradient(circle at 35% 35%, #fca5a5 0%, #ef4444 60%, #7f1d1d 100%);
+  box-shadow: 0 0 12px #ef4444, inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  animation: pulse-slow 1.8s infinite;
+}
+
+.led-amber {
+  background: radial-gradient(circle at 35% 35%, #fde68a 0%, #f59e0b 60%, #78350f 100%);
+  box-shadow: 0 0 10px #f59e0b, inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+

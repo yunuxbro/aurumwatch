@@ -1,0 +1,28 @@
+:root {
+  /* Precious Metals Palette */
+  --gold-24k: #ffd700;
+  --gold-22k-light: #fff3b0;
+  --gold-22k-mid: #d4af37;
+  --gold-22k-dark: #aa771c;
+  --gold-amber-deep: #78350f;
+  
+  /* Bullion Vault & Chassis */
+  --vault-bg: #0a0d14;
+  --vault-surface: #121620;
+  --vault-card-start: #181d27;
+  --vault-card-end: #10141d;
+  --vault-border: #283344;
+  --vault-border-highlight: #3e4e68;
+
+  /* Precision Scale OLED Display */
+  --oled-bg: #07090e;
+  --oled-phosphor-gold: #f59e0b;
+  --oled-phosphor-bright: #fbbf24;
+  --oled-phosphor-glow: rgba(245, 158, 11, 0.45);
+  
+  /* Physical Indicators */
+  --led-green-glow: #22c55e;
+  --led-amber-glow: #f59e0b;
+  --led-red-glow: #ef4444;
+}
+
