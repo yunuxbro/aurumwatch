@@ -6,9 +6,9 @@
   "market_rows_after_alignment": 2967,
   "spike_days_flagged": 12,
   "nonpositive_values": 0,
-  "pettah_rows": 10,
-  "pettah_dates_22k": 10,
-  "pettah_joined_rows": 10,
+  "pettah_rows": 14,
+  "pettah_dates_22k": 14,
+  "pettah_joined_rows": 14,
   "max_lag_days": 1,
   "market_last_date": "2026-10-26"
 }
