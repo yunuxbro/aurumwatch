@@ -1,0 +1,82 @@
+{
+  "h7": {
+    "status": "ok",
+    "notes": [],
+    "horizon_days": 7,
+    "start_price_8g": 300000.0,
+    "start_source": "manual quote",
+    "quote_date": "2026-10-27",
+    "market_date": "2026-10-26",
+    "daily_vol": {
+      "world": 0.011622284521720226,
+      "fx": 0.007502622468227344
+    },
+    "range_8g": {
+      "p1": 273810.7517371993,
+      "p5": 282747.801729958,
+      "p25": 294092.5695853853,
+      "p50": 301891.75458540634,
+      "p75": 309476.4634833555,
+      "p95": 321670.4719032281,
+      "p99": 332657.62353798526
+    },
+    "stock_1kg_lkr": {
+      "p1": 34226343.96714991,
+      "p5": 35343475.21624475,
+      "p25": 36761571.198173165,
+      "p50": 37736469.323175795,
+      "p75": 38684557.93541943,
+      "p95": 40208808.98790351,
+      "p99": 41582202.94224816
+    },
+    "prob_fall_5pct": 0.0734,
+    "prob_fall_10pct": 0.0049,
+    "worst_premium_move": -0.08122848100353863,
+    "premium_stress_8g": 276594.9035320793,
+    "assumptions": [
+      "Premium held constant in the range; range covers world gold and rupee only.",
+      "Premium stress uses the worst move seen in a very short history (experimental).",
+      "Volatility held at today's EWMA level over the horizon. No point forecast. Not advice."
+    ]
+  },
+  "h14": {
+    "status": "ok",
+    "notes": [],
+    "horizon_days": 14,
+    "start_price_8g": 300000.0,
+    "start_source": "manual quote",
+    "quote_date": "2026-10-27",
+    "market_date": "2026-10-26",
+    "daily_vol": {
+      "world": 0.011622284521720226,
+      "fx": 0.007502622468227344
+    },
+    "range_8g": {
+      "p1": 265955.3015922238,
+      "p5": 276955.524271589,
+      "p25": 292339.7140108932,
+      "p50": 303332.3235708955,
+      "p75": 314675.7858606519,
+      "p95": 333019.33659259527,
+      "p99": 348494.78033523593
+    },
+    "stock_1kg_lkr": {
+      "p1": 33244412.699027978,
+      "p5": 34619440.53394862,
+      "p25": 36542464.251361646,
+      "p50": 37916540.44636194,
+      "p75": 39334473.23258148,
+      "p95": 41627417.07407441,
+      "p99": 43561847.541904494
+    },
+    "prob_fall_5pct": 0.1218,
+    "prob_fall_10pct": 0.018,
+    "worst_premium_move": -0.08122848100353863,
+    "premium_stress_8g": 276594.9035320793,
+    "assumptions": [
+      "Premium held constant in the range; range covers world gold and rupee only.",
+      "Premium stress uses the worst move seen in a very short history (experimental).",
+      "Volatility held at today's EWMA level over the horizon. No point forecast. Not advice."
+    ]
+  }
+}

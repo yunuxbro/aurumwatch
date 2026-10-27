@@ -1,0 +1,14 @@
+{
+  "world_gold_rows": 2971,
+  "usdlkr_rows": 3075,
+  "dates_in_gold_not_fx": 4,
+  "dates_in_fx_not_gold": 108,
+  "market_rows_after_alignment": 2967,
+  "spike_days_flagged": 12,
+  "nonpositive_values": 0,
+  "pettah_rows": 10,
+  "pettah_dates_22k": 10,
+  "pettah_joined_rows": 10,
+  "max_lag_days": 1,
+  "market_last_date": "2026-10-26"
+}
