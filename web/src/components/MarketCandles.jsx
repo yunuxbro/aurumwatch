@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import LiveMarketCandles from "./LiveMarketCandles";
+import { useLiveMarket } from "@/hooks/useLiveMarket";
 
 const RANGES = [
   { label: "1M", days: 31 },
@@ -18,9 +20,13 @@ function shortPriceLabel(value) {
   return `Rs ${(value / 1000).toFixed(0)}k`;
 }
 
-export default function MarketCandles({ snapshot, dealerReference, localQuotes = [] }) {
+function HistoricalMarketCandles({
+  snapshot,
+  dealerReference,
+  localQuotes = [],
+  selectedKarat,
+}) {
   const [rangeDays, setRangeDays] = useState(366);
-  const [selectedKarat, setSelectedKarat] = useState(22);
   const [focusedDate, setFocusedDate] = useState(null);
   const rows = snapshot?.rows;
   const data = useMemo(() => (Array.isArray(rows) ? rows : []), [rows]);
@@ -113,18 +119,6 @@ export default function MarketCandles({ snapshot, dealerReference, localQuotes =
           </span>
         </div>
         <div className="market-candle-controls">
-          <div className="market-candle-ranges" role="group" aria-label="Gold purity">
-            {[22, 24].map((karat) => (
-              <button
-                key={karat}
-                type="button"
-                aria-pressed={selectedKarat === karat}
-                onClick={() => setSelectedKarat(karat)}
-              >
-                {karat}K
-              </button>
-            ))}
-          </div>
           <div className="market-candle-ranges" role="group" aria-label="Candle chart date range">
             {RANGES.map((range) => (
               <button
@@ -273,6 +267,71 @@ export default function MarketCandles({ snapshot, dealerReference, localQuotes =
           </tbody>
         </table>
       </div>
+    </div>
+  );
+}
+
+export default function MarketCandles({ snapshot, dealerReference, localQuotes = [] }) {
+  const [selectedKarat, setSelectedKarat] = useState(22);
+  const [manualChartMode, setManualChartMode] = useState(null);
+  const market = useLiveMarket();
+  const chartMode = manualChartMode || (market.configured ? "live" : "history");
+
+  const statusLabel = {
+    loading: "Checking live feed",
+    connecting: "Connecting to live feed",
+    live: "Live feed connected",
+    reconnecting: "Reconnecting to live feed",
+    unconfigured: "Daily data · live feed not configured",
+    error: "Live feed unavailable",
+  }[market.status] || "Live feed status unknown";
+
+  return (
+    <div className="market-chart-panel">
+      <div className="market-chart-panel-toolbar">
+        <div className="market-chart-mode" role="group" aria-label="Market chart mode">
+          <button
+            type="button"
+            aria-pressed={chartMode === "live"}
+            onClick={() => setManualChartMode("live")}
+          >
+            Live
+          </button>
+          <button
+            type="button"
+            aria-pressed={chartMode === "history"}
+            onClick={() => setManualChartMode("history")}
+          >
+            Daily history
+          </button>
+        </div>
+        <div className="market-candle-ranges" role="group" aria-label="Gold purity">
+          {[22, 24].map((karat) => (
+            <button
+              key={karat}
+              type="button"
+              aria-pressed={selectedKarat === karat}
+              onClick={() => setSelectedKarat(karat)}
+            >
+              {karat}K
+            </button>
+          ))}
+        </div>
+        <span className={`live-market-status ${market.status}`} aria-live="polite">
+          <i aria-hidden="true" />
+          {statusLabel}
+        </span>
+      </div>
+      {chartMode === "live" ? (
+        <LiveMarketCandles market={market} karat={selectedKarat} />
+      ) : (
+        <HistoricalMarketCandles
+          snapshot={snapshot}
+          dealerReference={dealerReference}
+          localQuotes={localQuotes}
+          selectedKarat={selectedKarat}
+        />
+      )}
     </div>
   );
 }

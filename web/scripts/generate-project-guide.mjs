@@ -185,9 +185,9 @@ pdf.text("Market inputs are refreshed separately; a market proxy is never labell
 
 startPage("1. Pages and what they show", "The main navigation routes in the AurumWatch web app.");
 section("Overview - /");
-paragraph("A quick daily brief: the best available dated price basis, latest source dates, a toggleable 22K/24K daily candlestick chart, a market snapshot, an experimental supervised gold/FX benchmark forecast with its holdout comparison, and an inventory exposure widget. Pettah reports and published dealer observations keep separate dates and source labels.");
+paragraph("A quick daily brief: the best available dated price basis, latest source dates, toggleable 22K/24K daily history and optional live candles, an evidence-based market snapshot, an experimental supervised gold/FX benchmark forecast with its holdout comparison, and an inventory exposure widget. Pettah reports and published dealer observations keep separate dates and source labels.");
 section("What Changed - /changes");
-paragraph("The sparse Pettah news archive remains separate, while the daily synthetic benchmark lets the user switch between 22K and 24K OHLC candles with dated Pettah and published dealer observations marked by source. Dealer rates are never relabeled as Pettah offers. The page also shows the latest date and provenance for each series.");
+paragraph("The sparse Pettah news archive remains separate, while the daily synthetic benchmark lets the user switch between 22K and 24K OHLC candles with dated Pettah and published dealer observations marked by source. When a private GoldAPI WebSocket key is configured, an optional live chart aggregates XAU/USD and USD/LKR updates into 1-minute through 4-hour OHLC bars. It shows no fabricated ticks when unconfigured or disconnected. Dealer rates are never relabeled as Pettah offers.");
 section("Gold Prices - /prices");
 paragraph("A searchable and filterable table of published dealer/feed observations. Each row keeps the institution, karat, buying/selling/listed type, amount and unit, rate date, observation time, and source link. Old records are visibly aged rather than made current by a new fetch.");
 section("Design Studio - /design");
@@ -212,6 +212,8 @@ bullet("History, local_quotes, moves, anomalies, risk, market_reference, health,
 bullet("The world-equivalent on an actual Pettah quote date is a comparison estimate. A current daily benchmark does not create missing local retail observations.");
 section("How prices are kept current");
 paragraph("The daily refresh runs the Pettah CSV loader, international gold and USD/LKR ingestion, dealer quote ingestion, risk backtest, supervised-model training, and JSON export. Both the Pettah archive date and latest local listing date are exposed. A dated dealer listing can provide local context when Pettah reports are absent, while preserving its original source type. The daily market benchmark itself is derived from gold/FX; the model forecasts only that synthetic benchmark.");
+paragraph("Live-chart conversion: the streamed XAU/USD price is converted to LKR per gram using the streamed USD/LKR rate and then scaled to 8 grams. 24K uses the full fine-gold benchmark; 22K multiplies it by 22/24. The 22K and 24K charts therefore share price movement by design, but differ in their purity-adjusted price levels. Neither is a shop offer or a local retail premium.");
+paragraph("The live provider key is read only by the server from GOLD_API_WS_KEY. Without that key the application stays on dated daily candles. GoldAPI currently documents a 300 monthly request allowance and one simultaneous WebSocket connection on its Free plan; check the provider's current pricing and terms before a multi-viewer demonstration.");
 
 startPage("3. The ML / risk part, simply explained", "What is fitted, what is simulated, and what is not in this project.");
 section("Supervised market model");

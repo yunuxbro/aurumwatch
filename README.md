@@ -61,6 +61,27 @@ improvement. It does not forecast Pettah or shop prices: the available dated
 Pettah history is too sparse and old to train a reliable local model. Fresh
 dealer quotes are direct references, not training labels.
 
+The chart also has a genuine live mode, powered by GoldAPI WebSocket updates
+for XAU/USD and USD/LKR. It builds 1-minute through 4-hour OHLC candles from
+received market updates; it does not animate or fabricate prices between
+updates. The 24K benchmark is gold spot converted to LKR per 8 g; 22K applies
+the 22/24 purity ratio to that same underlying gold price. These are metal
+benchmarks, not local shop offers, and exclude retail premiums, workmanship,
+and taxes. Without provider credentials, the app clearly stays on daily history.
+
+To enable live mode locally, create a GoldAPI account and add its dedicated
+WebSocket key to `web/.env.local` (never expose it as a `NEXT_PUBLIC_` variable):
+
+```dotenv
+GOLD_API_WS_KEY=your_private_websocket_key
+```
+
+Restart the web app after setting the key. GoldAPI's published Free plan allows
+300 monthly API/WebSocket-token requests and one simultaneous WebSocket
+connection; its Business plan lists up to five. Check the provider's current
+plans and market-data terms before a multi-viewer demo. The app keeps the key
+server-side and only returns the provider's short-lived connection token.
+
 The What Changed page preserves the sparse Pettah-news archive and overlays
 dated local quotes on the daily gold/FX-derived market history. When Pettah
 reports are missing for a date and karat, a dated seller/listed
