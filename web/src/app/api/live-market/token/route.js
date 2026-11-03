@@ -28,11 +28,25 @@ export async function POST(request) {
     return Response.json({ message: "Live market tokens are only available to this site." }, { status: 403 });
   }
 
+  const restApiKey = process.env.GOLD_API_KEY;
+  const pollIntervalMs = Number(process.env.GOLD_API_POLL_INTERVAL_MS);
+  const safePollIntervalMs = Number.isFinite(pollIntervalMs)
+    ? Math.max(60_000, Math.min(24 * 60 * 60 * 1000, Math.floor(pollIntervalMs)))
+    : 3 * 60 * 60 * 1000;
   const apiKey = process.env.GOLD_API_WS_KEY;
   if (!apiKey) {
+    if (restApiKey) {
+      return Response.json({
+        configured: true,
+        mode: "rest",
+        pollIntervalMs: safePollIntervalMs,
+      }, {
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
     return Response.json({
       configured: false,
-      message: "Live prices need a GoldAPI WebSocket key. Add GOLD_API_WS_KEY to web/.env.local and restart the app.",
+      message: "Add a GoldAPI REST key as GOLD_API_KEY or a dedicated WebSocket key as GOLD_API_WS_KEY to web/.env.local.",
     }, {
       status: 503,
       headers: { "Cache-Control": "no-store" },
@@ -80,6 +94,7 @@ export async function POST(request) {
 
       cache.value = {
         configured: true,
+        mode: "websocket",
         token: token.token,
         expiresAt: token.expiresAt,
         websocketUrl: websocketUrl.toString(),
@@ -97,6 +112,15 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Could not obtain a GoldAPI WebSocket token:", error);
+    if (restApiKey && error instanceof Error && error.retryable === false) {
+      return Response.json({
+        configured: true,
+        mode: "rest",
+        pollIntervalMs: safePollIntervalMs,
+      }, {
+        headers: { "Cache-Control": "no-store" },
+      });
+    }
     const message = error instanceof Error ? error.message : "Could not connect to the live price provider.";
     return Response.json({
       configured: true,

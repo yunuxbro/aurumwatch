@@ -281,13 +281,14 @@ export default function MarketCandles({ snapshot, dealerReference, localQuotes =
     loading: "Checking live feed",
     connecting: "Connecting to live feed",
     live: "Live feed connected",
+    polling: "REST quote · periodic refresh",
     reconnecting: "Reconnecting to live feed",
     unconfigured: "Daily data · live feed not configured",
     error: "Live feed unavailable",
   }[market.status] || "Live feed status unknown";
 
   return (
-    <div className="market-chart-panel">
+    <div className="market-candle-widget market-chart-panel">
       <div className="market-chart-panel-toolbar">
         <div className="market-chart-mode" role="group" aria-label="Market chart mode">
           <button
@@ -323,7 +324,7 @@ export default function MarketCandles({ snapshot, dealerReference, localQuotes =
         </span>
       </div>
       {chartMode === "live" ? (
-        <LiveMarketCandles market={market} karat={selectedKarat} />
+        <LiveMarketCandles market={market} karat={selectedKarat} snapshot={snapshot} />
       ) : (
         <HistoricalMarketCandles
           snapshot={snapshot}

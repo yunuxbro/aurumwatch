@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { goldSpotToLkrPer8g } from "@/lib/live-market";
+import {
+  goldLkrSpotToLkrPer8g,
+  goldSpotToLkrPer8g,
+} from "@/lib/live-market";
 
 const CHANNELS = ["metals:XAUUSD", "fx:USDLKR"];
 const MAX_TICKS = 5000;
@@ -16,6 +19,8 @@ function channelPrice(message) {
 export function useLiveMarket() {
   const [status, setStatus] = useState("loading");
   const [configured, setConfigured] = useState(null);
+  const [mode, setMode] = useState(null);
+  const [pollIntervalMs, setPollIntervalMs] = useState(null);
   const [error, setError] = useState("");
   const [ticks, setTicks] = useState([]);
   const [latest, setLatest] = useState(null);
@@ -26,6 +31,7 @@ export function useLiveMarket() {
     let socket = null;
     let heartbeat = null;
     let retryTimer = null;
+    let restTimer = null;
     let retryCount = 0;
     let subscriptionIds = new Set();
 
@@ -56,6 +62,45 @@ export function useLiveMarket() {
         }
 
         setError("");
+        setMode(details.mode);
+        if (details.mode === "rest") {
+          setPollIntervalMs(Number(details.pollIntervalMs) || 3 * 60 * 60 * 1000);
+          setStatus("polling");
+          const pollQuote = async () => {
+            try {
+              const quoteResponse = await fetch("/api/live-market/quote", {
+                cache: "no-store",
+              });
+              const quote = await quoteResponse.json();
+              if (!quoteResponse.ok) {
+                throw new Error(quote.message || `Live price request failed (${quoteResponse.status}).`);
+              }
+              const price = goldLkrSpotToLkrPer8g(Number(quote.priceLkrPerTroyOunce));
+              const timestamp = Number(quote.timestamp);
+              if (!Number.isFinite(timestamp) || !price) {
+                throw new Error("The live quote did not contain a valid XAU/LKR price and timestamp.");
+              }
+              const tick = { timestamp, price };
+              setLatest({ ...tick, provider: quote.provider, providerSymbol: quote.providerSymbol });
+              setTicks((current) => [...current, tick].slice(-MAX_TICKS));
+              setStatus("polling");
+              setError("");
+            } catch (quoteError) {
+              if (stopped) return;
+              setStatus("error");
+              setError(quoteError instanceof Error
+                ? quoteError.message
+                : "Could not retrieve the periodic XAU/LKR price.");
+            }
+          };
+          void pollQuote();
+          restTimer = window.setInterval(
+            pollQuote,
+            Math.max(60_000, Number(details.pollIntervalMs) || 3 * 60 * 60 * 1000),
+          );
+          return;
+        }
+
         socket = new WebSocket(details.websocketUrl);
         socket.addEventListener("open", () => {
           send({
@@ -149,9 +194,10 @@ export function useLiveMarket() {
       stopped = true;
       if (heartbeat) window.clearInterval(heartbeat);
       if (retryTimer) window.clearTimeout(retryTimer);
+      if (restTimer) window.clearInterval(restTimer);
       if (socket && socket.readyState < WebSocket.CLOSING) socket.close();
     };
   }, []);
 
-  return { status, configured, error, ticks, latest };
+  return { status, configured, mode, pollIntervalMs, error, ticks, latest };
 }

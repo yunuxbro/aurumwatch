@@ -61,26 +61,40 @@ improvement. It does not forecast Pettah or shop prices: the available dated
 Pettah history is too sparse and old to train a reliable local model. Fresh
 dealer quotes are direct references, not training labels.
 
-The chart also has a genuine live mode, powered by GoldAPI WebSocket updates
-for XAU/USD and USD/LKR. It builds 1-minute through 4-hour OHLC candles from
-received market updates; it does not animate or fabricate prices between
+The chart supports GoldAPI WebSocket streaming and its XAU/LKR REST quote.
+WebSocket streaming builds 1-minute through 4-hour OHLC candles from provider
+updates; the REST option refreshes periodically and is not tick-by-tick. REST
+refresh defaults to every three hours to conserve API quota. Its chart provides
+1D, 1W, 1M, 3M, 6M, and 1Y ranges using the app's dated daily gold/FX benchmark,
+with the newest daily candle updated by the latest REST quote. Earlier candles
+are not GoldAPI REST history. To change the polling cadence, set
+`GOLD_API_POLL_INTERVAL_MS` in milliseconds; the server enforces a minimum of
+one minute and maximum of 24 hours. Choose an interval supported by the
+account's current plan. The app does not animate or fabricate prices between
 updates. The 24K benchmark is gold spot converted to LKR per 8 g; 22K applies
 the 22/24 purity ratio to that same underlying gold price. These are metal
 benchmarks, not local shop offers, and exclude retail premiums, workmanship,
 and taxes. Without provider credentials, the app clearly stays on daily history.
 
-To enable live mode locally, create a GoldAPI account and add its dedicated
-WebSocket key to `web/.env.local` (never expose it as a `NEXT_PUBLIC_` variable):
+For REST updates, add a regular GoldAPI REST key to `web/.env.local`:
+
+```dotenv
+GOLD_API_KEY=your_private_rest_key
+GOLD_API_POLL_INTERVAL_MS=10800000
+```
+
+For genuine streaming instead, use a dedicated WebSocket key:
 
 ```dotenv
 GOLD_API_WS_KEY=your_private_websocket_key
 ```
 
-Restart the web app after setting the key. GoldAPI's published Free plan allows
-300 monthly API/WebSocket-token requests and one simultaneous WebSocket
-connection; its Business plan lists up to five. Check the provider's current
-plans and market-data terms before a multi-viewer demo. The app keeps the key
-server-side and only returns the provider's short-lived connection token.
+Restart the web app after changing environment variables. GoldAPI's published
+Free plan allows 300 monthly API/WebSocket-token requests and one simultaneous
+WebSocket connection; its Business plan lists up to five. Check the provider's
+current plans and market-data terms before choosing a polling cadence or running
+a multi-viewer demo. The app keeps both credential types server-side; WebSocket
+mode only returns the provider's short-lived connection token.
 
 The What Changed page preserves the sparse Pettah-news archive and overlays
 dated local quotes on the daily gold/FX-derived market history. When Pettah
