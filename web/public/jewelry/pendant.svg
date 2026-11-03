@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" fill="none">
+  <defs>
+    <linearGradient id="gold" x1="155" y1="78" x2="322" y2="284" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fbf0d2"/>
+      <stop offset=".25" stop-color="#d5bd82"/>
+      <stop offset=".55" stop-color="#9f8046"/>
+      <stop offset=".78" stop-color="#eddaa1"/>
+      <stop offset="1" stop-color="#876d3f"/>
+    </linearGradient>
+    <linearGradient id="stone" x1="194" y1="162" x2="280" y2="253" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff"/>
+      <stop offset=".55" stop-color="#dae6e7"/>
+      <stop offset="1" stop-color="#8d9da2"/>
+    </linearGradient>
+    <filter id="shadow" x="87" y="62" width="306" height="290" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <ellipse cx="240" cy="299" fill="#19232c" opacity=".16" rx="105" ry="15" filter="url(#shadow)"/>
+  <path d="m144 38 96 111 96-111" stroke="url(#gold)" stroke-linecap="round" stroke-width="5"/>
+  <path d="M226 130c-25-24-54 12 14 67 68-55 39-91 14-67-11 11-17 19-14 29 3-10-3-18-14-29Z" fill="url(#gold)" stroke="#85683a" stroke-width="4"/>
+  <path d="m240 161 38 36-38 58-38-58z" fill="url(#stone)" stroke="url(#gold)" stroke-width="10"/>
+  <path d="m240 170 27 27-27 42-27-42z" fill="#a5b8bc" opacity=".66"/>
+  <path d="M148 42c27 31 51 59 74 87" stroke="#fff8e6" stroke-linecap="round" stroke-width="3" opacity=".72"/>
+  <circle cx="144" cy="38" r="5" fill="#f4e7c5"/>
+  <circle cx="336" cy="38" r="5" fill="#f4e7c5"/>
+</svg>

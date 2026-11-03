@@ -1,14 +1,15 @@
 import argparse, datetime as dt
 import numpy as np
 import pandas as pd
-from clean import market_daily, pettah_joined
+from clean import market_daily
 from decompose import decompose
 
 LAMBDA = 0.94
 N_SIMS = 10_000
-MAX_MARKET_AGE_DAYS = 7       # D1/D2 freshness limit
-MAX_QUOTE_AGE_WORKDAYS = 3    # D3 freshness limit
+MAX_MARKET_AGE_DAYS = 5
 SOVEREIGNS_PER_KG = 125       # 1000 g / 8 g
+GRAMS_PER_TROY_OUNCE = 31.1034768
+GRAMS_PER_SOVEREIGN = 8.0
 
 def ewma_variance(r, lam=LAMBDA):
     """s2[t] = variance forecast for r[t], made before seeing r[t]."""
@@ -34,24 +35,31 @@ def stock_risk(horizon=7, start_price=None, today=None):
     today = pd.Timestamp(today or dt.date.today())
     total, sw, sf, market_date = simulate(horizon)
     notes = []
+    market_rows = market_daily().dropna(subset=["usd_oz", "lkr_per_usd"])
+    latest_market = market_rows.iloc[-1]
+    market_benchmark_22k = (
+        float(latest_market.usd_oz)
+        * float(latest_market.lkr_per_usd)
+        / GRAMS_PER_TROY_OUNCE
+        * GRAMS_PER_SOVEREIGN
+        * (22 / 24)
+    )
     if start_price is None:
-        j = pettah_joined(22)
-        quote_date = j.date.iloc[-1]
-        start_price = float(j.local.iloc[-1])
-        source = "latest stored Pettah quote"
+        quote_date = pd.Timestamp(market_date)
+        start_price = market_benchmark_22k
+        source = "daily world-gold and USD/LKR benchmark"
+        notes.append(
+            "The starting value is a market-derived 22K estimate, not a verified Pettah shop quote."
+        )
     else:
         quote_date = today
         source = "manual quote"
-    market_age = (today - market_date).days
-    quote_age = int(np.busday_count(quote_date.date(), today.date()))
+    market_age = (today - pd.Timestamp(market_date)).days
 
     status = "ok"
     if market_age > MAX_MARKET_AGE_DAYS:
         status = "cannot_assess"
         notes.append(f"World gold / USD-LKR data is {market_age} days old.")
-    elif quote_age > MAX_QUOTE_AGE_WORKDAYS:
-        status = "cannot_assess"
-        notes.append(f"Latest Pettah quote is {quote_age} working days old. Enter today's quote.")
 
     paths = start_price * np.exp(total)
     q = {f"p{p}": float(np.percentile(paths, p)) for p in (1, 5, 25, 50, 75, 95, 99)}
@@ -77,7 +85,7 @@ def stock_risk(horizon=7, start_price=None, today=None):
         "assumptions": [
             "Premium held constant in the range; range covers world gold and rupee only.",
             "Premium stress uses the worst move seen in a very short history (experimental).",
-            "Volatility held at today's EWMA level over the horizon. No point forecast. Not advice.",
+            "Volatility held at the latest EWMA level over the horizon. No point forecast. Not advice.",
         ],
     }
 

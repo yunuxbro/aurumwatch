@@ -9,137 +9,108 @@ export default function ChangesPage() {
   const moves = getData("moves") || [];
 
   const chartLines = [
-    { key: "local", label: "Pettah 22K (8g)", color: "#f59e0b" },
-    { key: "local_equiv", label: "World Equiv in LKR (8g)", color: "#38bdf8" },
+    { key: "local", label: "Pettah 22K (8g)", color: "var(--chart-gold)" },
+    { key: "local_equiv", label: "World equivalent (LKR)", color: "var(--chart-world)" },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between border-b border-stone-800 pb-3">
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-amber-200">Historical Moves &amp; Decomposition</h1>
-          <p className="text-xs text-stone-400">
-            Pettah market prices versus theoretical world-equivalent prices (Output 1 &amp; Output 3)
-          </p>
-        </div>
-        <span className="font-mono text-xs text-stone-400 rounded border border-stone-800 bg-[#121620] px-2 py-1">
-          PDF OUTPUT 1 (WHAT CHANGED)
-        </span>
-      </div>
+    <div className="page">
+      <header className="page-head">
+        <p className="page-kicker">Market history</p>
+        <h1>What changed</h1>
+        <p>Compare Pettah quotes with the international gold price translated into rupees.</p>
+      </header>
 
-      {/* Chart Section */}
-      <section className="skeuo-card p-6">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
-
-        <div className="flex items-center justify-between border-b border-stone-800 pb-3 mb-4">
+      <section className="card panel">
+        <div className="section-header">
           <div>
-            <h2 className="font-serif text-lg font-bold text-amber-200">
-              Price History Chart: Pettah 22K vs. World Equivalent
-            </h2>
-            <p className="text-xs text-stone-400">
-              Units: LKR per 8 g sovereign. Comparing domestic price against international market value.
-            </p>
+            <h2 className="section-title">Price history</h2>
+            <p className="section-sub">LKR per 8 g sovereign · local quote versus world-equivalent value</p>
           </div>
-          <span className="font-mono text-xs text-amber-400">
-            {history.length} Historic Quotes
-          </span>
+          <span className="badge badge-neutral">{history.length} quotes</span>
         </div>
-
-        <div className="skeuo-screen p-4">
-          <LineChart data={history} lines={chartLines} height={260} />
+        <div className="chart-frame">
+          <LineChart data={history} lines={chartLines} height={280} />
         </div>
       </section>
 
-      {/* Decomposition Table */}
-      <section className="skeuo-card p-6">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
-
-        <div className="border-b border-stone-800 pb-3 mb-4">
-          <h2 className="font-serif text-lg font-bold text-amber-200">
-            Decomposition of Recent Price Moves
-          </h2>
-          <p className="text-xs text-stone-400">
-            Accounting identity: Δln(Local) = Δln(World Gold) + Δln(USD/LKR) + Δln(Local Premium)
-          </p>
+      <section className="card panel">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Recent price moves</h2>
+            <p className="section-sub">
+              Δln(local) = Δln(world gold) + Δln(USD/LKR) + Δln(local premium)
+            </p>
+          </div>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-mono">
+        <div className="scroll-x">
+          <table className="data-table">
             <thead>
-              <tr className="border-b border-stone-800 text-left text-xs uppercase text-stone-400">
-                <th className="py-2">Date</th>
-                <th>Observed Local Move</th>
-                <th>World Gold (USD)</th>
-                <th>USD / LKR</th>
-                <th>Local Premium</th>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Pettah</th>
+                <th scope="col">World gold</th>
+                <th scope="col">USD / LKR</th>
+                <th scope="col">Local premium</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-800/60">
-              {moves.slice(-10).reverse().map((m) => (
-                <tr key={m.date} className="hover:bg-stone-800/20">
-                  <td className="py-2 text-stone-300 font-bold">{m.date}</td>
-                  <td className="font-bold text-amber-300">
-                    {m.ret_local > 0 ? "▲ " : m.ret_local < 0 ? "▼ " : ""}{pct(m.ret_local)}
+            <tbody>
+              {moves.slice(-10).reverse().map((move) => (
+                <tr key={move.date}>
+                  <td>{move.date}</td>
+                  <td className={move.ret_local >= 0 ? "move-up" : "move-down"}>
+                    {move.ret_local > 0 ? "▲ " : move.ret_local < 0 ? "▼ " : ""}{pct(move.ret_local)}
                   </td>
-                  <td className="text-stone-300">
-                    {m.ret_world > 0 ? "▲ " : m.ret_world < 0 ? "▼ " : ""}{pct(m.ret_world)}
+                  <td className={move.ret_world >= 0 ? "move-up" : "move-down"}>
+                    {move.ret_world > 0 ? "▲ " : move.ret_world < 0 ? "▼ " : ""}{pct(move.ret_world)}
                   </td>
-                  <td className="text-stone-300">
-                    {m.ret_fx > 0 ? "▲ " : m.ret_fx < 0 ? "▼ " : ""}{pct(m.ret_fx)}
+                  <td className={move.ret_fx >= 0 ? "move-up" : "move-down"}>
+                    {move.ret_fx > 0 ? "▲ " : move.ret_fx < 0 ? "▼ " : ""}{pct(move.ret_fx)}
                   </td>
-                  <td className={Math.abs(m.ret_premium) > 0.05 ? "text-amber-400 font-bold" : "text-stone-400"}>
-                    {m.ret_premium > 0 ? "▲ " : m.ret_premium < 0 ? "▼ " : ""}{pct(m.ret_premium)}
+                  <td className={Math.abs(move.ret_premium) > 0.05 ? "text-warning" : "text-secondary"}>
+                    {move.ret_premium > 0 ? "▲ " : move.ret_premium < 0 ? "▼ " : ""}{pct(move.ret_premium)}
                   </td>
                 </tr>
               ))}
+              {moves.length === 0 && (
+                <tr><td colSpan={5}>No move data available yet.</td></tr>
+              )}
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* Quote History Table */}
-      <section className="skeuo-card p-6">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
-
-        <div className="border-b border-stone-800 pb-3 mb-4">
-          <h2 className="font-serif text-lg font-bold text-amber-200">
-            Latest Stored Quotes &amp; Calculated Premium
-          </h2>
-          <p className="text-xs text-stone-400">
-            Comparing local 8 g price to theoretical equivalent in LKR with reporting lag
-          </p>
+      <section className="card panel">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Stored quotes</h2>
+            <p className="section-sub">Latest local prices, estimated world value, premium, and reporting lag.</p>
+          </div>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm font-mono">
+        <div className="scroll-x">
+          <table className="data-table">
             <thead>
-              <tr className="border-b border-stone-800 text-left text-xs uppercase text-stone-400">
-                <th className="py-2">Quote Date</th>
-                <th>Pettah 22K (8g)</th>
-                <th>World Equiv (8g)</th>
-                <th>Premium Spread</th>
-                <th>Lag Days</th>
+              <tr>
+                <th scope="col">Quote date</th>
+                <th scope="col">Pettah 22K (8g)</th>
+                <th scope="col">World equivalent</th>
+                <th scope="col">Premium</th>
+                <th scope="col">Lag</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-stone-800/60">
-              {history.slice(-10).reverse().map((h) => (
-                <tr key={h.date} className="hover:bg-stone-800/20">
-                  <td className="py-2 text-stone-300">{h.date}</td>
-                  <td className="font-bold text-amber-300">{lkr(h.local)}</td>
-                  <td className="text-sky-300">{lkr(h.local_equiv)}</td>
-                  <td className="text-amber-400">{pct(h.premium)}</td>
-                  <td className="text-stone-400 text-xs">{h.lag_days}d</td>
+            <tbody>
+              {history.slice(-10).reverse().map((quote) => (
+                <tr key={quote.date}>
+                  <td>{quote.date}</td>
+                  <td>{lkr(quote.local)}</td>
+                  <td>{lkr(quote.local_equiv)}</td>
+                  <td>{pct(quote.premium)}</td>
+                  <td>{quote.lag_days} days</td>
                 </tr>
               ))}
+              {history.length === 0 && (
+                <tr><td colSpan={5}>No quote history available yet.</td></tr>
+              )}
             </tbody>
           </table>
         </div>

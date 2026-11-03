@@ -1,28 +1,74 @@
 :root {
-  /* Precious Metals Palette */
-  --gold-24k: #ffd700;
-  --gold-22k-light: #fff3b0;
-  --gold-22k-mid: #d4af37;
-  --gold-22k-dark: #aa771c;
-  --gold-amber-deep: #78350f;
-  
-  /* Bullion Vault & Chassis */
-  --vault-bg: #0a0d14;
-  --vault-surface: #121620;
-  --vault-card-start: #181d27;
-  --vault-card-end: #10141d;
-  --vault-border: #283344;
-  --vault-border-highlight: #3e4e68;
+  --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  color-scheme: light;
 
-  /* Precision Scale OLED Display */
-  --oled-bg: #07090e;
-  --oled-phosphor-gold: #f59e0b;
-  --oled-phosphor-bright: #fbbf24;
-  --oled-phosphor-glow: rgba(245, 158, 11, 0.45);
-  
-  /* Physical Indicators */
-  --led-green-glow: #22c55e;
-  --led-amber-glow: #f59e0b;
-  --led-red-glow: #ef4444;
+  --brand: #36434e;
+  --brand-soft: #53636e;
+  --on-brand: #f7f5ef;
+  --on-brand-dim: #ddd9ce;
+  --gold: #d6ae55;
+  --gold-light: #f3dfaa;
+  --gold-dark: #76520d;
+  --gold-subtle: rgba(214, 174, 85, .15);
+  --gold-border: rgba(160, 119, 36, .34);
+
+  --bg: #f3f2ef;
+  --surface: rgba(255, 255, 255, .78);
+  --surface-2: rgba(246, 245, 241, .92);
+  --surface-3: #e9e7e1;
+  --border: rgba(65, 68, 70, .12);
+  --border-strong: rgba(65, 68, 70, .24);
+  --text-primary: #22272b;
+  --text-secondary: #4a5156;
+  --text-muted: #616a70;
+  --text-on-gold: #231904;
+
+  --success: #365d69; --success-bg: #eaf1f3; --success-border: #c2d4d9;
+  --warning: #744700; --warning-bg: #fff4d9; --warning-border: #e9cd81;
+  --danger: #a52e24; --danger-bg: #fff0ed; --danger-border: #e9b9b2;
+  --info: #155686; --info-bg: #eaf4fb; --info-border: #b8d7eb;
+
+  --shadow-sm: 0 4px 14px rgba(47, 49, 50, .055);
+  --shadow-md: 0 14px 36px rgba(47, 49, 50, .09);
+  --shadow-lg: 0 24px 60px rgba(47, 49, 50, .14);
+  --shadow-gold: 0 12px 32px rgba(174, 129, 42, .18);
+
+  --radius-sm: 12px;
+  --radius: 18px;
+  --radius-lg: 26px;
 }
 
+html.dark {
+  color-scheme: dark;
+  --brand: #303b44;
+  --brand-soft: #556571;
+  --on-brand: #f5f3ed;
+  --on-brand-dim: #d3d0c7;
+  --gold: #e0b957;
+  --gold-light: #f1d98e;
+  --gold-dark: #f0cd76;
+  --gold-subtle: rgba(224, 185, 87, .12);
+  --gold-border: rgba(224, 185, 87, .28);
+
+  --bg: #111518;
+  --surface: rgba(29, 35, 40, .88);
+  --surface-2: rgba(37, 44, 49, .92);
+  --surface-3: #343c42;
+  --border: rgba(215, 218, 216, .12);
+  --border-strong: rgba(215, 218, 216, .24);
+  --text-primary: #f1f0eb;
+  --text-secondary: #d0d0cb;
+  --text-muted: #b1b5b5;
+  --text-on-gold: #211803;
+
+  --success: #9ac2cc; --success-bg: rgba(67, 109, 121, .2); --success-border: rgba(154, 194, 204, .34);
+  --warning: #f4ce69; --warning-bg: rgba(148, 105, 23, .2); --warning-border: rgba(244, 206, 105, .35);
+  --danger: #ff9a8d; --danger-bg: rgba(153, 55, 45, .2); --danger-border: rgba(255, 154, 141, .34);
+  --info: #8bc8f1; --info-bg: rgba(44, 105, 151, .2); --info-border: rgba(139, 200, 241, .34);
+
+  --shadow-sm: 0 5px 16px rgba(0, 0, 0, .14);
+  --shadow-md: 0 16px 40px rgba(0, 0, 0, .2);
+  --shadow-lg: 0 28px 70px rgba(0, 0, 0, .28);
+  --shadow-gold: 0 12px 34px rgba(0, 0, 0, .22);
+}

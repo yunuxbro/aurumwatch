@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" fill="none">
+  <defs>
+    <linearGradient id="gold" x1="111" y1="130" x2="366" y2="260" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fbf0d2"/>
+      <stop offset=".22" stop-color="#d5bd82"/>
+      <stop offset=".5" stop-color="#9f8046"/>
+      <stop offset=".76" stop-color="#eddaa1"/>
+      <stop offset="1" stop-color="#806439"/>
+    </linearGradient>
+    <filter id="shadow" x="62" y="75" width="356" height="260" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feGaussianBlur stdDeviation="14"/>
+    </filter>
+  </defs>
+  <ellipse cx="240" cy="278" fill="#19232c" opacity=".18" rx="139" ry="21" filter="url(#shadow)"/>
+  <ellipse cx="240" cy="200" stroke="#8c7040" stroke-width="34" rx="130" ry="67"/>
+  <ellipse cx="240" cy="188" stroke="url(#gold)" stroke-width="31" rx="130" ry="67"/>
+  <ellipse cx="240" cy="181" stroke="#fff3cd" stroke-opacity=".7" stroke-width="3" rx="126" ry="62"/>
+  <path d="M127 162c19-25 47-40 79-45" stroke="#fff5dc" stroke-linecap="round" stroke-width="6" opacity=".72"/>
+  <path d="m211 108 9-14h40l9 14-29 12z" fill="url(#gold)" stroke="#8a6e3d" stroke-width="3"/>
+  <circle cx="240" cy="105" r="7" fill="#eef0e9" stroke="#9e895b" stroke-width="3"/>
+  <circle cx="162" cy="137" r="4" fill="#f5e6bd"/>
+  <circle cx="318" cy="137" r="4" fill="#f5e6bd"/>
+</svg>

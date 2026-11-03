@@ -1,0 +1,24 @@
+/* UTILITIES */
+.text-primary   { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted     { color: var(--text-muted); }
+.text-gold      { color: var(--gold-dark); }
+.text-success   { color: var(--success); }
+.text-danger    { color: var(--danger); }
+.text-warning   { color: var(--warning); }
+
+.bg-surface     { background-color: var(--surface); }
+.bg-surface-2   { background-color: var(--surface-2); }
+.bg-gold-subtle { background-color: var(--gold-subtle); }
+
+.stat-value      { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.stat-value-gold { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1.15; color: var(--gold-dark); }
+.stat-label      { font-size: .8rem; font-weight: 500; color: var(--text-muted); }
+
+.move-up   { color: var(--success); }
+.move-down { color: var(--danger); }
+.move-flat { color: var(--text-muted); }
+
+.scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.mono     { font-variant-numeric: tabular-nums; }
+.page     { display: flex; flex-direction: column; gap: 1.5rem; }

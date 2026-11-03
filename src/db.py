@@ -1,8 +1,9 @@
-import sqlite3, datetime as dt
+import pathlib, sqlite3, datetime as dt
 
-DB_PATH = "data/aurum.db"
+DB_PATH = pathlib.Path(__file__).resolve().parent.parent / "data" / "aurum.db"
 
 def get_conn():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     return sqlite3.connect(DB_PATH)
 
 def init_db():
@@ -16,6 +17,21 @@ def init_db():
             date TEXT, karat INTEGER, lkr_per_8g REAL,
             outlet TEXT, url TEXT,
             PRIMARY KEY(date, karat, outlet));
+        CREATE TABLE IF NOT EXISTS dealer_quotes(
+            institution TEXT NOT NULL,
+            institution_type TEXT NOT NULL,
+            commodity TEXT NOT NULL,
+            karat INTEGER NOT NULL,
+            side TEXT NOT NULL,
+            unit TEXT NOT NULL,
+            unit_label TEXT NOT NULL,
+            price_lkr REAL NOT NULL,
+            currency TEXT NOT NULL,
+            rate_date TEXT NOT NULL,
+            observed_at TEXT NOT NULL,
+            source_url TEXT NOT NULL,
+            fetched_at TEXT NOT NULL,
+            PRIMARY KEY(institution, karat, side, unit, rate_date, source_url));
         CREATE TABLE IF NOT EXISTS raw_files(
             path TEXT, sha256 TEXT, source TEXT, fetched_at TEXT);
         """)

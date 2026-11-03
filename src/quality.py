@@ -1,4 +1,3 @@
-import pandas as pd
 from clean import load, market_daily, pettah_joined
 
 def report():

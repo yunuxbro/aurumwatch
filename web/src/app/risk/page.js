@@ -6,77 +6,70 @@ import JewellerCalculator from "@/components/JewellerCalculator";
 export const dynamic = "force-dynamic";
 const LEVELS = [1, 5, 25, 50, 75, 95, 99];
 
-function Block({ r, title }) {
-  if (!r) return null;
-  return (
-    <section className="skeuo-card p-6">
-      <div className="rivet rivet-tl" />
-      <div className="rivet rivet-tr" />
-      <div className="rivet rivet-bl" />
-      <div className="rivet rivet-br" />
+function Block({ risk, title }) {
+  if (!risk) return null;
 
-      <div className="flex flex-wrap items-center justify-between border-b border-stone-800 pb-3 mb-4">
-        <h2 className="font-serif text-lg font-bold text-amber-200">{title}</h2>
-        <span className="font-mono text-xs text-stone-400">
-          Starting Price: <b className="text-amber-300">{lkr(r.start_price_8g)}</b> / 8 g ({r.quote_date})
+  return (
+    <section className="card panel">
+      <div className="section-header">
+        <div>
+          <h2 className="section-title">{title}</h2>
+          <p className="section-sub">
+            Starting baseline: {lkr(risk.start_price_8g)} per 8 g · {risk.quote_date}
+            {" "}· {risk.start_source}
+          </p>
+        </div>
+        <span className={`badge ${risk.status === "ok" ? "badge-success" : "badge-warning"}`}>
+          {risk.status === "ok" ? "Model range available" : "Cannot assess"}
         </span>
       </div>
 
-      {r.status !== "ok" ? (
-        <div className="rounded border border-red-500/30 bg-red-950/20 p-4">
-          <p className="text-sm text-red-300 font-mono">
-            Safety Trigger: Cannot assess without fresh quotes. {r.notes?.join(" ") || ""}
+      {risk.status !== "ok" ? (
+        <div className="risk-callout" style={{ padding: "1rem" }}>
+          <p style={{ margin: 0, fontWeight: 700 }}>
+            Fresh quotes are required before the model can provide this range.
           </p>
-          <p className="text-xs text-stone-400 mt-2">
-            Use the interactive stock exposure simulator below to compute custom risk intervals on today&apos;s prices.
-          </p>
+          {risk.notes?.length > 0 && (
+            <p style={{ margin: ".45rem 0 0", color: "var(--text-secondary)" }}>
+              {risk.notes.join(" ")}
+            </p>
+          )}
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm font-mono">
+          <div className="scroll-x">
+            <table className="risk-table">
               <thead>
-                <tr className="border-b border-stone-800 text-left text-xs uppercase text-stone-400">
-                  <th className="py-2">Quantile (Outcomes Below)</th>
-                  <th>Per 8 g Sovereign</th>
-                  <th>1 kg Stock Exposure</th>
+                <tr>
+                  <th scope="col">Percentile</th>
+                  <th scope="col">Per 8 g</th>
+                  <th scope="col">1 kg exposure</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-stone-800/60">
-                {LEVELS.map((n) => (
-                  <tr
-                    key={n}
-                    className={
-                      n === 5
-                        ? "bg-red-950/20 text-red-300 font-bold"
-                        : n === 50
-                        ? "bg-amber-500/10 text-amber-200 font-semibold"
-                        : "text-stone-300"
-                    }
-                  >
-                    <td className="py-2">
-                      {n}% {n === 5 ? "← 5% Downside Tail" : n === 50 ? "← Most Likely Median" : ""}
-                    </td>
-                    <td>{lkr(r.range_8g?.[`p${n}`])}</td>
-                    <td>{lkr(r.stock_1kg_lkr?.[`p${n}`])}</td>
+              <tbody>
+                {LEVELS.map((level) => (
+                  <tr key={level} className={level === 5 ? "risk-low" : level === 50 ? "risk-median" : ""}>
+                    <td>{level}% {level === 5 ? "· downside tail" : level === 50 ? "· median" : ""}</td>
+                    <td>{lkr(risk.range_8g?.[`p${level}`])}</td>
+                    <td>{lkr(risk.stock_1kg_lkr?.[`p${level}`])}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 border-t border-stone-800 pt-3">
-            <div className="skeuo-screen p-3 text-xs">
-              <span className="text-stone-400 font-mono">Downside Probability:</span>
-              <p className="mt-1 font-mono text-stone-200">
-                Fall &gt;5%: <b className="text-amber-300">{pct(r.prob_fall_5pct, 0)}</b> · Fall &gt;10%: <b className="text-amber-300">{pct(r.prob_fall_10pct, 0)}</b>
-              </p>
+          <div className="metric-grid" style={{ marginTop: "1rem" }}>
+            <div className="metric-tile">
+              <span className="stat-label">Probability of a fall over 5%</span>
+              <p className="stat-value">{pct(risk.prob_fall_5pct, 0)}</p>
             </div>
-            <div className="skeuo-screen p-3 text-xs">
-              <span className="text-stone-400 font-mono">Premium Stress Case:</span>
-              <p className="mt-1 font-mono text-stone-200">
-                Worst historical move: <b className="text-red-300">{lkr(r.premium_stress_8g)}</b> / 8 g
-              </p>
+            <div className="metric-tile">
+              <span className="stat-label">Probability of a fall over 10%</span>
+              <p className="stat-value">{pct(risk.prob_fall_10pct, 0)}</p>
+            </div>
+            <div className="metric-tile">
+              <span className="stat-label">Historical premium stress · per 8 g</span>
+              <p className="stat-value text-danger">{lkr(risk.premium_stress_8g)}</p>
             </div>
           </div>
         </>
@@ -87,50 +80,94 @@ function Block({ r, title }) {
 
 export default function RiskPage() {
   const risk = getData("risk") || {};
+  const market = getData("market_reference") || {};
   const h7 = risk.h7;
   const h14 = risk.h14;
+  const marketIsCurrent = market.status === "current";
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between border-b border-stone-800 pb-3">
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-amber-200">Stock Risk Simulations</h1>
-          <p className="text-xs text-stone-400">
-            Filtered Historical Simulation (EWMA Volatility Scaled Resampling)
-          </p>
+    <div className="page">
+      <header className="page-head">
+        <p className="page-kicker">Inventory planning</p>
+        <h1>Stock risk</h1>
+        <p>Explore historical price ranges for your stock and restocking horizon.</p>
+      </header>
+
+      <section className="card panel">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Daily gold benchmarks</h2>
+            <p className="section-sub">
+              International market proxy and LKR conversions. Pettah retail prices are not supplied by this feed.
+            </p>
+          </div>
+          <span className={`badge ${marketIsCurrent ? "badge-success" : "badge-warning"}`}>
+            {marketIsCurrent ? "Fresh market feeds" : "Market feed unavailable or stale"}
+          </span>
         </div>
-        <span className="font-mono text-xs text-stone-400 rounded border border-stone-800 bg-[#121620] px-2 py-1">
-          OUTPUT 2 (PDF SECTION 4)
-        </span>
-      </div>
+        {marketIsCurrent ? (
+          <>
+            <div className="metric-grid">
+              <div className="metric-tile">
+                <span className="stat-label">World gold proxy</span>
+                <p className="stat-value">US$ {market.gold_usd_per_oz?.toLocaleString("en-US", { maximumFractionDigits: 2 })} / troy oz</p>
+                <p className="section-sub">{market.gold_date} · {market.gold_source}</p>
+              </div>
+              <div className="metric-tile">
+                <span className="stat-label">USD / LKR</span>
+                <p className="stat-value">{market.usd_lkr?.toFixed(2)}</p>
+                <p className="section-sub">{market.fx_date} · {market.fx_source}</p>
+              </div>
+              {[24, 22, 18].map((karat) => (
+                <div className="metric-tile" key={karat}>
+                  <span className="stat-label">{karat}K benchmark · LKR / g</span>
+                  <p className="stat-value">{lkr(market[`lkr_per_gram_${karat}k`])}</p>
+                  <p className="section-sub">
+                    {lkr(market[`lkr_per_8g_${karat}k`])} per 8 g
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="section-sub" style={{ marginTop: "1rem" }}>
+              The Pettah baseline in the simulator is derived from the latest world-gold and FX observations.
+              It is an estimate, not a live shop quote; shop premiums, making charges, and taxes are excluded.
+            </p>
+          </>
+        ) : (
+          <p className="risk-callout" role="status">
+            A current benchmark cannot be calculated until the market feeds refresh successfully. No old Pettah quote is substituted.
+          </p>
+        )}
+      </section>
 
       <Banner risk={h7} />
 
-      {/* Interactive Jeweller Simulator */}
       <JewellerCalculator
-        initialPrice={h7?.start_price_8g || 363400}
+        initialPrice={h7?.status === "ok" ? h7.start_price_8g : null}
+        initialPriceLabel={
+          h7?.status === "ok" && h7.start_source === "daily world-gold and USD/LKR benchmark"
+            ? "Daily market estimate"
+            : "22K risk baseline"
+        }
         riskData={risk}
       />
 
-      <Block r={h7} title="7-Day Restocking Horizon (Pre-calculated Model Baseline)" />
-      <Block r={h14} title="14-Day Restocking Horizon (Pre-calculated Model Baseline)" />
+      <Block risk={h7} title="7-day restocking horizon" />
+      <Block risk={h14} title="14-day restocking horizon" />
 
-      {/* Assumptions Plaque */}
-      <section className="skeuo-card p-5 text-xs">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
-
-        <h2 className="font-serif font-bold text-amber-300 mb-2 text-sm">
-          Limits &amp; Assumptions of this Range (PDF Section 6 &amp; 10)
-        </h2>
-        <ul className="list-disc space-y-1 pl-5 text-stone-300 leading-relaxed">
-          {(h7?.assumptions || []).map((a) => (
-            <li key={a}>{a}</li>
+      <section className="card panel">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Limits and assumptions</h2>
+            <p className="section-sub">How to interpret these model estimates.</p>
+          </div>
+        </div>
+        <ul className="assumption-list">
+          {(h7?.assumptions || []).map((assumption) => (
+            <li key={assumption}>{assumption}</li>
           ))}
           <li>
-            Non-financial advice notice: The simulated range is an empirical estimate of uncertainty based on historical data. It does not predict future prices with certainty.
+            These ranges estimate uncertainty from historical data. They are not financial advice or a guarantee of future prices.
           </li>
         </ul>
       </section>

@@ -3,5 +3,10 @@ __pycache__/
 *.pyc
 *.db
 .env
+web/.env.local
 node_modules/
 .next/
+data/logs/
+web/public/cad/
+data/raw/*_yfinance_*.csv
+data/raw/lankabizz_gold_*.csv

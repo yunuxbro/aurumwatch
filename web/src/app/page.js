@@ -2,255 +2,236 @@ import { getData } from "@/lib/data";
 import { pct, lkr } from "@/lib/format";
 import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
+import { resolveDashboardPricing } from "@/lib/dashboard-pricing";
 
 export const dynamic = "force-dynamic";
+
+/* ── Trend chart: pure SVG, no chart library needed ─────────── */
+function Trend({ data }) {
+  const pts = data.filter((d) => d.local != null && d.local_equiv != null).slice(-60);
+  if (pts.length < 2) return null;
+
+  const W = 640, H = 190, padX = 6, padTop = 10, padBottom = 22;
+  const all = pts.flatMap((d) => [d.local, d.local_equiv]);
+  const min = Math.min(...all), max = Math.max(...all);
+  const room = (max - min || 1) * 0.1;
+  const lo = min - room, hi = max + room;
+
+  const x = (i) => padX + (i * (W - padX * 2)) / (pts.length - 1);
+  const y = (v) => padTop + (1 - (v - lo) / (hi - lo)) * (H - padTop - padBottom);
+  const path = (key) => pts.map((d, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(d[key]).toFixed(1)}`).join(" ");
+  const gap =
+    path("local") + " " +
+    [...pts].reverse().map((d, i) => `L${x(pts.length - 1 - i).toFixed(1)},${y(d.local_equiv).toFixed(1)}`).join(" ") + " Z";
+
+  return (
+    <svg className="trend" viewBox={`0 0 ${W} ${H}`} role="img"
+       aria-label="Historical Pettah prices compared with the world-equivalent price">
+      {[0, 0.5, 1].map((t) => (
+        <line key={t} className="grid" x1="0" x2={W} y1={padTop + t * (H - padTop - padBottom)} y2={padTop + t * (H - padTop - padBottom)} />
+      ))}
+      <path className="gap" d={gap} />
+      <path className="line-world" d={path("local_equiv")} />
+      <path className="line-local" d={path("local")} />
+      <text x={padX} y={H - 5}>{pts[0].date}</text>
+      <text x={W - padX} y={H - 5} textAnchor="end">{pts.at(-1).date}</text>
+    </svg>
+  );
+}
+
+/* ── One row of the "what moved the price" list ─────────────── */
+function Driver({ name, hint, value, max, total, gold }) {
+  const v = value ?? 0;
+  const width = Math.min(50, (Math.abs(v) / max) * 50); // 50% = one full side of the centre line
+  const dir = v >= 0 ? "up" : "down";
+  return (
+    <div className={`driver${total ? " total" : ""}`}>
+      <div className="driver-name">
+        {name}
+        <span className="driver-hint">{hint}</span>
+      </div>
+      <div className={`driver-val ${v > 0 ? "move-up" : v < 0 ? "move-down" : "move-flat"}`}>
+        {v > 0 ? "+" : ""}{pct(v)}
+      </div>
+      <div className="driver-track" aria-hidden="true">
+        <div
+          className={`driver-fill ${dir}`}
+          style={{ width: `${width}%`, ...(gold ? { background: "var(--gold)" } : {}) }}
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
   const risk = getData("risk")?.h7 || {};
   const flags = getData("anomalies") || [];
   const history = getData("history") || [];
+  const market = getData("market_reference") || {};
+  const pricing = resolveDashboardPricing({ history, market });
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
-  const lastHistory = history.length > 0 ? history.at(-1) : null;
-  const q = risk.range_8g;
+  const currentPrice = pricing.currentPrice;
 
-  const currentPrice = lastHistory?.local || risk?.start_price_8g || 363400;
-  const worldEquivPrice = lastHistory?.local_equiv || 350777;
-  const premiumPct = lastHistory?.premium != null ? lastHistory.premium : 0.035;
-  const premiumLkrDiff = currentPrice - worldEquivPrice;
+  const moves = lastMove
+    ? [lastMove.ret_local, lastMove.ret_world, lastMove.ret_fx, lastMove.ret_premium].map((n) => Math.abs(n ?? 0))
+    : [];
+  const maxMove = Math.max(...moves, 1e-9);
+
+  const state =
+    !pricing.quoteIsCurrent || !lastMove || lastMove.status === "cannot_assess"
+      ? "wait"
+      : lastMove.flag
+        ? "bad"
+        : "ok";
 
   return (
-    <div className="space-y-6">
-      {/* Safety Notice Banner if stale quote */}
-      <Banner risk={risk} />
-
-      {/* Top Gold Ingot Anchor Plaque */}
-      <div className="skeuo-gold-card p-6">
-        <div className="rivet gold rivet-tl" />
-        <div className="rivet gold rivet-tr" />
-        <div className="rivet gold rivet-bl" />
-        <div className="rivet gold rivet-br" />
-
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-amber-500/20 pb-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-mono text-xs uppercase tracking-widest text-amber-400 font-bold">
-                BENCHMARK QUOTE · COLOMBO PETTAH
-              </span>
-              <span className="rounded bg-amber-500/10 px-2 py-0.5 font-mono text-[10px] text-amber-300 border border-amber-500/30">
-                22 KARAT SOVEREIGN (8g)
-              </span>
-            </div>
-            <h1 className="mt-1 font-serif text-2xl sm:text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-yellow-200 to-amber-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
-              Daily Gold Risk Brief
-            </h1>
-          </div>
-
-          <div className="flex flex-col items-end text-right">
-            <span className="flex items-center gap-1.5 font-mono text-xs text-stone-300">
-              <span className="led-indicator led-green" />
-              PETTAH QUOTE: <b>{risk.quote_date || lastHistory?.date || "2026-05-06"}</b>
-            </span>
-            <span className="font-mono text-[11px] text-stone-400">
-              WORLD MARKET: {risk.market_date || "2026-10-27"}
-            </span>
-          </div>
-        </div>
-
-        {/* 3 Metric Ingot Columns */}
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {/* Observed Local Quote */}
-          <div className="skeuo-screen p-4 text-center">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-amber-400/80">
-              Observed Pettah Quote (D3)
-            </span>
-            <p className="mt-1 font-mono text-2xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.4)]">
-              {lkr(currentPrice)}
-            </p>
-            <p className="mt-1 text-[11px] text-stone-400">
-              Per 8 g (22K) Sovereign
-            </p>
-          </div>
-
-          {/* Theoretical World-Equiv Price */}
-          <div className="skeuo-screen p-4 text-center">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-sky-400/80">
-              World-Equiv Reference (D1×D2)
-            </span>
-            <p className="mt-1 font-mono text-2xl font-black text-sky-200">
-              {lkr(worldEquivPrice)}
-            </p>
-            <p className="mt-1 text-[11px] text-stone-400">
-              GC=F Futures converted to LKR
-            </p>
-          </div>
-
-          {/* Domestic Pettah Premium */}
-          <div className="skeuo-screen p-4 text-center">
-            <span className="font-mono text-[10px] uppercase tracking-wider text-amber-400/80">
-              Domestic Premium Residual
-            </span>
-            <p className="mt-1 font-mono text-2xl font-black text-amber-400">
-              {pct(premiumPct)}
-            </p>
-            <p className="mt-1 text-[11px] text-stone-400">
-              Diff: +{lkr(premiumLkrDiff)} / 8g
-            </p>
-          </div>
-        </div>
+    <div className="page">
+      <div className="page-head">
+        <p className="page-kicker">Daily market overview</p>
+        <h1>Latest gold brief</h1>
+        <p>Current gold estimates in LKR, with Pettah comparisons when recent shop quotes are available.</p>
       </div>
 
-      {/* Output 1: Component Decomposition (What Drove the Last Move) */}
-      <section className="skeuo-card p-6">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
+      <Banner risk={risk} />
 
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-3">
+      {/* ── The tray: latest price + trend ── */}
+      <section className="hero" aria-label="Current gold price">
+        <div className="hero-head">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="rounded bg-stone-800 px-1.5 py-0.5 font-mono text-[10px] font-bold text-amber-400 border border-stone-700">
-                OUTPUT 1
-              </span>
-              <h2 className="font-serif text-lg font-bold text-stone-100 tracking-wide">
-                Price-Component Attribution Identity
-              </h2>
-            </div>
-            <p className="text-xs text-stone-400 mt-0.5">
-              Exact log-decomposition of the observed local price move: Δln(Local) = Δln(World) + Δln(USD/LKR) + Δln(Premium)
-            </p>
+            <p className="hero-label">{pricing.priceLabel}</p>
+            <p className="hero-price">{lkr(currentPrice)}</p>
           </div>
-          {lastMove?.date && (
-            <span className="font-mono text-xs text-amber-400/90 rounded border border-stone-700 bg-stone-900/60 px-2 py-1">
-              OBSERVATION: {lastMove.date}
+          <div className="hero-chips">
+            <span className="chip">
+              Pettah shop quote: <b>{pricing.quoteIsCurrent ? pricing.quoteDate : "not available"}</b>
             </span>
-          )}
+            <span className="chip">
+              World gold: <b>{pricing.goldDate || "feed unavailable"}</b>
+            </span>
+            <span className="chip">
+              USD/LKR: <b>{pricing.fxDate || "feed unavailable"}</b>
+            </span>
+          </div>
         </div>
 
-        {lastMove ? (
-          <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
-            {/* Local Net Move */}
-            <div className="skeuo-screen p-3 text-center border-amber-500/30">
-              <span className="font-mono text-[10px] text-amber-400 uppercase tracking-wider">
-                Total Local Move
+        {history.length > 1 && (
+          <div className="hero-chart">
+            <div className="hero-chart-top">
+              <span>Historical Pettah quotes vs the world-gold equivalent</span>
+              <span style={{ display: "inline-flex", gap: "1rem" }}>
+                <span className="legend"><i /> Pettah</span>
+                <span className="legend"><i className="dash" /> World equivalent</span>
               </span>
-              <p className="mt-1 font-mono text-xl font-bold text-amber-300">
-                {lastMove.ret_local > 0 ? "▲ " : lastMove.ret_local < 0 ? "▼ " : ""}{pct(lastMove.ret_local)}
-              </p>
-              <p className="text-[10px] text-stone-500 font-mono mt-0.5">Observed in Pettah</p>
             </div>
-
-            {/* World Gold Contribution */}
-            <div className="skeuo-screen p-3 text-center">
-              <span className="font-mono text-[10px] text-stone-400 uppercase tracking-wider">
-                1. World Gold (D1)
-              </span>
-              <p className="mt-1 font-mono text-xl font-bold text-stone-200">
-                {lastMove.ret_world > 0 ? "▲ " : lastMove.ret_world < 0 ? "▼ " : ""}{pct(lastMove.ret_world)}
-              </p>
-              <p className="text-[10px] text-stone-500 font-mono mt-0.5">International USD/oz</p>
-            </div>
-
-            {/* USD/LKR Contribution */}
-            <div className="skeuo-screen p-3 text-center">
-              <span className="font-mono text-[10px] text-stone-400 uppercase tracking-wider">
-                2. USD / LKR (D2)
-              </span>
-              <p className="mt-1 font-mono text-xl font-bold text-stone-200">
-                {lastMove.ret_fx > 0 ? "▲ " : lastMove.ret_fx < 0 ? "▼ " : ""}{pct(lastMove.ret_fx)}
-              </p>
-              <p className="text-[10px] text-stone-500 font-mono mt-0.5">Exchange rate impact</p>
-            </div>
-
-            {/* Local Premium Contribution */}
-            <div className="skeuo-screen p-3 text-center">
-              <span className="font-mono text-[10px] text-stone-400 uppercase tracking-wider">
-                3. Pettah Premium (D3)
-              </span>
-              <p className="mt-1 font-mono text-xl font-bold text-amber-400">
-                {lastMove.ret_premium > 0 ? "▲ " : lastMove.ret_premium < 0 ? "▼ " : ""}{pct(lastMove.ret_premium)}
-              </p>
-              <p className="text-[10px] text-stone-500 font-mono mt-0.5">Domestic markup delta</p>
-            </div>
+            <Trend data={history} />
           </div>
-        ) : (
-          <p className="text-sm text-stone-400 p-4 text-center font-mono">
-            Insufficient consecutive quote history to calculate decomposition.
+        )}
+
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <p className="k">Same gold at world prices</p>
+            <p className="v">{lkr(pricing.worldEquivalentPrice)}</p>
+          </div>
+          <div className="hero-stat">
+            <p className="k">Pettah premium over world price</p>
+            <p className="v">{pct(pricing.premium)}</p>
+          </div>
+          <div className="hero-stat">
+            <p className="k">Premium on one sovereign</p>
+            <p className="v">
+              {pricing.premiumDifference == null
+                ? "—"
+                : `${pricing.premiumDifference >= 0 ? "+" : ""}${lkr(pricing.premiumDifference)}`}
+            </p>
+          </div>
+        </div>
+        {!pricing.quoteIsCurrent && (
+          <p className="section-sub">
+            No recent Pettah shop quote is available; the displayed price is a market-derived estimate, not a retail offer.
           </p>
         )}
       </section>
 
-      {/* Output 3: Abnormal Local-Premium Detector (Outlier Jewel Gauge) */}
-      <section className="skeuo-card p-6">
-        <div className="rivet rivet-tl" />
-        <div className="rivet rivet-tr" />
-        <div className="rivet rivet-bl" />
-        <div className="rivet rivet-br" />
-
-        <div className="flex items-start gap-4">
-          <div className="mt-1">
-            <span
-              className={`led-indicator ${
-                !lastMove || lastMove.status === "cannot_assess"
-                  ? "led-amber"
-                  : lastMove.flag
-                  ? "led-red"
-                  : "led-green"
-              }`}
-            />
+      <div className="two-col">
+        {/* ── Why the price moved ── */}
+        <section className="card panel">
+          <div className="panel-head">
+            <h2 className="panel-title">
+              {pricing.quoteIsCurrent ? "Why the price moved" : "Historical Pettah price movement"}
+              {lastMove?.date ? ` on ${lastMove.date}` : ""}
+            </h2>
+            <p className="panel-sub">
+              {pricing.quoteIsCurrent
+                ? "The three parts add up exactly to the total change in the Pettah price."
+                : "This historical breakdown is not a current shop quote or price assessment."}
+            </p>
           </div>
 
-          <div className="flex-1 space-y-2">
-            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone-800 pb-2">
-              <div className="flex items-center gap-2">
-                <span className="rounded bg-stone-800 px-1.5 py-0.5 font-mono text-[10px] font-bold text-amber-400 border border-stone-700">
-                  OUTPUT 3
-                </span>
-                <h2 className="font-serif text-lg font-bold text-stone-100 tracking-wide">
-                  Abnormal Local-Premium Outlier Detector
-                </h2>
+          {lastMove ? (
+            <>
+              <Driver total name="Pettah price change" hint="What you saw at the counter" value={lastMove.ret_local} max={maxMove} gold />
+              <Driver name="World gold price" hint="Gold in US dollars on world markets" value={lastMove.ret_world} max={maxMove} />
+              <Driver name="Rupee against the dollar" hint="A weaker rupee pushes the local price up" value={lastMove.ret_fx} max={maxMove} />
+              <Driver name="Local premium" hint="Extra charged in Pettah over the world price" value={lastMove.ret_premium} max={maxMove} />
+            </>
+          ) : (
+            <p className="text-muted">
+              We need at least two days of quotes in a row before we can split a price move into its parts.
+            </p>
+          )}
+        </section>
+
+        {/* ── Is the latest quote normal? ── */}
+        <section className="card panel">
+          <div className="panel-head">
+            <h2 className="panel-title">Does the latest quote look normal?</h2>
+            <p className="panel-sub">We compare the latest local premium with its usual range.</p>
+          </div>
+
+          {state === "wait" && (
+            <div className="status wait">
+              <div className="status-icon" aria-hidden="true">?</div>
+              <div>
+                <h3>No recent Pettah quote to compare</h3>
+                <p>
+                  The current market estimate is available above. A shop premium comparison appears when a recent verified Pettah quote is available.
+                </p>
               </div>
-              <span className="font-mono text-xs text-stone-400">
-                MAD Robust Z-Score Rule (Cut-off: |z| &gt; 3.5)
-              </span>
             </div>
-
-            {!lastMove || lastMove.status === "cannot_assess" ? (
-              <p className="text-sm text-amber-300/80 font-mono">
-                Cannot assess yet: Requires at least 5 recent local price observations.
-              </p>
-            ) : lastMove.flag ? (
-              <div className="rounded border border-red-500/40 bg-red-950/20 p-3">
-                <p className="text-sm font-bold text-red-400">
-                  ⚠️ ABNORMAL LOCAL PREMIUM DETECTED (z = {lastMove.z?.toFixed(2)})
-                </p>
-                <p className="mt-1 text-xs text-stone-300">
-                  The local premium moved far more than usual relative to its recent median absolute deviation.
-                  As stated in the research methodology, this indicates an unusual local market condition that warrants checking, not a certainty of market collapse.
+          )}
+          {state === "bad" && (
+            <div className="status bad">
+              <div className="status-icon" aria-hidden="true">!</div>
+              <div>
+                <h3>The latest premium looks unusual</h3>
+                <p>
+                  The local premium moved much more than it normally does. Check your dealer&apos;s quote before you reprice.
+                  This is a warning to look closer, not a sign the market will fall.
                 </p>
               </div>
-            ) : (
-              <div className="flex items-center justify-between rounded border border-emerald-500/30 bg-emerald-950/20 p-3">
-                <div>
-                  <p className="text-sm font-semibold text-emerald-300">
-                    ✓ NORMAL: Premium move is within historical tolerance
-                  </p>
-                  <p className="text-xs text-stone-400 mt-0.5">
-                    Robust z-score is {lastMove.z != null ? lastMove.z.toFixed(2) : "0.00"}, below the 3.5 anomaly threshold.
-                  </p>
-                </div>
-                <span className="rounded bg-emerald-500/20 px-2 py-1 font-mono text-xs font-bold text-emerald-300 border border-emerald-500/40">
-                  STABLE
-                </span>
+            </div>
+          )}
+          {state === "ok" && (
+            <div className="status ok">
+              <div className="status-icon" aria-hidden="true">✓</div>
+              <div>
+                <h3>The latest quote looks normal</h3>
+                <p>The local premium is within its usual range. Nothing unusual to act on.</p>
               </div>
-            )}
-          </div>
-        </div>
-      </section>
+            </div>
+          )}
 
-      {/* Output 2: Interactive Jeweller's Stock Exposure Calculator */}
+          {lastMove?.z != null && state !== "wait" && (
+            <p className="status-detail">
+              Technical detail: robust z-score {lastMove.z.toFixed(2)}. We flag anything above 3.5.
+            </p>
+          )}
+        </section>
+      </div>
+
       <JewellerCalculator
         initialPrice={currentPrice}
+        initialPriceLabel={pricing.priceInputLabel}
         riskData={risk}
       />
     </div>

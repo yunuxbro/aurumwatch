@@ -1,0 +1,55 @@
+/* BASE: body, type, scrollbar, focus */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(127, 141, 151, .14), transparent 34rem),
+    radial-gradient(ellipse at 92% 18%, rgba(220, 183, 99, .10), transparent 30rem),
+    var(--bg);
+  color: var(--text-primary);
+}
+
+body::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(rgba(83, 91, 98, .12) .7px, transparent .7px);
+  background-size: 20px 20px;
+  content: "";
+  opacity: .18;
+  pointer-events: none;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  font-weight: 650;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+button, input { font: inherit; }
+
+::selection { background: var(--gold-subtle); color: var(--text-primary); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 8px; }
+
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; border-radius: var(--radius-sm); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

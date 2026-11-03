@@ -1,11 +1,11 @@
 export default function LineChart({ data = [], lines = [], height = 260 }) {
   if (!data || data.length === 0) {
-    return <p className="text-sm text-stone-500 p-4 text-center">No chart data available.</p>;
+    return <p className="text-muted p-4 text-center">No chart data available.</p>;
   }
   const W = 640, H = height, P = 45;
   const vals = data.flatMap((d) => lines.map((l) => d[l.key])).filter((v) => v != null);
   if (vals.length === 0) {
-    return <p className="text-sm text-stone-500 p-4 text-center">No chart values to display.</p>;
+    return <p className="text-muted p-4 text-center">No chart values to display.</p>;
   }
   const min = Math.min(...vals), max = Math.max(...vals);
   const x = (i) => P + (i * (W - 2 * P)) / Math.max(data.length - 1, 1);
@@ -17,9 +17,9 @@ export default function LineChart({ data = [], lines = [], height = 260 }) {
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full font-mono">
       {/* Background Subtle Grid Lines */}
-      <line x1={P} y1={y(max)} x2={W - P} y2={y(max)} stroke="#263143" strokeDasharray="3 3" />
-      <line x1={P} y1={yMid} x2={W - P} y2={yMid} stroke="#1e2736" strokeDasharray="3 3" />
-      <line x1={P} y1={y(min)} x2={W - P} y2={y(min)} stroke="#263143" strokeDasharray="3 3" />
+      <line x1={P} y1={y(max)} x2={W - P} y2={y(max)} stroke="var(--chart-grid)" strokeDasharray="3 3" />
+      <line x1={P} y1={yMid} x2={W - P} y2={yMid} stroke="var(--chart-grid)" strokeDasharray="3 3" />
+      <line x1={P} y1={y(min)} x2={W - P} y2={y(min)} stroke="var(--chart-grid)" strokeDasharray="3 3" />
 
       {/* Series Polylines with Glow */}
       {lines.map((l) => (
@@ -43,16 +43,16 @@ export default function LineChart({ data = [], lines = [], height = 260 }) {
       ))}
 
       {/* Axis Labels & Dates */}
-      <text x={P} y={H - 12} fontSize="10" fill="#94a3b8">
+      <text x={P} y={H - 12} fontSize="10" fill="var(--chart-label)">
         {data[0]?.date}
       </text>
-      <text x={W - P} y={H - 12} fontSize="10" fill="#94a3b8" textAnchor="end">
+      <text x={W - P} y={H - 12} fontSize="10" fill="var(--chart-label)" textAnchor="end">
         {data.at(-1)?.date}
       </text>
-      <text x={4} y={y(max) + 4} fontSize="10" fill="#cbd5e1">
+      <text x={4} y={y(max) + 4} fontSize="10" fill="var(--chart-value)">
         Rs {Math.round(max / 1000)}k
       </text>
-      <text x={4} y={y(min) + 4} fontSize="10" fill="#94a3b8">
+      <text x={4} y={y(min) + 4} fontSize="10" fill="var(--chart-label)">
         Rs {Math.round(min / 1000)}k
       </text>
     </svg>
