@@ -6,9 +6,17 @@ const money = (value) => (
     : "Unavailable"
 );
 
-function addPriceChart(doc, history) {
-  const rows = history
-    .filter((row) => Number.isFinite(Number(row.local_equiv)))
+function addPriceChart(doc, marketCandles, karat) {
+  const rows = (Array.isArray(marketCandles?.rows) ? marketCandles.rows : [])
+    .map((row) => ({
+      ...row,
+      chartPrice: Number(
+        karat === 24
+          ? row.close_24k ?? row.close * 24 / 22
+          : row.close * karat / 22,
+      ),
+    }))
+    .filter((row) => Number.isFinite(row.chartPrice))
     .slice(-30);
   const x = 18;
   const y = 198;
@@ -17,7 +25,7 @@ function addPriceChart(doc, history) {
 
   doc.setFontSize(10);
   doc.setTextColor(45, 50, 56);
-  doc.text("Recent 22K benchmark history (LKR per 8 g)", x, 191);
+  doc.text(`Recent ${karat}K benchmark history (LKR per 8 g)`, x, 191);
   doc.setDrawColor(206, 211, 216);
   doc.rect(x, y, width, height);
 
@@ -28,7 +36,7 @@ function addPriceChart(doc, history) {
     return;
   }
 
-  const prices = rows.map((row) => Number(row.local_equiv));
+  const prices = rows.map((row) => row.chartPrice);
   const minimum = Math.min(...prices);
   const maximum = Math.max(...prices);
   const span = Math.max(maximum - minimum, 1);
@@ -66,6 +74,9 @@ export function createDesignReport({
   fineGoldForOrder,
   alloyDensity,
   marketReference,
+  dealerReference,
+  selectedDealerQuote,
+  dealerShopQuotes = [],
   marketMetalPerPiece,
   makingCharge,
   stoneCost,
@@ -76,7 +87,9 @@ export function createDesignReport({
   localQuoteIsCurrent,
   localQuoteDate,
   localQuotePrice,
-  marketHistory = [],
+  localQuoteShopName,
+  marketCandles = {},
+  shopDirectory = [],
   generatedDate,
 }) {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -134,18 +147,33 @@ export function createDesignReport({
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   doc.setTextColor(70, 76, 82);
+  const goldPrice = Number.isFinite(marketReference?.gold_usd_per_oz)
+    ? `US$ ${marketReference.gold_usd_per_oz.toLocaleString("en-US", { maximumFractionDigits: 2 })}/oz`
+    : "Unavailable";
+  const fxRate = Number.isFinite(marketReference?.usd_lkr)
+    ? marketReference.usd_lkr.toFixed(4)
+    : "Unavailable";
   doc.text(
-    `World gold: US$ ${Number(marketReference.gold_usd_per_oz).toLocaleString("en-US", { maximumFractionDigits: 2 })}/oz (${marketReference.gold_date}, ${marketReference.gold_source})`,
+    `World gold: ${goldPrice} (${marketReference?.gold_date || "date unavailable"}, ${marketReference?.gold_source || "source unavailable"})`,
     14,
     105,
   );
   doc.text(
-    `USD/LKR: ${Number(marketReference.usd_lkr).toFixed(4)} (${marketReference.fx_date}, ${marketReference.fx_source})`,
+    `USD/LKR: ${fxRate} (${marketReference?.fx_date || "date unavailable"}, ${marketReference?.fx_source || "source unavailable"})`,
     14,
     111,
   );
+  const benchmark22k = Number.isFinite(marketReference?.lkr_per_8g_22k)
+    ? money(marketReference.lkr_per_8g_22k)
+    : "Unavailable";
+  const benchmark18k = Number.isFinite(marketReference?.lkr_per_8g_18k)
+    ? money(marketReference.lkr_per_8g_18k)
+    : "Unavailable";
+  const benchmark24k = Number.isFinite(marketReference?.lkr_per_gram_24k)
+    ? money(marketReference.lkr_per_gram_24k)
+    : "Unavailable";
   doc.text(
-    `24K: ${money(marketReference.lkr_per_gram_24k)}/g  |  22K: ${money(marketReference.lkr_per_8g_22k)}/8 g  |  18K: ${money(marketReference.lkr_per_8g_18k)}/8 g`,
+    `24K: ${benchmark24k}/g  |  22K: ${benchmark22k}/8 g  |  18K: ${benchmark18k}/8 g`,
     14,
     117,
   );
@@ -154,6 +182,13 @@ export function createDesignReport({
     14,
     123,
   );
+  if (dealerReference?.status === "current") {
+    doc.text(
+      `Sri Lankan dealer guide: ${money(dealerReference.price_lkr_per_8g)} / 8 g on ${dealerReference.rate_date} (${dealerReference.quote_count} dealer rates).`,
+      14,
+      129,
+    );
+  }
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(11);
@@ -178,19 +213,109 @@ export function createDesignReport({
     doc.text(value, 196, rowY, { align: "right" });
   });
 
-  addPriceChart(doc, marketHistory);
+  addPriceChart(doc, marketCandles, karat);
 
-  const quoteText = localQuoteIsCurrent
-    ? `User-verified shop comparison: ${money(localQuotePrice)} per 8 g on ${localQuoteDate}; estimated order cost ${money(localEstimatePerPiece * quantity)}.`
-    : "Pettah retail prices are not available from a dependable live feed. The market benchmark is an estimate, not a shop quote.";
+  const quoteTextParts = [];
+  if (selectedDealerQuote) {
+    quoteTextParts.push(
+      `Selected published shop basis: ${selectedDealerQuote.institution} (${selectedDealerQuote.side}), ${money(selectedDealerQuote.price_lkr_per_8g)} per 8 g on ${selectedDealerQuote.rate_date}; estimated order cost ${money(total)}.`,
+    );
+  } else if (dealerReference?.status === "current") {
+    quoteTextParts.push(
+      `Current Sri Lankan dealer guide: ${money(dealerReference.price_lkr_per_8g)} per 8 g on ${dealerReference.rate_date}; this is not a verified Pettah quote.`,
+    );
+  } else {
+    quoteTextParts.push("Pettah retail prices are not available from a dependable live feed. The market benchmark is an estimate, not a shop quote.");
+  }
+  if (localQuoteIsCurrent) {
+    quoteTextParts.push(
+      `User-verified shop comparison${localQuoteShopName ? ` for ${localQuoteShopName}` : ""}: ${money(localQuotePrice)} per 8 g on ${localQuoteDate}; estimated comparison order cost ${money(localEstimatePerPiece * quantity)}.`,
+    );
+  }
+  const quoteText = quoteTextParts.join(" ");
   doc.setFontSize(8);
   doc.setTextColor(70, 76, 82);
   const quoteLines = doc.splitTextToSize(quoteText, 182);
   doc.text(quoteLines, 14, 242);
   const disclaimerY = 242 + quoteLines.length * 4.5 + 2;
-  const disclaimer = "Planning estimate only - not an invoice, tax document, casting certificate, or guaranteed offer. The market basis converts a daily gold futures proxy and USD/LKR reference; shop premiums, taxes, fees, alloy variation, casting loss, and workmanship may change the final price. CAD weight depends on supported closed mesh geometry and the selected unit and density.";
+  const marketBasis = selectedDealerQuote
+    ? `The gold input uses ${selectedDealerQuote.institution}'s published dealer rate, not a verified Pettah offer.`
+    : dealerReference?.status === "current"
+      ? "The gold input uses published Sri Lankan dealer rates, not a verified Pettah offer."
+    : "The market basis converts a daily gold futures proxy and USD/LKR reference.";
+  const disclaimer = `Planning estimate only - not an invoice, tax document, casting certificate, or guaranteed offer. ${marketBasis} Taxes, fees, alloy variation, casting loss, and workmanship may change the final price. CAD weight depends on supported closed mesh geometry and the selected unit and density.`;
   doc.setFontSize(7.5);
   doc.setTextColor(100, 105, 110);
   doc.text(doc.splitTextToSize(disclaimer, 182), 14, disclaimerY);
+
+  if (selectedDealerQuote || dealerShopQuotes.length > 0 || shopDirectory.length > 0) {
+    doc.addPage();
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.setTextColor(38, 43, 48);
+    doc.text("Published rates and Sri Lankan jeweller directory", 14, 20);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.setTextColor(70, 76, 82);
+    doc.text(
+      "Dated published rates are listed when available. Directory entries without a rate have no current verified offer in this data set.",
+      14,
+      27,
+    );
+    if (selectedDealerQuote) {
+      doc.setFont("helvetica", "bold");
+      doc.text("Selected estimate basis", 14, 37);
+      doc.setFont("helvetica", "normal");
+      doc.text(
+        `${selectedDealerQuote.institution} · ${selectedDealerQuote.side} · ${money(selectedDealerQuote.price_lkr_per_8g)} per 8 g · ${selectedDealerQuote.rate_date}`,
+        14,
+        43,
+      );
+    }
+
+    let rowY = selectedDealerQuote ? 56 : 40;
+    doc.setFont("helvetica", "bold");
+    doc.text("Shop", 14, rowY);
+    doc.text("Price type", 85, rowY);
+    doc.text("LKR / 8 g", 112, rowY);
+    doc.text("Rate date", 151, rowY);
+    doc.text("Source", 176, rowY);
+    rowY += 7;
+    doc.setFont("helvetica", "normal");
+    for (const quote of dealerShopQuotes) {
+      if (rowY > 275) {
+        doc.addPage();
+        rowY = 20;
+      }
+      doc.text(String(quote.institution).slice(0, 30), 14, rowY);
+      doc.text(String(quote.side), 85, rowY);
+      doc.text(money(quote.price_lkr_per_8g), 112, rowY);
+      doc.text(String(quote.rate_date), 151, rowY);
+      if (quote.source_url) {
+        doc.textWithLink("View listing", 176, rowY, { url: quote.source_url });
+      } else {
+        doc.text("Unavailable", 176, rowY);
+      }
+      rowY += 7;
+    }
+    const quotedShops = new Set(dealerShopQuotes.map((quote) => quote.institution.toLowerCase()));
+    for (const shop of shopDirectory) {
+      if (quotedShops.has(shop.institution.toLowerCase())) continue;
+      if (rowY > 275) {
+        doc.addPage();
+        rowY = 20;
+      }
+      doc.text(String(shop.institution).slice(0, 30), 14, rowY);
+      doc.text(shop.location ? String(shop.location).slice(0, 23) : "Quote needed", 85, rowY);
+      doc.text("—", 112, rowY);
+      doc.text("—", 151, rowY);
+      if (shop.source_url) {
+        doc.textWithLink("Shop website", 176, rowY, { url: shop.source_url });
+      } else {
+        doc.text("User-referenced", 176, rowY);
+      }
+      rowY += 7;
+    }
+  }
   return doc;
 }

@@ -6,7 +6,9 @@ import { lkr } from "@/lib/format";
 import { importCadFile } from "@/lib/cad-import";
 import { UNIT_TO_MM } from "@/lib/cad-geometry";
 import { daysSinceDate } from "@/lib/date";
+import { getCurrentDealerQuotes } from "@/lib/dealer-pricing";
 import { createDesignReport } from "@/lib/design-report";
+import { ADDITIONAL_GOLD_SHOPS } from "@/lib/dealer-pricing";
 import { accountRequest } from "@/lib/account-api";
 import ModelViewer from "./ModelViewer";
 
@@ -54,7 +56,8 @@ function NumberField({
 
 export default function DesignStudio({
   marketReference,
-  marketHistory = [],
+  marketCandles = {},
+  dealerQuoteRows = [],
   today,
 }) {
   const previewRef = useRef(null);
@@ -64,9 +67,11 @@ export default function DesignStudio({
   const [grossWeight, setGrossWeight] = useState(5);
   const [stoneWeight, setStoneWeight] = useState(0.25);
   const [localQuotePrice, setLocalQuotePrice] = useState("");
+  const [localQuoteShopName, setLocalQuoteShopName] = useState("");
   const [localQuoteDate, setLocalQuoteDate] = useState(today);
   const [localQuoteKarat, setLocalQuoteKarat] = useState(22);
   const [localQuoteConfirmed, setLocalQuoteConfirmed] = useState(false);
+  const [selectedDealerQuoteId, setSelectedDealerQuoteId] = useState("");
   const [makingCharge, setMakingCharge] = useState(5000);
   const [stoneCost, setStoneCost] = useState(3500);
   const [budget, setBudget] = useState(1_000_000);
@@ -81,6 +86,22 @@ export default function DesignStudio({
   const [reportStatus, setReportStatus] = useState("");
 
   const design = DESIGNS.find((item) => item.id === designId) || DESIGNS[0];
+  const dealerReference = marketReference?.dealer_reference;
+  const dealerReferenceAgeDays = daysSinceDate(dealerReference?.rate_date, today);
+  const dealerReferenceIsCurrent =
+    dealerReference?.status === "current" &&
+    Number.isFinite(dealerReference.price_lkr_per_8g) &&
+    dealerReference.price_lkr_per_8g > 0 &&
+    dealerReferenceAgeDays != null &&
+    dealerReferenceAgeDays >= 0 &&
+    dealerReferenceAgeDays <= 7;
+  const dealerShopQuotes = useMemo(
+    () => getCurrentDealerQuotes(dealerQuoteRows, today),
+    [dealerQuoteRows, today],
+  );
+  const selectedDealerQuote = dealerShopQuotes.find(
+    (quote) => quote.id === selectedDealerQuoteId,
+  ) || null;
   const selectedParts = useMemo(
     () => cadModel?.parts.filter((part) => part.closed && includedPartIds.has(part.id)) || [],
     [cadModel, includedPartIds],
@@ -99,12 +120,22 @@ export default function DesignStudio({
   const fineGoldForOrder = fineGoldPerPiece * quantity;
   const additionalCostPerPiece = makingCharge + stoneCost;
   const marketIsCurrent = marketReference?.status === "current";
+  const hasCurrentPricing = marketIsCurrent || dealerReferenceIsCurrent || selectedDealerQuote != null;
   const marketGoldPerFineGram = marketIsCurrent
     ? marketReference.lkr_per_gram_24k
     : null;
-  const marketMetalPerPiece = marketGoldPerFineGram == null
-    ? null
-    : fineGoldPerPiece * marketGoldPerFineGram;
+  const currentPricePer8g = selectedDealerQuote?.price_lkr_per_8g
+    ?? (dealerReferenceIsCurrent ? dealerReference.price_lkr_per_8g : null);
+  const marketMetalPerPiece = currentPricePer8g != null
+    ? goldWeightPerPiece * currentPricePer8g / 8 * karat / 22
+    : marketGoldPerFineGram == null
+      ? null
+      : fineGoldPerPiece * marketGoldPerFineGram;
+  const marketReferencePricePer8g = currentPricePer8g != null
+    ? currentPricePer8g * karat / 22
+    : marketIsCurrent
+      ? marketReference.lkr_per_gram_24k * 8 * karat / 24
+      : null;
   const marketEstimatePerPiece = marketMetalPerPiece == null
     ? null
     : marketMetalPerPiece + additionalCostPerPiece;
@@ -153,8 +184,8 @@ export default function DesignStudio({
 
   async function downloadReport() {
     setReportStatus("");
-    if (!marketIsCurrent || !marketReference) {
-      setReportStatus("A current market reference is required to create this estimate report.");
+    if (!hasCurrentPricing) {
+      setReportStatus("Current Sri Lankan dealer rates or current gold and FX feeds are required to create this estimate report.");
       return;
     }
 
@@ -171,6 +202,9 @@ export default function DesignStudio({
         fineGoldForOrder,
         alloyDensity,
         marketReference,
+        dealerReference,
+        selectedDealerQuote,
+        dealerShopQuotes,
         marketMetalPerPiece,
         makingCharge,
         stoneCost,
@@ -181,7 +215,9 @@ export default function DesignStudio({
         localQuoteIsCurrent,
         localQuoteDate,
         localQuotePrice: localPrice,
-        marketHistory,
+        localQuoteShopName,
+        marketCandles,
+        shopDirectory: ADDITIONAL_GOLD_SHOPS,
         generatedDate: today,
       });
       const slug = (cadFileName || design.name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
@@ -512,20 +548,85 @@ export default function DesignStudio({
           )}
 
           <fieldset className="studio-group studio-price-group">
-            <legend>Daily market estimate</legend>
-            {marketIsCurrent ? (
-              <>
-                <div className="market-reference-grid">
+            <legend>Current local and global price references</legend>
+            {marketIsCurrent && (
+              <div className="market-reference-grid">
                   <div><span>World gold proxy</span><strong>US$ {marketReference.gold_usd_per_oz.toLocaleString("en-US", { maximumFractionDigits: 2 })} / troy oz</strong><small>{marketReference.gold_date} · {marketReference.gold_source}</small></div>
                   <div><span>USD / LKR</span><strong>{marketReference.usd_lkr.toFixed(2)}</strong><small>{marketReference.fx_date} · {marketReference.fx_source}</small></div>
                   <div><span>24K · LKR / g</span><strong>{lkr(marketReference.lkr_per_gram_24k)}</strong><small>Market benchmark · {marketReference.gold_date}</small></div>
                   <div><span>22K · LKR / 8 g</span><strong>{lkr(marketReference.lkr_per_8g_22k)}</strong><small>Indicative local baseline; excludes shop premiums</small></div>
                   <div><span>18K · LKR / 8 g</span><strong>{lkr(marketReference.lkr_per_8g_18k)}</strong><small>Spot + FX conversion; excludes shop premiums</small></div>
+              </div>
+            )}
+            {dealerReferenceIsCurrent && (
+              <div className="market-reference-local">
+                <span>Current Sri Lankan 22K dealer guide · LKR / 8 g</span>
+                <strong>{lkr(dealerReference.price_lkr_per_8g)}</strong>
+                <small>
+                  {dealerReference.rate_date} · median of {dealerReference.quote_count} listed/selling dealer{" "}
+                  {dealerReference.quote_count === 1 ? "rate" : "rates"} · dated retailer listings
+                </small>
+              </div>
+            )}
+            {dealerShopQuotes.length > 0 && (
+              <>
+                <label className="studio-field" htmlFor="design-shop-price">
+                  <span>Price source for this estimate · 22K per 8 g</span>
+                  <select
+                    id="design-shop-price"
+                    value={selectedDealerQuoteId}
+                    onChange={(event) => setSelectedDealerQuoteId(event.target.value)}
+                  >
+                    <option value="">Use dealer median / daily market benchmark</option>
+                    {dealerShopQuotes.map((quote) => (
+                      <option key={quote.id} value={quote.id}>
+                        {quote.institution} · {quote.side} · {quote.rate_date}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                {selectedDealerQuote && (
+                  <p className="studio-source-note">
+                    Estimate uses {selectedDealerQuote.institution}&apos;s published {selectedDealerQuote.side} rate:
+                    {" "}{lkr(selectedDealerQuote.price_lkr_per_8g)} per 8 g on {selectedDealerQuote.rate_date}.
+                    {" "}{selectedDealerQuote.source_url && (
+                      <a href={selectedDealerQuote.source_url} target="_blank" rel="noreferrer">View source</a>
+                    )}
+                  </p>
+                )}
+                <div className="scroll-x">
+                  <table className="risk-table">
+                    <caption>Current published 22K shop rates · LKR per 8 g</caption>
+                    <thead>
+                      <tr><th scope="col">Shop</th><th scope="col">Price type</th><th scope="col">Rate</th><th scope="col">Date</th><th scope="col">Source</th></tr>
+                    </thead>
+                    <tbody>
+                      {dealerShopQuotes.map((quote) => (
+                        <tr key={quote.id}>
+                          <td>{quote.institution}</td>
+                          <td>{quote.side}</td>
+                          <td>{lkr(quote.price_lkr_per_8g)}</td>
+                          <td>{quote.rate_date}</td>
+                          <td>
+                            {quote.source_url
+                              ? <a href={quote.source_url} target="_blank" rel="noreferrer">View source</a>
+                              : "Unavailable"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </>
-            ) : (
+            )}
+            {!marketIsCurrent && !dealerReferenceIsCurrent && !selectedDealerQuote && dealerShopQuotes.length === 0 && (
               <p className="cad-import-error" role="status">
-                The gold or exchange-rate feed is stale or unavailable. A live market estimate is withheld until both feeds are current.
+                No current dealer listing or complete gold and exchange-rate benchmark is available.
+              </p>
+            )}
+            {dealerReferenceIsCurrent && (
+              <p className="studio-source-note">
+                Published dealer rates are not verified Pettah quotes and may exclude workmanship, stones, or taxes.
               </p>
             )}
           </fieldset>
@@ -533,9 +634,26 @@ export default function DesignStudio({
           <fieldset className="studio-group studio-price-group">
             <legend>Local shop comparison (optional)</legend>
             <p className="studio-source-note">
-              The automatic baseline uses current world gold and USD/LKR data. It is not a verified Pettah shop price; enter a recent quote only when comparing a specific shop.
+              Choose a published dealer rate above to price this estimate for that outlet. You can also enter a separate shop quote below and confirm it manually.
             </p>
             <div className="studio-field-grid">
+              <label className="studio-field" htmlFor="shop-quote-name">
+                <span>Shop name</span>
+                <input
+                  id="shop-quote-name"
+                  type="text"
+                  value={localQuoteShopName}
+                  onChange={(event) => setLocalQuoteShopName(event.target.value)}
+                  placeholder="e.g. Imeeshi Jewellery"
+                  maxLength={100}
+                  list="local-shop-directory"
+                />
+                <datalist id="local-shop-directory">
+                  {ADDITIONAL_GOLD_SHOPS.map((shop) => (
+                    <option key={shop.institution} value={shop.institution} />
+                  ))}
+                </datalist>
+              </label>
               <NumberField
                 id="shop-quote"
                 label={`Verified shop quote per 8 g (${localQuoteKarat}K)`}
@@ -597,7 +715,7 @@ export default function DesignStudio({
                 <h3>{quantity} {quantity === 1 ? "piece" : "pieces"} · {karat}K gold</h3>
               </div>
               <div className="studio-order-total">
-                <span>Market estimate · total</span>
+                <span>{selectedDealerQuote ? `${selectedDealerQuote.institution} estimate · total` : "Market estimate · total"}</span>
                 <strong>{marketEstimatePerPiece == null ? "Unavailable" : lkr(marketEstimatePerPiece * quantity)}</strong>
               </div>
             </div>
@@ -605,7 +723,7 @@ export default function DesignStudio({
               type="button"
               className="btn btn-secondary"
               onClick={downloadReport}
-              disabled={!marketIsCurrent}
+              disabled={!hasCurrentPricing}
               style={{ marginTop: ".8rem" }}
             >
               Download PDF report
@@ -629,10 +747,10 @@ export default function DesignStudio({
               <div><span>Budget covers · market basis</span><strong>{marketAffordablePieces == null ? "Unavailable" : `${marketAffordablePieces} ${marketAffordablePieces === 1 ? "piece" : "pieces"}`}</strong></div>
               <div><span>Remaining after this order</span><strong>{marketEstimatePerPiece == null ? "Unavailable" : lkr(budget - marketEstimatePerPiece * quantity)}</strong></div>
               <div>
-                <span>{localEstimatePerPiece == null ? `Indicative ${karat}K baseline · per 8 g` : "Verified shop comparison · order"}</span>
+                <span>{localEstimatePerPiece == null ? `Current ${karat}K reference · per 8 g` : "Verified shop comparison · order"}</span>
                 <strong>
                   {localEstimatePerPiece == null
-                    ? lkr(marketIsCurrent ? marketReference.lkr_per_gram_24k * 8 * karat / 24 : null)
+                    ? lkr(marketReferencePricePer8g)
                     : lkr(localEstimatePerPiece * quantity)}
                 </strong>
               </div>

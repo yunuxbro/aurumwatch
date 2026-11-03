@@ -2,6 +2,7 @@ import { getData } from "@/lib/data";
 import { pct, lkr } from "@/lib/format";
 import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
+import MarketCandles from "@/components/MarketCandles";
 import { resolveDashboardPricing } from "@/lib/dashboard-pricing";
 
 export const dynamic = "force-dynamic";
@@ -67,7 +68,17 @@ export default function Home() {
   const risk = getData("risk")?.h7 || {};
   const flags = getData("anomalies") || [];
   const history = getData("history") || [];
+  const localQuotes = getData("local_quotes") || [];
   const market = getData("market_reference") || {};
+  const candles = getData("candles") || {};
+  const forecast = getData("ml_forecast") || {};
+  const refresh = getData("refresh") || {};
+  const forecastIsCurrent = forecast.status === "available"
+    && refresh.status === "success"
+    && refresh.steps?.some((step) => step.name === "market_model" && step.status === "success")
+    && forecast.market_as_of_date
+    && forecast.market_as_of_date === market.gold_date
+    && forecast.market_as_of_date === market.fx_date;
   const pricing = resolveDashboardPricing({ history, market });
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
   const currentPrice = pricing.currentPrice;
@@ -76,20 +87,22 @@ export default function Home() {
     ? [lastMove.ret_local, lastMove.ret_world, lastMove.ret_fx, lastMove.ret_premium].map((n) => Math.abs(n ?? 0))
     : [];
   const maxMove = Math.max(...moves, 1e-9);
-
-  const state =
-    !pricing.quoteIsCurrent || !lastMove || lastMove.status === "cannot_assess"
-      ? "wait"
-      : lastMove.flag
-        ? "bad"
-        : "ok";
+  const latestCandle = candles.rows?.at(-1);
+  const previousCandle = candles.rows?.at(-2);
+  const benchmarkClose22 = latestCandle?.close_22k ?? latestCandle?.close;
+  const benchmarkClose24 = latestCandle?.close_24k;
+  const previousClose22 = previousCandle?.close_22k ?? previousCandle?.close;
+  const benchmarkChange22 = Number.isFinite(benchmarkClose22) && Number.isFinite(previousClose22) && previousClose22 > 0
+    ? (benchmarkClose22 - previousClose22) / previousClose22
+    : null;
+  const latestLocalQuote = localQuotes.at(-1);
 
   return (
     <div className="page">
       <div className="page-head">
         <p className="page-kicker">Daily market overview</p>
         <h1>Latest gold brief</h1>
-        <p>Current gold estimates in LKR, with Pettah comparisons when recent shop quotes are available.</p>
+        <p>Current Sri Lankan dealer references with Pettah comparisons when recent shop quotes are available.</p>
       </div>
 
       <Banner risk={risk} />
@@ -103,7 +116,14 @@ export default function Home() {
           </div>
           <div className="hero-chips">
             <span className="chip">
-              Pettah shop quote: <b>{pricing.quoteIsCurrent ? pricing.quoteDate : "not available"}</b>
+              Pettah news archive through: <b>{history.at(-1)?.date || "not available"}</b>
+            </span>
+            <span className="chip">
+              Selected local reference: <b>{pricing.quoteIsCurrent
+                ? `Pettah report · ${pricing.quoteDate}`
+                : pricing.dealerReferenceIsCurrent
+                  ? `Dated dealer listings · ${pricing.dealerReferenceDate} · ${pricing.dealerReferenceCount} shops`
+                  : "world-gold estimate"}</b>
             </span>
             <span className="chip">
               World gold: <b>{pricing.goldDate || "feed unavailable"}</b>
@@ -114,40 +134,81 @@ export default function Home() {
           </div>
         </div>
 
-        {history.length > 1 && (
+        {(candles.rows?.length > 0 || history.length > 1) && (
           <div className="hero-chart">
             <div className="hero-chart-top">
-              <span>Historical Pettah quotes vs the world-gold equivalent</span>
-              <span style={{ display: "inline-flex", gap: "1rem" }}>
-                <span className="legend"><i /> Pettah</span>
-                <span className="legend"><i className="dash" /> World equivalent</span>
+              <span>
+                {candles.rows?.length > 0
+                  ? `Market-derived candles · latest feed date ${candles.rows.at(-1).date}`
+                  : "Historical Pettah quotes vs the world-gold equivalent"}
               </span>
             </div>
-            <Trend data={history} />
+            {candles.rows?.length > 0
+              ? (
+                <MarketCandles
+                  snapshot={candles}
+                  dealerReference={pricing.dealerReferenceIsCurrent ? market.dealer_reference : null}
+                  localQuotes={localQuotes}
+                />
+              )
+              : <Trend data={history} />}
           </div>
         )}
 
         <div className="hero-stats">
           <div className="hero-stat">
-            <p className="k">Same gold at world prices</p>
+            <p className="k">World-gold benchmark · 22K / 8 g</p>
             <p className="v">{lkr(pricing.worldEquivalentPrice)}</p>
           </div>
           <div className="hero-stat">
-            <p className="k">Pettah premium over world price</p>
-            <p className="v">{pct(pricing.premium)}</p>
+            <p className="k">Selected local reference · 22K / 8 g</p>
+            <p className="v">{lkr(currentPrice)}</p>
           </div>
           <div className="hero-stat">
-            <p className="k">Premium on one sovereign</p>
-            <p className="v">
-              {pricing.premiumDifference == null
-                ? "—"
-                : `${pricing.premiumDifference >= 0 ? "+" : ""}${lkr(pricing.premiumDifference)}`}
-            </p>
+            <p className="k">Dated local observations</p>
+            <p className="v">{localQuotes.length.toLocaleString()}</p>
           </div>
         </div>
-        {!pricing.quoteIsCurrent && (
+      </section>
+
+      <section className="card panel forecast-panel" aria-labelledby="market-forecast-title">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title" id="market-forecast-title">Experimental ML market forecast</h2>
+            <p className="section-sub">
+              Trained ridge regression on gold and USD/LKR history; this is a synthetic benchmark, not a Pettah or shop-price forecast.
+            </p>
+          </div>
+          <span className={`badge ${forecastIsCurrent ? "badge-info" : "badge-warning"}`}>
+            {forecastIsCurrent ? `Market data ${forecast.market_as_of_date}` : forecast.status === "unavailable" ? "Model unavailable" : "Forecast stale or unavailable"}
+          </span>
+        </div>
+        {forecastIsCurrent ? (
+          <>
+            <div className="forecast-metrics">
+              <div>
+                <p className="k">7-observation forecast · 22K / 8 g</p>
+                <p className="v">{lkr(forecast.forecast_lkr_per_8g)}</p>
+              </div>
+              <div>
+                <p className="k">Predicted change</p>
+                <p className="v">{forecast.forecast_change_percent >= 0 ? "+" : ""}{forecast.forecast_change_percent.toFixed(2)}%</p>
+              </div>
+              <div>
+                <p className="k">Holdout MAE · ridge / no-change</p>
+                <p className="v">{forecast.test_metrics.ridge.mae_bps.toFixed(1)} / {forecast.test_metrics.no_change_baseline.mae_bps.toFixed(1)} bps</p>
+              </div>
+            </div>
+            <p className="section-sub">
+              Chronological holdout: {forecast.evaluation.test_start_date} to {forecast.evaluation.test_end_date}. The model
+              {forecast.test_metrics.ridge_beats_baseline_mae ? " beat" : " did not beat"} the no-change baseline on MAE.
+              The 10th–90th percentile validation-residual range is descriptive, not a guaranteed prediction interval.
+              No buy/sell signal; do not use it as a shop quote.
+            </p>
+          </>
+        ) : (
           <p className="section-sub">
-            No recent Pettah shop quote is available; the displayed price is a market-derived estimate, not a retail offer.
+            {forecast.error || "A current model forecast is not available. Check Data health and refresh market data."}
           </p>
         )}
       </section>
@@ -181,51 +242,40 @@ export default function Home() {
           )}
         </section>
 
-        {/* ── Is the latest quote normal? ── */}
+        {/* ── Dated market context ── */}
         <section className="card panel">
           <div className="panel-head">
-            <h2 className="panel-title">Does the latest quote look normal?</h2>
-            <p className="panel-sub">We compare the latest local premium with its usual range.</p>
-          </div>
-
-          {state === "wait" && (
-            <div className="status wait">
-              <div className="status-icon" aria-hidden="true">?</div>
-              <div>
-                <h3>No recent Pettah quote to compare</h3>
-                <p>
-                  The current market estimate is available above. A shop premium comparison appears when a recent verified Pettah quote is available.
-                </p>
-              </div>
-            </div>
-          )}
-          {state === "bad" && (
-            <div className="status bad">
-              <div className="status-icon" aria-hidden="true">!</div>
-              <div>
-                <h3>The latest premium looks unusual</h3>
-                <p>
-                  The local premium moved much more than it normally does. Check your dealer&apos;s quote before you reprice.
-                  This is a warning to look closer, not a sign the market will fall.
-                </p>
-              </div>
-            </div>
-          )}
-          {state === "ok" && (
-            <div className="status ok">
-              <div className="status-icon" aria-hidden="true">✓</div>
-              <div>
-                <h3>The latest quote looks normal</h3>
-                <p>The local premium is within its usual range. Nothing unusual to act on.</p>
-              </div>
-            </div>
-          )}
-
-          {lastMove?.z != null && state !== "wait" && (
-            <p className="status-detail">
-              Technical detail: robust z-score {lastMove.z.toFixed(2)}. We flag anything above 3.5.
+            <h2 className="panel-title">Market snapshot</h2>
+            <p className="panel-sub">
+              Daily benchmark closes use international gold and USD/LKR data; local observations retain their source and quote date.
             </p>
-          )}
+          </div>
+          <div className="forecast-metrics">
+            <div>
+              <p className="k">22K close · LKR / 8 g</p>
+              <p className="v">{Number.isFinite(benchmarkClose22) ? lkr(benchmarkClose22) : "Unavailable"}</p>
+              <small>{latestCandle?.date || "No daily benchmark date"}</small>
+              {benchmarkChange22 != null && (
+                <small>
+                  {benchmarkChange22 > 0 ? "+" : ""}{pct(benchmarkChange22)} from the prior observation
+                </small>
+              )}
+            </div>
+            <div>
+              <p className="k">24K close · LKR / 8 g</p>
+              <p className="v">{Number.isFinite(benchmarkClose24) ? lkr(benchmarkClose24) : "Unavailable"}</p>
+              <small>{latestCandle?.date || "No daily benchmark date"}</small>
+            </div>
+            <div>
+              <p className="k">Latest local observation</p>
+              <p className="v">{latestLocalQuote ? lkr(latestLocalQuote.price_lkr_per_8g) : "—"}</p>
+              <small>
+                {latestLocalQuote
+                  ? `${latestLocalQuote.karat}K · ${latestLocalQuote.source} · ${latestLocalQuote.date}`
+                  : "Dated Pettah and retailer observations are shown when collected"}
+              </small>
+            </div>
+          </div>
         </section>
       </div>
 

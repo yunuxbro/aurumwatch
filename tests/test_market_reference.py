@@ -2,7 +2,7 @@ import datetime as dt
 
 import pytest
 
-from market_reference import build_market_reference
+from market_reference import build_local_dealer_reference, build_market_reference
 
 
 def test_market_reference_converts_spot_and_fx_to_22k_quote():
@@ -46,3 +46,86 @@ def test_market_reference_rejects_nonpositive_rates(gold_price, exchange_rate):
             "2026-11-02", exchange_rate, "fx feed",
             today=dt.date(2026, 11, 2),
         )
+
+
+def test_local_dealer_reference_uses_fresh_22k_selling_and_listed_rates():
+    rows = [
+        {
+            "institution": "CMB Gold",
+            "karat": 22,
+            "side": "selling",
+            "unit": "pawn_8g",
+            "price_lkr": 325384,
+            "currency": "LKR",
+            "rate_date": "2026-11-02",
+            "source_url": "https://example.com/cmb",
+        },
+        {
+            "institution": "Devi Jewellers",
+            "karat": 22,
+            "side": "listed",
+            "unit": "gram",
+            "price_lkr": 40825,
+            "currency": "LKR",
+            "rate_date": "2026-11-02",
+            "source_url": "https://example.com/devi",
+        },
+        {
+            "institution": "Old quote",
+            "karat": 22,
+            "side": "listed",
+            "unit": "pawn_8g",
+            "price_lkr": 300000,
+            "currency": "LKR",
+            "rate_date": "2026-10-19",
+            "source_url": "https://example.com/old",
+        },
+        {
+            "institution": "Buying price",
+            "karat": 22,
+            "side": "buying",
+            "unit": "pawn_8g",
+            "price_lkr": 310000,
+            "currency": "LKR",
+            "rate_date": "2026-11-02",
+            "source_url": "https://example.com/buying",
+        },
+    ]
+
+    result = build_local_dealer_reference(rows, today=dt.date(2026, 11, 3))
+
+    assert result["status"] == "current"
+    assert result["rate_date"] == "2026-11-02"
+    assert result["quote_count"] == 2
+    assert result["price_lkr_per_8g"] == pytest.approx((325384 + 40825 * 8) / 2)
+
+
+def test_local_dealer_reference_does_not_use_stale_or_future_rates():
+    rows = [
+        {
+            "institution": "Old quote",
+            "karat": 22,
+            "side": "listed",
+            "unit": "pawn_8g",
+            "price_lkr": 300000,
+            "currency": "LKR",
+            "rate_date": "2026-10-19",
+            "source_url": "https://example.com/old",
+        },
+        {
+            "institution": "Future quote",
+            "karat": 22,
+            "side": "selling",
+            "unit": "pawn_8g",
+            "price_lkr": 320000,
+            "currency": "LKR",
+            "rate_date": "2026-11-04",
+            "source_url": "https://example.com/future",
+        },
+    ]
+
+    result = build_local_dealer_reference(rows, today=dt.date(2026, 11, 3))
+
+    assert result["status"] == "stale"
+    assert result["rate_date"] == "2026-10-19"
+    assert "price_lkr_per_8g" not in result

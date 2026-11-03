@@ -1,8 +1,10 @@
 import datetime as dt
 import math
+import statistics
 
 OUNCE_TO_GRAMS = 31.1034768
 MAX_MARKET_AGE_DAYS = 5
+MAX_DEALER_QUOTE_AGE_DAYS = 7
 
 
 def build_market_reference(
@@ -53,4 +55,85 @@ def build_market_reference(
         "lkr_per_8g_24k": lkr_per_gram_24k * 8,
         "lkr_per_8g_22k": lkr_per_gram_24k * 8 * 22 / 24,
         "lkr_per_8g_18k": lkr_per_gram_24k * 8 * 18 / 24,
+    }
+
+
+def build_local_dealer_reference(rows, today=None):
+    today = today or dt.date.today()
+    candidates = []
+    for row in rows:
+        if row.get("karat") != 22 or row.get("side") not in {"selling", "listed"}:
+            continue
+        if row.get("currency") != "LKR":
+            continue
+        unit = row.get("unit")
+        if unit not in {"gram", "pawn_8g"}:
+            continue
+
+        try:
+            rate_date = dt.date.fromisoformat(row["rate_date"])
+            price = float(row["price_lkr"])
+        except (KeyError, TypeError, ValueError, OverflowError):
+            continue
+        age_days = (today - rate_date).days
+        if age_days < 0 or not math.isfinite(price) or price <= 0:
+            continue
+
+        price_per_8g = price * 8 if unit == "gram" else price
+        institution = str(row.get("institution") or "").strip()
+        if not institution:
+            continue
+        candidates.append({
+            "institution": institution,
+            "price_lkr_per_8g": price_per_8g,
+            "rate_date": rate_date,
+            "source_url": row.get("source_url"),
+        })
+
+    if not candidates:
+        return {
+            "status": "unavailable",
+            "source": "Published Sri Lankan dealer rates",
+            "reason": "No current 22K selling or listed dealer rates are available.",
+        }
+
+    latest_date = max(row["rate_date"] for row in candidates)
+    age_days = (today - latest_date).days
+    if age_days > MAX_DEALER_QUOTE_AGE_DAYS:
+        return {
+            "status": "stale",
+            "source": "Published Sri Lankan dealer rates",
+            "rate_date": latest_date.isoformat(),
+            "age_days": age_days,
+            "reason": "The latest 22K dealer rate is older than seven days.",
+        }
+
+    latest_rows = [row for row in candidates if row["rate_date"] == latest_date]
+    grouped = {}
+    for row in latest_rows:
+        grouped.setdefault(row["institution"], []).append(row)
+
+    institutions = [
+        {
+            "name": name,
+            "price_lkr_per_8g": statistics.median(
+                item["price_lkr_per_8g"] for item in quotes
+            ),
+            "source_url": next(
+                (item["source_url"] for item in quotes if item["source_url"]),
+                None,
+            ),
+        }
+        for name, quotes in sorted(grouped.items())
+    ]
+    return {
+        "status": "current",
+        "source": "Published Sri Lankan dealer rates",
+        "rate_date": latest_date.isoformat(),
+        "age_days": age_days,
+        "price_lkr_per_8g": statistics.median(
+            row["price_lkr_per_8g"] for row in institutions
+        ),
+        "quote_count": len(institutions),
+        "institutions": institutions,
     }

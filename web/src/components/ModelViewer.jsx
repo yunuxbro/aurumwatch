@@ -22,6 +22,7 @@ export default function ModelViewer({ model, includedPartIds }) {
         canvas,
         alpha: true,
         antialias: true,
+        preserveDrawingBuffer: true,
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.setClearColor(0x000000, 0);

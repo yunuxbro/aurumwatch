@@ -14,11 +14,12 @@ STEPS = [
     ("load_pettah", "src/load_pettah.py"),
     ("world_gold", "src/ingest_world.py"),
     ("usd_lkr", "src/ingest_fx.py"),
-    ("lankabizz_quotes", "src/ingest_lankabizz.py"),
+    ("dealer_prices", "src/ingest_lankabizz.py"),
     ("backtest", "src/backtest.py"),
+    ("market_model", "src/train_market_model.py"),
     ("export", "src/export_json.py"),
 ]
-OPTIONAL_STEPS = {"lankabizz_quotes"}
+OPTIONAL_STEPS = {"dealer_prices"}
 
 
 def _utc_now():
@@ -125,6 +126,15 @@ def refresh():
                 warnings.append(f"{name}: {step_error}")
             else:
                 failure = f"{name}: {step_error}"
+                if name == "market_model":
+                    model_file = PROJECT_ROOT / "web" / "public" / "data" / "ml_forecast.json"
+                    model_file.parent.mkdir(parents=True, exist_ok=True)
+                    temporary = model_file.with_suffix(".json.tmp")
+                    temporary.write_text(
+                        json.dumps({"status": "unavailable", "error": step_error}, indent=2),
+                        encoding="utf-8",
+                    )
+                    temporary.replace(model_file)
                 break
 
     succeeded = failure is None
@@ -142,7 +152,7 @@ def refresh():
             "world_gold": "Stooq XAU/USD; Yahoo Finance GC=F futures proxy is the fallback.",
             "usdlkr": "Yahoo Finance LKR=X unless a CBSL CSV is configured.",
             "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
-            "dealer_quotes": "LankaBIZZ public dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific.",
+            "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific.",
         },
     }
     _write_status(status)

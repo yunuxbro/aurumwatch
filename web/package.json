@@ -11,7 +11,8 @@
     "prestart": "node scripts/copy-cad-assets.mjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test"
+    "test": "node --test",
+    "project-guide": "node scripts/generate-project-guide.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

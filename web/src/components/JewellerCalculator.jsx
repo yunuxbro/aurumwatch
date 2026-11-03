@@ -1,6 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { lkr, pct } from "@/lib/format";
+import { getCurrentDealerQuotes } from "@/lib/dealer-pricing";
 
 const WEIGHT_PRESETS = [
   { label: "1 Sov (8g)",  grams: 8 },
@@ -29,11 +30,20 @@ function Metric({ label, value, sub, valueStyle }) {
 export default function JewellerCalculator({
   initialPrice = null,
   initialPriceLabel = "22K price input",
+  dealerQuoteRows = [],
+  today,
 }) {
   const [horizon, setHorizon]     = useState(7);
   const [karat, setKarat]         = useState(22);
   const [grams, setGrams]         = useState(80);
   const [price, setPrice]         = useState(initialPrice);
+  const [selectedShopId, setSelectedShopId] = useState("");
+  const [manualShopName, setManualShopName] = useState("");
+  const dealerShopQuotes = useMemo(
+    () => getCurrentDealerQuotes(dealerQuoteRows, today),
+    [dealerQuoteRows, today],
+  );
+  const selectedShop = dealerShopQuotes.find((quote) => quote.id === selectedShopId) || null;
   const hasPrice = Number.isFinite(price) && price > 0;
 
   const f                = MODEL[horizon];
@@ -181,13 +191,52 @@ export default function JewellerCalculator({
             {/* Starting quote */}
             <div>
               <div style={s.label}>
-                <span>{initialPriceLabel}</span>
+                <span>{selectedShop ? `${selectedShop.institution} ${selectedShop.side} rate` : selectedShopId === "manual" ? "Manual 22K price input" : initialPriceLabel}</span>
                 <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>22K per 8 g</span>
               </div>
+              {dealerShopQuotes.length > 0 && (
+                <label className="studio-field" htmlFor="exposure-shop-price" style={{ marginBottom: ".5rem" }}>
+                  <span>Use a current published shop rate</span>
+                  <select
+                    id="exposure-shop-price"
+                    value={selectedShopId}
+                    onChange={(event) => {
+                      const shopId = event.target.value;
+                      setSelectedShopId(shopId);
+                      const quote = dealerShopQuotes.find((item) => item.id === shopId);
+                      setPrice(quote ? quote.price_lkr_per_8g : shopId === "manual" ? price : initialPrice);
+                    }}
+                  >
+                    <option value="">Current market/dealer baseline</option>
+                    {dealerShopQuotes.map((quote) => (
+                      <option key={quote.id} value={quote.id}>
+                        {quote.institution} · {quote.side} · {quote.rate_date}
+                      </option>
+                    ))}
+                    <option value="manual">Manual price entry</option>
+                  </select>
+                </label>
+              )}
+              {selectedShopId === "manual" && (
+                <label className="studio-field" htmlFor="exposure-manual-shop" style={{ marginBottom: ".5rem" }}>
+                  <span>Manual shop name (optional)</span>
+                  <input
+                    id="exposure-manual-shop"
+                    type="text"
+                    value={manualShopName}
+                    onChange={(event) => setManualShopName(event.target.value)}
+                    placeholder="e.g. Imeeshi Jewellery"
+                    maxLength={100}
+                  />
+                </label>
+              )}
               <div style={s.inset}>
                 <span style={{ fontSize: "0.78rem", color: "var(--text-muted)", fontFamily: "monospace" }}>LKR</span>
                 <input type="number" step="500" value={price ?? ""}
-                  onChange={(e) => setPrice(e.target.value === "" ? null : Number(e.target.value))}
+                  onChange={(e) => {
+                    setSelectedShopId("manual");
+                    setPrice(e.target.value === "" ? null : Number(e.target.value));
+                  }}
                   className="input"
                   style={{ width: "180px", textAlign: "right", background: "transparent",
                     border: "none", boxShadow: "none", fontWeight: 700, color: "var(--gold-dark)",
@@ -197,8 +246,45 @@ export default function JewellerCalculator({
               {!hasPrice && (
                 <p className="section-sub">Enter a current 22K price per 8 g to calculate LKR exposure.</p>
               )}
+              {selectedShop && (
+                <p className="section-sub">
+                  {lkr(selectedShop.price_lkr_per_8g)} per 8 g · {selectedShop.rate_date} · {selectedShop.source}
+                  {selectedShop.source_url && <> · <a href={selectedShop.source_url} target="_blank" rel="noreferrer">source</a></>}
+                </p>
+              )}
+              {selectedShopId === "manual" && (
+                <p className="section-sub">
+                  Manual input{manualShopName ? ` for ${manualShopName}` : ""}; verify the rate and date directly with the shop.
+                </p>
+              )}
             </div>
           </div>
+
+          {dealerShopQuotes.length > 0 && (
+            <div className="scroll-x">
+              <table className="risk-table">
+                <caption>Comparable current published 22K rates · LKR per 8 g</caption>
+                <thead>
+                  <tr><th scope="col">Shop</th><th scope="col">Price type</th><th scope="col">Rate</th><th scope="col">Rate date</th><th scope="col">Source</th></tr>
+                </thead>
+                <tbody>
+                  {dealerShopQuotes.map((quote) => (
+                    <tr key={quote.id}>
+                      <td>{quote.institution}</td>
+                      <td>{quote.side}</td>
+                      <td>{lkr(quote.price_lkr_per_8g)}</td>
+                      <td>{quote.rate_date}</td>
+                      <td>
+                        {quote.source_url
+                          ? <a href={quote.source_url} target="_blank" rel="noreferrer">View source</a>
+                          : "Unavailable"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
 
           {/* ── Readout ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>

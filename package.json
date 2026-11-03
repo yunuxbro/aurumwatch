@@ -6,6 +6,7 @@
     "build": "npm --prefix web run build",
     "start": "npm --prefix web run start",
     "lint": "npm --prefix web run lint",
-    "refresh": ".venv\\Scripts\\python.exe src\\run_daily.py"
+    "refresh": ".venv\\Scripts\\python.exe src\\run_daily.py",
+    "project-guide": "npm --prefix web run project-guide"
   }
 }

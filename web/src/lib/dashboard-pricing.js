@@ -2,6 +2,7 @@ import { daysSinceDate } from "./date.js";
 
 export const PETTAH_QUOTE_MAX_AGE_DAYS = 7;
 export const MARKET_FEED_MAX_AGE_DAYS = 5;
+export const DEALER_QUOTE_MAX_AGE_DAYS = 7;
 
 function isRecentDate(date, today, maxAgeDays) {
   const ageDays = daysSinceDate(date, today);
@@ -24,9 +25,17 @@ export function resolveDashboardPricing({ history, market }, today) {
     isRecentDate(market.gold_date, today, MARKET_FEED_MAX_AGE_DAYS) &&
     isRecentDate(market.fx_date, today, MARKET_FEED_MAX_AGE_DAYS);
 
+  const dealerReference = market?.dealer_reference;
+  const dealerReferenceIsCurrent =
+    dealerReference?.status === "current" &&
+    isPositiveFinite(dealerReference.price_lkr_per_8g) &&
+    isRecentDate(dealerReference.rate_date, today, DEALER_QUOTE_MAX_AGE_DAYS);
+
   const currentPrice = quoteIsCurrent
     ? latestQuote.local
-    : marketIsCurrent
+    : dealerReferenceIsCurrent
+      ? dealerReference.price_lkr_per_8g
+      : marketIsCurrent
       ? market.lkr_per_8g_22k
       : null;
   const worldEquivalentPrice = quoteIsCurrent
@@ -40,7 +49,10 @@ export function resolveDashboardPricing({ history, market }, today) {
     worldEquivalentPrice,
     quoteIsCurrent,
     marketIsCurrent,
+    dealerReferenceIsCurrent,
     quoteDate: quoteIsCurrent ? latestQuote.date : null,
+    dealerReferenceDate: dealerReferenceIsCurrent ? dealerReference.rate_date : null,
+    dealerReferenceCount: dealerReferenceIsCurrent ? dealerReference.quote_count : null,
     latestHistoricalQuoteDate: latestQuote?.date || null,
     goldDate: marketIsCurrent ? market.gold_date : null,
     fxDate: marketIsCurrent ? market.fx_date : null,
@@ -55,12 +67,16 @@ export function resolveDashboardPricing({ history, market }, today) {
         : null,
     priceLabel: quoteIsCurrent
       ? "Pettah 22K sovereign, per 8 g"
-      : marketIsCurrent
+      : dealerReferenceIsCurrent
+        ? "Sri Lankan dealer guide, 22K per 8 g"
+        : marketIsCurrent
         ? "22K market estimate, per 8 g"
         : "22K price unavailable",
     priceInputLabel: quoteIsCurrent
       ? "Pettah shop quote"
-      : marketIsCurrent
+      : dealerReferenceIsCurrent
+        ? "Sri Lankan dealer guide"
+        : marketIsCurrent
         ? "Daily market estimate"
         : "Enter a current 22K price",
   };

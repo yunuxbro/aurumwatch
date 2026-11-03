@@ -1,5 +1,6 @@
 import { getData } from "@/lib/data";
 import { pct, lkr } from "@/lib/format";
+import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
 
@@ -81,9 +82,19 @@ function Block({ risk, title }) {
 export default function RiskPage() {
   const risk = getData("risk") || {};
   const market = getData("market_reference") || {};
+  const dealerQuotes = getData("dealer_quotes") || {};
   const h7 = risk.h7;
   const h14 = risk.h14;
   const marketIsCurrent = market.status === "current";
+  const dealerReference = market.dealer_reference;
+  const dealerAgeDays = daysSinceDate(dealerReference?.rate_date, todayInSriLanka());
+  const dealerReferenceIsCurrent =
+    dealerReference?.status === "current" &&
+    Number.isFinite(dealerReference.price_lkr_per_8g) &&
+    dealerReference.price_lkr_per_8g > 0 &&
+    dealerAgeDays != null &&
+    dealerAgeDays >= 0 &&
+    dealerAgeDays <= 7;
 
   return (
     <div className="page">
@@ -127,10 +138,19 @@ export default function RiskPage() {
                   </p>
                 </div>
               ))}
+              {dealerReferenceIsCurrent && (
+                <div className="metric-tile">
+                  <span className="stat-label">Sri Lankan 22K dealer guide · LKR / 8 g</span>
+                  <p className="stat-value">{lkr(dealerReference.price_lkr_per_8g)}</p>
+                  <p className="section-sub">
+                    Median of {dealerReference.quote_count} listed/selling dealer rates · {dealerReference.rate_date}
+                  </p>
+                </div>
+              )}
             </div>
             <p className="section-sub" style={{ marginTop: "1rem" }}>
-              The Pettah baseline in the simulator is derived from the latest world-gold and FX observations.
-              It is an estimate, not a live shop quote; shop premiums, making charges, and taxes are excluded.
+              The simulator uses a fresh 22K dealer median as its starting value when available; otherwise it falls back to the world-gold and FX benchmark.
+              Future ranges model gold and rupee movement only, not retail premiums, making charges, or taxes.
             </p>
           </>
         ) : (
@@ -145,11 +165,15 @@ export default function RiskPage() {
       <JewellerCalculator
         initialPrice={h7?.status === "ok" ? h7.start_price_8g : null}
         initialPriceLabel={
-          h7?.status === "ok" && h7.start_source === "daily world-gold and USD/LKR benchmark"
-            ? "Daily market estimate"
-            : "22K risk baseline"
+          h7?.status === "ok" && h7.start_source === "current Sri Lankan 22K dealer median"
+            ? "Sri Lankan dealer guide"
+            : h7?.status === "ok" && h7.start_source === "daily world-gold and USD/LKR benchmark"
+              ? "Daily market estimate"
+              : "22K risk baseline"
         }
         riskData={risk}
+        dealerQuoteRows={dealerQuotes.rows || []}
+        today={todayInSriLanka()}
       />
 
       <Block risk={h7} title="7-day restocking horizon" />

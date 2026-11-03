@@ -1,0 +1,52 @@
+﻿Institution,Institution Type,Commodity,Karat,Side,Unit,Unit Label,Price (LKR),Currency,Rate Date,Observed Date,Source URL
+Vilva Gold,gold_dealer,Gold,24ct,buying,pawn_8g,24ct 8g (1 pawn),372000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,22ct,buying,pawn_8g,22ct 8g (1 pawn),341500,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,21ct,buying,pawn_8g,21ct 8g (1 pawn),325500,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,18ct,buying,pawn_8g,18ct 8g (1 pawn),279000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,24ct,buying,gram,24ct 1 gram,46500,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,22ct,buying,gram,22ct 1 gram,42687.5,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,21ct,buying,gram,21ct 1 gram,40687.5,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,18ct,buying,gram,18ct 1 gram,34875,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,24ct,selling,pawn_8g,24ct 8g (1 pawn),376000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,22ct,selling,pawn_8g,22ct 8g (1 pawn),345000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,21ct,selling,pawn_8g,21ct 8g (1 pawn),329000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,18ct,selling,pawn_8g,18ct 8g (1 pawn),282000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,24ct,selling,gram,24ct 1 gram,47000,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,22ct,selling,gram,22ct 1 gram,43125,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,21ct,selling,gram,21ct 1 gram,41125,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+Vilva Gold,gold_dealer,Gold,18ct,selling,gram,18ct 1 gram,35250,LKR,2026-10-12,2026-11-03T10:48:00.000Z,https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka
+CMB Gold,gold_dealer,Gold,24ct,listed,pawn_8g,24ct 8g (1 pawn),360000,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,24ct,listed,pawn_8g,24ct 8g (1 pawn),355000,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+CMB Gold,gold_dealer,Gold,22ct,listed,pawn_8g,22ct 8g (1 pawn),330000,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,22ct,listed,pawn_8g,22ct 8g (1 pawn),326600,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+Ravi Jewellers,jeweller,Gold,22ct,listed,pawn_8g,22ct 8g (1 pawn),326600,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://ravijewellers.lk/
+CMB Gold,gold_dealer,Gold,21ct,listed,pawn_8g,21ct 8g (1 pawn),315000,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,21ct,listed,pawn_8g,21ct 8g (1 pawn),310625,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+CMB Gold,gold_dealer,Gold,18ct,listed,pawn_8g,18ct 8g (1 pawn),270000,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,18ct,listed,pawn_8g,18ct 8g (1 pawn),266250,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+CMB Gold,gold_dealer,Gold,24ct,listed,gram,24ct 1 gram,45000,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,24ct,listed,gram,24ct 1 gram,44375,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+CMB Gold,gold_dealer,Gold,22ct,listed,gram,22ct 1 gram,41250,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,22ct,listed,gram,22ct 1 gram,40825,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+Ravi Jewellers,jeweller,Gold,22ct,listed,gram,22ct 1 gram,40825,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://ravijewellers.lk/
+CMB Gold,gold_dealer,Gold,21ct,listed,gram,21ct 1 gram,39375,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,21ct,listed,gram,21ct 1 gram,38828.13,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+CMB Gold,gold_dealer,Gold,18ct,listed,gram,18ct 1 gram,33750,LKR,2026-10-19,2026-10-19T09:49:00.000Z,https://www.cmbgold.lk/srilanka-gold-price-today
+Devi Jewellers,jeweller,Gold,18ct,listed,gram,18ct 1 gram,33281.25,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://devijewellers.lk/gold-rate
+Central Bank of Sri Lanka,benchmark_source,Gold,24ct,benchmark,troy_ounce,24ct troy ounce,1312732.288,LKR,2026-11-03,2026-11-03T10:48:00.000Z,https://www.cbsl.gov.lk/cbsl_custom/exrates/exrates_results.php
+CMB Gold,gold_dealer,Gold,24ct,buying,pawn_8g,24ct 8g (1 pawn),348000,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,22ct,buying,pawn_8g,22ct 8g (1 pawn),319000,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,21ct,buying,pawn_8g,21ct 8g (1 pawn),304504,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,18ct,buying,pawn_8g,18ct 8g (1 pawn),261000,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,24ct,buying,gram,24ct 1 gram,43500,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,22ct,buying,gram,22ct 1 gram,39875,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,21ct,buying,gram,21ct 1 gram,38063,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,18ct,buying,gram,18ct 1 gram,32625,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,24ct,selling,pawn_8g,24ct 8g (1 pawn),354960,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,22ct,selling,pawn_8g,22ct 8g (1 pawn),325384,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,21ct,selling,pawn_8g,21ct 8g (1 pawn),310592,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,18ct,selling,pawn_8g,18ct 8g (1 pawn),266224,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,24ct,selling,gram,24ct 1 gram,44370,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,22ct,selling,gram,22ct 1 gram,40673,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,21ct,selling,gram,21ct 1 gram,38824,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka
+CMB Gold,gold_dealer,Gold,18ct,selling,gram,18ct 1 gram,33278,LKR,2026-11-02,2026-11-03T10:48:00.000Z,https://cmbgold.lk/gold-price-sri-lanka

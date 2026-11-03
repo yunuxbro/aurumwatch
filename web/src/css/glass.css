@@ -792,6 +792,10 @@ html.dark {
 .market-reference-grid span,
 .market-reference-grid small { color: var(--text-muted); font-size: .65rem; line-height: 1.4; }
 .market-reference-grid strong { color: var(--text-primary); font-size: .79rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.market-reference-local { display: grid; gap: .2rem; padding: .7rem; border: 1px solid var(--gold-border); border-radius: 10px; background: var(--gold-subtle); }
+.market-reference-local span,
+.market-reference-local small { color: var(--text-muted); font-size: .68rem; line-height: 1.4; }
+.market-reference-local strong { color: var(--text-primary); font-size: 1rem; font-variant-numeric: tabular-nums; }
 .quote-confirmation { display: flex; align-items: flex-start; gap: .5rem; color: var(--text-secondary); font-size: .75rem; line-height: 1.5; }
 .quote-confirmation input { margin-top: .15rem; }
 

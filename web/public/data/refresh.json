@@ -1,76 +1,83 @@
 {
   "status": "success",
-  "started_at": "2026-11-02T20:13:47+00:00",
-  "finished_at": "2026-11-02T20:14:15+00:00",
-  "duration_seconds": 28.5,
-  "last_success_at": "2026-11-02T20:14:15+00:00",
+  "started_at": "2026-11-03T18:33:03+00:00",
+  "finished_at": "2026-11-03T18:33:43+00:00",
+  "duration_seconds": 39.7,
+  "last_success_at": "2026-11-03T18:33:43+00:00",
   "error": null,
   "warnings": [],
   "steps": [
     {
       "name": "load_pettah",
       "status": "success",
-      "started_at": "2026-11-02T20:13:47+00:00",
+      "started_at": "2026-11-03T18:33:03+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "world_gold",
       "status": "success",
-      "started_at": "2026-11-02T20:13:48+00:00",
+      "started_at": "2026-11-03T18:33:05+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "usd_lkr",
       "status": "success",
-      "started_at": "2026-11-02T20:13:55+00:00",
+      "started_at": "2026-11-03T18:33:19+00:00",
       "return_code": 0,
       "error": null
     },
     {
-      "name": "lankabizz_quotes",
+      "name": "dealer_prices",
       "status": "success",
-      "started_at": "2026-11-02T20:13:59+00:00",
+      "started_at": "2026-11-03T18:33:24+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "backtest",
       "status": "success",
-      "started_at": "2026-11-02T20:14:08+00:00",
+      "started_at": "2026-11-03T18:33:31+00:00",
+      "return_code": 0,
+      "error": null
+    },
+    {
+      "name": "market_model",
+      "status": "success",
+      "started_at": "2026-11-03T18:33:38+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "export",
       "status": "success",
-      "started_at": "2026-11-02T20:14:13+00:00",
+      "started_at": "2026-11-03T18:33:40+00:00",
       "return_code": 0,
       "error": null
     }
   ],
   "data": {
     "world_gold": {
-      "latest_date": "2026-11-02",
+      "latest_date": "2026-11-03",
       "age_days": 1,
-      "rows": 2976
+      "rows": 2977
     },
     "usdlkr": {
-      "latest_date": "2026-11-02",
+      "latest_date": "2026-11-03",
       "age_days": 1,
-      "rows": 3080
+      "rows": 3081
     },
     "pettah": {
       "latest_date": "2026-05-06",
-      "age_days": 181,
+      "age_days": 182,
       "rows": 14
     },
     "dealer_quotes": {
-      "latest_date": "2026-11-02",
+      "latest_date": "2026-11-03",
       "age_days": 1,
-      "observed_at": "2026-11-02T10:48:00+00:00",
-      "fetched_at": "2026-11-02T20:14:08+00:00",
+      "observed_at": "2026-11-03T10:48:00+00:00",
+      "fetched_at": "2026-11-03T18:33:31+00:00",
       "rows": 51
     }
   },
@@ -78,6 +85,6 @@
     "world_gold": "Stooq XAU/USD; Yahoo Finance GC=F futures proxy is the fallback.",
     "usdlkr": "Yahoo Finance LKR=X unless a CBSL CSV is configured.",
     "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
-    "dealer_quotes": "LankaBIZZ public dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific."
+    "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific."
   }
 }

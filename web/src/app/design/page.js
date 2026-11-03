@@ -5,7 +5,8 @@ import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 export const dynamic = "force-dynamic";
 
 export default function DesignPage() {
-  const history = getData("history") || [];
+  const candles = getData("candles") || {};
+  const dealerQuotes = getData("dealer_quotes") || {};
   const storedMarketReference = getData("market_reference");
   const today = todayInSriLanka();
   const goldAgeDays = daysSinceDate(storedMarketReference?.gold_date, today);
@@ -36,7 +37,8 @@ export default function DesignPage() {
       </header>
       <DesignStudio
         marketReference={marketReference}
-        marketHistory={history}
+        marketCandles={candles}
+        dealerQuoteRows={dealerQuotes.rows || []}
         today={today}
       />
     </div>

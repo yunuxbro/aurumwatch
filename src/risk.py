@@ -31,7 +31,13 @@ def simulate(horizon, n=N_SIMS, seed=42):
     total = (zw[idx] * sw + zf[idx] * sf).sum(axis=1)         # log move over the horizon
     return total, sw, sf, m.date.iloc[-1]
 
-def stock_risk(horizon=7, start_price=None, today=None):
+def stock_risk(
+    horizon=7,
+    start_price=None,
+    today=None,
+    start_source=None,
+    start_date=None,
+):
     today = pd.Timestamp(today or dt.date.today())
     total, sw, sf, market_date = simulate(horizon)
     notes = []
@@ -52,8 +58,8 @@ def stock_risk(horizon=7, start_price=None, today=None):
             "The starting value is a market-derived 22K estimate, not a verified Pettah shop quote."
         )
     else:
-        quote_date = today
-        source = "manual quote"
+        quote_date = pd.Timestamp(start_date or today)
+        source = start_source or "manual quote"
     market_age = (today - pd.Timestamp(market_date)).days
 
     status = "ok"

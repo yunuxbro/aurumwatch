@@ -5,7 +5,9 @@ from risk import stock_risk
 from anomaly import flag_premium_jumps
 from quality import report
 from db import get_conn
-from market_reference import build_market_reference
+from market_reference import build_local_dealer_reference, build_market_reference
+from market_candles import build_market_candles
+from local_quotes import build_local_quote_history
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "web" / "public" / "data"
 
@@ -61,20 +63,60 @@ def dealer_quotes():
     )
     return {
         "status": "available" if records else "unavailable",
-        "source": "LankaBIZZ Gold Price Tracker",
+        "source": "Published Sri Lankan dealer feed",
         "last_fetched_at": latest_fetch,
         "rows": [dict(zip(columns, record)) for record in records],
     }
 
+def local_quote_history():
+    with get_conn() as connection:
+        pettah_records = connection.execute(
+            "SELECT date, karat, lkr_per_8g, outlet, url FROM pettah ORDER BY date"
+        ).fetchall()
+        dealer_records = connection.execute(
+            """
+            SELECT institution, commodity, karat, side, unit, price_lkr,
+                   currency, rate_date, source_url
+            FROM dealer_quotes
+            ORDER BY rate_date
+            """
+        ).fetchall()
+    pettah_columns = ("date", "karat", "lkr_per_8g", "outlet", "url")
+    dealer_columns = (
+        "institution", "commodity", "karat", "side", "unit", "price_lkr",
+        "currency", "rate_date", "source_url",
+    )
+    return build_local_quote_history(
+        [dict(zip(pettah_columns, record)) for record in pettah_records],
+        [dict(zip(dealer_columns, record)) for record in dealer_records],
+    )
+
 def main(price=None):
     j = pettah_joined(22)
+    dealer_data = dealer_quotes()
+    dealer_reference = build_local_dealer_reference(dealer_data["rows"])
+    risk_price = price
+    risk_source = None
+    risk_date = None
+    if risk_price is None and dealer_reference["status"] == "current":
+        risk_price = dealer_reference["price_lkr_per_8g"]
+        risk_source = "current Sri Lankan 22K dealer median"
+        risk_date = dealer_reference["rate_date"]
+
+    reference = market_reference()
+    reference["dealer_reference"] = dealer_reference
     write("history", rows(j[["date", "local", "local_equiv", "premium", "lag_days"]]))
     write("moves", rows(decompose(22)))
     write("anomalies", rows(flag_premium_jumps(22)))
-    write("risk", {"h7": stock_risk(7, price), "h14": stock_risk(14, price)})
+    write("risk", {
+        "h7": stock_risk(7, risk_price, start_source=risk_source, start_date=risk_date),
+        "h14": stock_risk(14, risk_price, start_source=risk_source, start_date=risk_date),
+    })
     write("health", report())
-    write("market_reference", market_reference())
-    write("dealer_quotes", dealer_quotes())
+    write("market_reference", reference)
+    write("dealer_quotes", dealer_data)
+    write("local_quotes", local_quote_history())
+    write("candles", build_market_candles())
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()

@@ -47,3 +47,45 @@ test("does not substitute stale or future market data", () => {
   assert.equal(pricing.quoteIsCurrent, false);
   assert.equal(pricing.marketIsCurrent, false);
 });
+
+test("prefers a fresh Sri Lankan dealer guide when there is no Pettah quote", () => {
+  const pricing = resolveDashboardPricing({
+    history: [],
+    market: {
+      ...market,
+      dealer_reference: {
+        status: "current",
+        rate_date: "2026-11-02",
+        price_lkr_per_8g: 326600,
+        quote_count: 2,
+      },
+    },
+  }, "2026-11-03");
+
+  assert.equal(pricing.currentPrice, 326600);
+  assert.equal(pricing.worldEquivalentPrice, market.lkr_per_8g_22k);
+  assert.equal(pricing.quoteIsCurrent, false);
+  assert.equal(pricing.dealerReferenceIsCurrent, true);
+  assert.equal(pricing.dealerReferenceDate, "2026-11-02");
+  assert.equal(pricing.priceLabel, "Sri Lankan dealer guide, 22K per 8 g");
+});
+
+test("rejects stale and future Sri Lankan dealer references", () => {
+  for (const rateDate of ["2026-10-25", "2026-11-04"]) {
+    const pricing = resolveDashboardPricing({
+      history: [],
+      market: {
+        ...market,
+        dealer_reference: {
+          status: "current",
+          rate_date: rateDate,
+          price_lkr_per_8g: 326600,
+          quote_count: 2,
+        },
+      },
+    }, "2026-11-03");
+
+    assert.equal(pricing.dealerReferenceIsCurrent, false);
+    assert.equal(pricing.currentPrice, market.lkr_per_8g_22k);
+  }
+});
