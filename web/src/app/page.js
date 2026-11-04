@@ -3,6 +3,7 @@ import { pct, lkr } from "@/lib/format";
 import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
 import MarketCandles from "@/components/MarketCandles";
+import RiskRangeCard from "@/components/RiskRangeCard";
 import { resolveDashboardPricing } from "@/lib/dashboard-pricing";
 import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 
@@ -75,14 +76,6 @@ export default function Home() {
   const pettahAgeDays = daysSinceDate(lastPettahQuote?.date, todayInSriLanka());
   const market = getData("market_reference") || {};
   const candles = getData("candles") || {};
-  const forecast = getData("ml_forecast") || {};
-  const refresh = getData("refresh") || {};
-  const forecastIsCurrent = forecast.status === "available"
-    && refresh.status === "success"
-    && refresh.steps?.some((step) => step.name === "market_model" && step.status === "success")
-    && forecast.market_as_of_date
-    && forecast.market_as_of_date === market.gold_date
-    && forecast.market_as_of_date === market.fx_date;
   const pricing = resolveDashboardPricing({ history, market });
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
   const dealerMove = attribution.moves?.at(-1);
@@ -115,6 +108,8 @@ export default function Home() {
         <h1>Latest gold brief</h1>
         <p>Current Sri Lankan dealer references with Pettah comparisons when recent shop quotes are available.</p>
       </div>
+
+      <RiskRangeCard risk={risk} title="7-day Stock Risk range" />
 
       <Banner risk={risk} />
 
@@ -195,48 +190,6 @@ export default function Home() {
             <p className="v">{localQuotes.length.toLocaleString()}</p>
           </div>
         </div>
-      </section>
-
-      <section className="card panel forecast-panel" aria-labelledby="market-forecast-title">
-        <div className="section-header">
-          <div>
-            <h2 className="section-title" id="market-forecast-title">Experimental ML market forecast</h2>
-            <p className="section-sub">
-              Trained ridge regression on gold and USD/LKR history; this is a synthetic benchmark, not a Pettah or shop-price forecast.
-            </p>
-          </div>
-          <span className={`badge ${forecastIsCurrent ? "badge-info" : "badge-warning"}`}>
-            {forecastIsCurrent ? `Market data ${forecast.market_as_of_date}` : forecast.status === "unavailable" ? "Model unavailable" : "Forecast stale or unavailable"}
-          </span>
-        </div>
-        {forecastIsCurrent ? (
-          <>
-            <div className="forecast-metrics">
-              <div>
-                <p className="k">7-observation forecast · 22K / 8 g</p>
-                <p className="v">{lkr(forecast.forecast_lkr_per_8g)}</p>
-              </div>
-              <div>
-                <p className="k">Predicted change</p>
-                <p className="v">{forecast.forecast_change_percent >= 0 ? "+" : ""}{forecast.forecast_change_percent.toFixed(2)}%</p>
-              </div>
-              <div>
-                <p className="k">Holdout MAE · ridge / no-change</p>
-                <p className="v">{forecast.test_metrics.ridge.mae_bps.toFixed(1)} / {forecast.test_metrics.no_change_baseline.mae_bps.toFixed(1)} bps</p>
-              </div>
-            </div>
-            <p className="section-sub">
-              Chronological holdout: {forecast.evaluation.test_start_date} to {forecast.evaluation.test_end_date}. The model
-              {forecast.test_metrics.ridge_beats_baseline_mae ? " beat" : " did not beat"} the no-change baseline on MAE.
-              The 10th–90th percentile validation-residual range is descriptive, not a guaranteed prediction interval.
-              No buy/sell signal; do not use it as a shop quote.
-            </p>
-          </>
-        ) : (
-          <p className="section-sub">
-            {forecast.error || "A current model forecast is not available. Check Data health and refresh market data."}
-          </p>
-        )}
       </section>
 
       <div className="two-col">

@@ -1,4 +1,5 @@
 import { getData } from "@/lib/data";
+import { lkr } from "@/lib/format";
 import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
@@ -115,6 +116,16 @@ export default function Health() {
               Chronological holdout: {forecast.evaluation.test_start_date} to {forecast.evaluation.test_end_date}; alpha selected on validation.
               Standardization was fit on training data only, and the 7-observation target was purged at split boundaries.
             </p>
+            <div className="forecast-metrics">
+              <div>
+                <p className="k">Ridge 7-observation forecast · 22K / 8 g</p>
+                <p className="v">{lkr(forecast.forecast_lkr_per_8g)}</p>
+              </div>
+              <div>
+                <p className="k">Predicted benchmark change</p>
+                <p className="v">{forecast.forecast_change_percent >= 0 ? "+" : ""}{forecast.forecast_change_percent.toFixed(2)}%</p>
+              </div>
+            </div>
             <div className="scroll-x" style={{ marginTop: "1rem" }}>
               <table className="data-table">
                 <thead>
@@ -139,7 +150,7 @@ export default function Health() {
                 </tbody>
               </table>
             </div>
-            <p className="section-sub" style={{ marginTop: "0.75rem" }}>
+              <p className="section-sub" style={{ marginTop: "0.75rem" }}>
               Paired block-bootstrap 95% CI for ridge-minus-baseline MAE: [
               {forecast.test_metrics.paired_block_bootstrap_95ci_mae_difference_bps.map((value) => value.toFixed(2)).join(", ")}] bps.
               {forecast.test_metrics.ridge_beats_baseline_mae
@@ -225,10 +236,13 @@ export default function Health() {
               <tr>
                 <th scope="col">Model</th>
                 <th scope="col">Horizon</th>
+                <th scope="col">Windows</th>
                 <th scope="col">Outside 95%</th>
                 <th scope="col">Outside 99%</th>
+                <th scope="col">Kupiec p · 95%</th>
+                <th scope="col">Kupiec p · 99%</th>
                 <th scope="col">Pinball loss</th>
-                <th scope="col">Evaluation</th>
+                <th scope="col">Role</th>
               </tr>
             </thead>
             <tbody>
@@ -236,23 +250,26 @@ export default function Health() {
                 const proposed = row.model === "model";
                 return (
                   <tr key={`${row.model}-${row.horizon}`} className={proposed ? "row-highlight" : ""}>
-                    <td>{proposed ? "Proposed resampling" : row.model}</td>
+                    <td>{proposed ? "Proposed resampling" : row.model === "B1_fixed_vol" ? "Fixed volatility" : "Normal / EWMA"}</td>
                     <td>{row.horizon} days</td>
+                    <td>{row.n ?? "—"}</td>
                     <td>{row.outside_95 != null ? `${(row.outside_95 * 100).toFixed(1)}%` : "—"}</td>
                     <td>{row.outside_99 != null ? `${(row.outside_99 * 100).toFixed(1)}%` : "—"}</td>
+                    <td>{row.kupiec_p_95 != null ? row.kupiec_p_95.toFixed(3) : "—"}</td>
+                    <td>{row.kupiec_p_99 != null ? row.kupiec_p_99.toFixed(3) : "—"}</td>
                     <td>{row.pinball != null ? row.pinball.toFixed(4) : "—"}</td>
-                    <td>{proposed ? "Kupiec p > 0.05" : "Baseline"}</td>
+                    <td>{proposed ? "Resampling model" : "Baseline"}</td>
                   </tr>
                 );
               })}
               {backtest.length === 0 && (
-                <tr><td colSpan={6}>No backtest results are available yet.</td></tr>
+                <tr><td colSpan={9}>No backtest results are available yet.</td></tr>
               )}
             </tbody>
           </table>
         </div>
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          Calibration is an empirical model check, not a guarantee of future performance.
+          If the outside-95% rate is below 5%, the interval was slightly conservative in this sample. Calibration is an empirical model check, not a guarantee of future performance.
         </p>
       </section>
     </div>

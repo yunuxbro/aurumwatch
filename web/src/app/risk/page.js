@@ -1,84 +1,11 @@
 import { getData } from "@/lib/data";
-import { pct, lkr } from "@/lib/format";
+import { lkr } from "@/lib/format";
 import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
+import RiskRangeCard from "@/components/RiskRangeCard";
 
 export const dynamic = "force-dynamic";
-const LEVELS = [1, 5, 25, 50, 75, 95, 99];
-
-function Block({ risk, title }) {
-  if (!risk) return null;
-
-  return (
-    <section className="card panel">
-      <div className="section-header">
-        <div>
-          <h2 className="section-title">{title}</h2>
-          <p className="section-sub">
-            Starting baseline: {lkr(risk.start_price_8g)} per 8 g · {risk.quote_date}
-            {" "}· {risk.start_source}
-          </p>
-        </div>
-        <span className={`badge ${risk.status === "ok" ? "badge-success" : "badge-warning"}`}>
-          {risk.status === "ok" ? "Model range available" : "Cannot assess"}
-        </span>
-      </div>
-
-      {risk.status !== "ok" ? (
-        <div className="risk-callout" style={{ padding: "1rem" }}>
-          <p style={{ margin: 0, fontWeight: 700 }}>
-            Fresh quotes are required before the model can provide this range.
-          </p>
-          {risk.notes?.length > 0 && (
-            <p style={{ margin: ".45rem 0 0", color: "var(--text-secondary)" }}>
-              {risk.notes.join(" ")}
-            </p>
-          )}
-        </div>
-      ) : (
-        <>
-          <div className="scroll-x">
-            <table className="risk-table">
-              <thead>
-                <tr>
-                  <th scope="col">Percentile</th>
-                  <th scope="col">Per 8 g</th>
-                  <th scope="col">1 kg exposure</th>
-                </tr>
-              </thead>
-              <tbody>
-                {LEVELS.map((level) => (
-                  <tr key={level} className={level === 5 ? "risk-low" : level === 50 ? "risk-median" : ""}>
-                    <td>{level}% {level === 5 ? "· downside tail" : level === 50 ? "· median" : ""}</td>
-                    <td>{lkr(risk.range_8g?.[`p${level}`])}</td>
-                    <td>{lkr(risk.stock_1kg_lkr?.[`p${level}`])}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="metric-grid" style={{ marginTop: "1rem" }}>
-            <div className="metric-tile">
-              <span className="stat-label">Probability of a fall over 5%</span>
-              <p className="stat-value">{pct(risk.prob_fall_5pct, 0)}</p>
-            </div>
-            <div className="metric-tile">
-              <span className="stat-label">Probability of a fall over 10%</span>
-              <p className="stat-value">{pct(risk.prob_fall_10pct, 0)}</p>
-            </div>
-            <div className="metric-tile">
-              <span className="stat-label">Historical premium stress · per 8 g</span>
-              <p className="stat-value text-danger">{lkr(risk.premium_stress_8g)}</p>
-            </div>
-          </div>
-        </>
-      )}
-    </section>
-  );
-}
-
 export default function RiskPage() {
   const risk = getData("risk") || {};
   const market = getData("market_reference") || {};
@@ -176,8 +103,8 @@ export default function RiskPage() {
         today={todayInSriLanka()}
       />
 
-      <Block risk={h7} title="7-day restocking horizon" />
-      <Block risk={h14} title="14-day restocking horizon" />
+      <RiskRangeCard risk={h7} title="7-day restocking horizon" />
+      <RiskRangeCard risk={h14} title="14-day restocking horizon" />
 
       <section className="card panel">
         <div className="section-header">
