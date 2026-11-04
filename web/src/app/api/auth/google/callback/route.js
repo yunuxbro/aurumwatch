@@ -43,8 +43,8 @@ async function readGoogleProfile(request, cookieStore) {
     throw httpError("Google sign-in could not be verified.", 400);
   }
 
-  const clientId = process.env.GOOGLE_CLIENT_ID;
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+  const clientId = process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET;
   if (!clientId || !clientSecret) throw httpError("Google sign-in is not configured yet.", 503);
   const redirectUri = process.env.GOOGLE_REDIRECT_URI || new URL("/api/auth/google/callback", request.url).toString();
   const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
@@ -136,7 +136,11 @@ export async function GET(request) {
     return loginRedirect(request);
   } catch (error) {
     console.error("Google sign-in failed.", error);
-    const errorCode = error?.status === 503 && (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET)
+    const hasGoogleClient = Boolean(
+      (process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID) &&
+      (process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET),
+    );
+    const errorCode = error?.status === 503 && !hasGoogleClient
       ? "google_not_configured"
       : error?.status === 409
         ? "google_account_conflict"

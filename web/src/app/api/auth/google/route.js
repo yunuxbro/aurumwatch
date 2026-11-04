@@ -18,8 +18,9 @@ function getSecret() {
 
 export async function GET(request) {
   try {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    if (!clientId || !process.env.GOOGLE_CLIENT_SECRET) {
+    const clientId = process.env.GOOGLE_CLIENT_ID || process.env.AUTH_GOOGLE_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET || process.env.AUTH_GOOGLE_SECRET;
+    if (!clientId || !clientSecret) {
       throw httpError("Google sign-in is not configured yet.", 503);
     }
 

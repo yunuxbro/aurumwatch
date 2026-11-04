@@ -184,8 +184,9 @@ Generate a session secret with
 `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
 To enable Google sign-in, create an OAuth 2.0 Client ID for a Web application
-in Google Cloud Console. Add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and
-`GOOGLE_REDIRECT_URI` to `web/.env.local`. Set the redirect URI to
+in Google Cloud Console. Add `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and
+`GOOGLE_REDIRECT_URI` to `web/.env.local` (the client ID and secret can also be
+named `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`). Set the redirect URI to
 `http://localhost:3000/api/auth/google/callback` for local development and add
 that exact URL to the OAuth client's authorized redirect URIs. For deployment,
 set the production callback URL and register the matching HTTPS URL in Google

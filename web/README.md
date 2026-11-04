@@ -7,8 +7,10 @@ Run from this directory with `npm run dev`, or from the project root with
 
 Copy `.env.example` to `.env.local` and set `MONGODB_URI`, `MONGODB_DB`, and
 `AUTH_SECRET`. To enable Google sign-in, create an OAuth 2.0 Client ID for a
-Web application in Google Cloud Console and add `GOOGLE_CLIENT_ID`,
-`GOOGLE_CLIENT_SECRET`, and `GOOGLE_REDIRECT_URI` to `.env.local`. The redirect
+Web application in Google Cloud Console and add the client ID and secret as
+`AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` (or `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET`) in `.env.local`. Set `GOOGLE_REDIRECT_URI` to the same
+callback URL registered in Google Cloud. The redirect
 URI must exactly match the authorized redirect URI in Google Cloud Console; for
 local development use `http://localhost:3000/api/auth/google/callback`.
 Use an Atlas database user with a strong password, allow the
