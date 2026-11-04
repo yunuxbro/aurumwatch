@@ -183,6 +183,14 @@ and never expose the MongoDB URI or session secret in browser code.
 Generate a session secret with
 `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
+To enable Google sign-in, create an OAuth 2.0 Client ID for a Web application
+in Google Cloud Console. Add `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, and
+`GOOGLE_REDIRECT_URI` to `web/.env.local`. Set the redirect URI to
+`http://localhost:3000/api/auth/google/callback` for local development and add
+that exact URL to the OAuth client's authorized redirect URIs. For deployment,
+set the production callback URL and register the matching HTTPS URL in Google
+Cloud Console. Keep the client secret server-side.
+
 The sign-up form creates an account immediately using a hashed password and an
 HTTP-only session cookie; email confirmation is not configured. Signed-in users
 can save shop/profile settings, jewelry projects, validated Pettah/jewelry CSV

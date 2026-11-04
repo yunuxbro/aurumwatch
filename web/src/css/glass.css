@@ -52,12 +52,13 @@ html.dark {
 
 .brand { gap: .8rem; }
 .logo-mark {
-  width: 2.75rem;
-  height: 2.75rem;
-  border: 1px solid rgba(255,255,255,.25);
-  background: linear-gradient(145deg, #4a5964, #28333c);
-  box-shadow: 0 8px 18px rgba(35, 43, 48, .2), inset 0 1px rgba(255,255,255,.22);
-  color: #f3dfa9;
+  width: 3.6rem;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  object-fit: contain;
 }
 .brand-name { font-size: 1.05rem; }
 .brand-sub { margin-top: .16rem; font-size: .72rem; color: var(--text-muted); }
@@ -274,6 +275,11 @@ html.dark {
 .account-auth-switch { margin: 0; color: var(--text-secondary); font-size: .86rem; }
 .account-auth-switch-button { padding: 0; border: 0; background: none; color: var(--gold-dark); cursor: pointer; font: inherit; font-weight: 700; }
 .account-auth-switch-button:hover { text-decoration: underline; }
+.google-auth-button { display: flex; min-height: 3rem; align-items: center; justify-content: center; gap: .65rem; border: 1px solid var(--border-strong); border-radius: 999px; background: var(--surface); color: var(--text-primary); font-size: .92rem; font-weight: 650; text-decoration: none; transition: background-color .15s, border-color .15s; }
+.google-auth-button:hover { background: var(--surface-2); border-color: var(--gold-dark); }
+.google-auth-button svg { width: 1.2rem; height: 1.2rem; flex: 0 0 auto; }
+.account-auth-divider { display: flex; align-items: center; gap: .8rem; margin: 0; color: var(--text-muted); font-size: .78rem; }
+.account-auth-divider::before, .account-auth-divider::after { content: ""; height: 1px; flex: 1; background: var(--border); }
 .btn-theme {
   width: 2.55rem;
   height: 2.55rem;

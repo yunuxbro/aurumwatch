@@ -11,7 +11,7 @@ const display = Bricolage_Grotesque({ subsets: ["latin"], variable: "--font-disp
 export const metadata = {
   title: "AurumWatch LK | Gold Risk Monitor",
   description: "Daily gold risk brief and inventory exposure engine for Sri Lankan jewellers",
-  icons: { icon: "/gold-mark.svg" },
+  icons: { icon: "/aurumwatch-logo.png" },
 };
 
 export default function RootLayout({ children }) {
@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
         <header className="site-header">
           <div className="site-header-inner">
             <Link href="/" className="brand">
-              <Image className="logo-mark" src="/gold-mark.svg" alt="" width={44} height={44} />
+              <Image className="logo-mark" src="/aurumwatch-logo.png" alt="AurumWatch" width={58} height={42} priority />
               <div>
                 <div className="brand-name">AurumWatch <span>LK</span></div>
                 <div className="brand-sub">Gold price risk for Pettah jewellers</div>

@@ -10,7 +10,7 @@ export async function POST(request) {
     const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
     const password = typeof body.password === "string" ? body.password : "";
     const user = await (await getDatabase()).collection("users").findOne({ email });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    if (!user || typeof user.passwordHash !== "string" || !(await bcrypt.compare(password, user.passwordHash))) {
       throw httpError("Email or password is incorrect.", 401);
     }
 

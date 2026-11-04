@@ -1,72 +1,72 @@
 {
   "status": "success",
-  "started_at": "2026-11-03T18:33:03+00:00",
-  "finished_at": "2026-11-03T18:33:43+00:00",
-  "duration_seconds": 39.7,
-  "last_success_at": "2026-11-03T18:33:43+00:00",
+  "started_at": "2026-11-04T15:02:01+00:00",
+  "finished_at": "2026-11-04T15:02:46+00:00",
+  "duration_seconds": 45.5,
+  "last_success_at": "2026-11-04T15:02:46+00:00",
   "error": null,
   "warnings": [],
   "steps": [
     {
       "name": "load_pettah",
       "status": "success",
-      "started_at": "2026-11-03T18:33:03+00:00",
+      "started_at": "2026-11-04T15:02:01+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "world_gold",
       "status": "success",
-      "started_at": "2026-11-03T18:33:05+00:00",
+      "started_at": "2026-11-04T15:02:02+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "usd_lkr",
       "status": "success",
-      "started_at": "2026-11-03T18:33:19+00:00",
+      "started_at": "2026-11-04T15:02:18+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "dealer_prices",
       "status": "success",
-      "started_at": "2026-11-03T18:33:24+00:00",
+      "started_at": "2026-11-04T15:02:25+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "backtest",
       "status": "success",
-      "started_at": "2026-11-03T18:33:31+00:00",
+      "started_at": "2026-11-04T15:02:31+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "market_model",
       "status": "success",
-      "started_at": "2026-11-03T18:33:38+00:00",
+      "started_at": "2026-11-04T15:02:39+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "export",
       "status": "success",
-      "started_at": "2026-11-03T18:33:40+00:00",
+      "started_at": "2026-11-04T15:02:42+00:00",
       "return_code": 0,
       "error": null
     }
   ],
   "data": {
     "world_gold": {
-      "latest_date": "2026-11-03",
-      "age_days": 1,
-      "rows": 2977
+      "latest_date": "2026-11-04",
+      "age_days": 0,
+      "rows": 2978
     },
     "usdlkr": {
-      "latest_date": "2026-11-03",
-      "age_days": 1,
-      "rows": 3081
+      "latest_date": "2026-11-04",
+      "age_days": 0,
+      "rows": 3082
     },
     "pettah": {
       "latest_date": "2026-05-06",
@@ -74,10 +74,10 @@
       "rows": 14
     },
     "dealer_quotes": {
-      "latest_date": "2026-11-03",
-      "age_days": 1,
-      "observed_at": "2026-11-03T10:48:00+00:00",
-      "fetched_at": "2026-11-03T18:33:31+00:00",
+      "latest_date": "2026-11-04",
+      "age_days": 0,
+      "observed_at": "2026-11-04T11:23:00+00:00",
+      "fetched_at": "2026-11-04T15:02:31+00:00",
       "rows": 51
     }
   },

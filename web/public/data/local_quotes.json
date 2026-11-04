@@ -316,5 +316,35 @@
       "https://devijewellers.lk/gold-rate"
     ],
     "quote_count": 1
+  },
+  {
+    "date": "2026-11-04",
+    "karat": 22,
+    "price_lkr_per_8g": 328000.0,
+    "source_type": "dealer",
+    "source": "Published dealer listings",
+    "contributors": [
+      "Devi Jewellers",
+      "Ravi Jewellers"
+    ],
+    "source_urls": [
+      "https://devijewellers.lk/gold-rate",
+      "https://ravijewellers.lk/"
+    ],
+    "quote_count": 2
+  },
+  {
+    "date": "2026-11-04",
+    "karat": 24,
+    "price_lkr_per_8g": 355000.0,
+    "source_type": "dealer",
+    "source": "Published dealer listings",
+    "contributors": [
+      "Devi Jewellers"
+    ],
+    "source_urls": [
+      "https://devijewellers.lk/gold-rate"
+    ],
+    "quote_count": 1
   }
 ]
