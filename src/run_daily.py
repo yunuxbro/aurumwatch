@@ -60,7 +60,15 @@ def _latest_data():
                 source = connection.execute(
                     f"SELECT source FROM {table} WHERE date = ?", (date,)
                 ).fetchone()
-                result[table]["source"] = source[0] if source else None
+                label = source[0] if source else None
+                if table == "world_gold" and label:
+                    if "yfinance" in label.lower() or "gc=f" in label.lower():
+                        label = "futures proxy (GC=F), not spot"
+                    else:
+                        label = "Stooq XAU/USD"
+                elif table == "usdlkr" and label:
+                    label = "CBSL CSV" if "cbsl" in label.lower() else "Yahoo Finance LKR=X fallback"
+                result[table]["source"] = label
         latest_fetch, latest_date, latest_observation, latest_rows = connection.execute(
             """
             SELECT fetched_at, MAX(rate_date), MAX(observed_at), COUNT(*)

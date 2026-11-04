@@ -147,7 +147,7 @@ export default function Home() {
                   : "world-gold estimate"}</b>
             </span>
             <span className="chip">
-              World gold: <b>{pricing.goldDate || "feed unavailable"}</b>
+              World gold: <b>{pricing.goldDate || "feed unavailable"}{market.gold_source ? ` · ${market.gold_source}` : ""}</b>
             </span>
             <span className="chip">
               USD/LKR: <b>{pricing.fxDate || "feed unavailable"}</b>
@@ -180,6 +180,7 @@ export default function Home() {
           <div className="hero-stat">
             <p className="k">World-gold benchmark · 22K / 8 g</p>
             <p className="v">{lkr(pricing.worldEquivalentPrice)}</p>
+            <small>{market.gold_source || "Gold source unavailable"}</small>
           </div>
           <div className="hero-stat">
             <p className="k">Selected local reference · 22K / 8 g</p>
