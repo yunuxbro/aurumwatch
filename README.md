@@ -1,220 +1,232 @@
 # AurumWatch LK
-Daily gold buying and pricing risk monitor for small Sri Lankan jewellers. ModelX 2.0.
 
-## Setup
+AurumWatch LK is a gold market and inventory risk monitor for small jewellery
+businesses in Sri Lanka. It combines a Python market-data and modelling
+pipeline with a Next.js dashboard and jewellery design studio.
+
+The deployed web app is available at [aurumwatchlk.vercel.app](https://aurumwatchlk.vercel.app).
+
+## What it does
+
+- Tracks world gold and USD/LKR data and calculates 24K, 22K, and 18K metal
+  benchmarks in LKR per 8 g.
+- Shows dated local dealer listings and verified Pettah news quotes as separate
+  sources, with freshness and data-quality details.
+- Summarizes inventory exposure and historical market moves. The risk view
+  reports ranges and scenarios; it does not issue buy or sell instructions.
+- Imports jewellery models, estimates gold weight for selected closed,
+  manifold mesh parts, and creates downloadable PDF cost reports.
+- Supports private accounts for saved designs, validated CSV datasets, profile
+  settings, and reports.
+- Optionally uses GoldAPI for periodic quotes or WebSocket streaming.
+
+## Project layout
+
+```text
+src/                  Python ingestion, validation, analytics, and modelling
+tests/                Python tests
+data/                 Local source data, quote records, and refresh logs
+web/                  Next.js app, API routes, assets, and Node.js tests
+scripts/              Windows Task Scheduler setup for daily refresh
+```
+
+## Run locally
+
+### Requirements
+
+- Python and pip
+- Node.js and npm
+- MongoDB Atlas credentials only if you want to use saved accounts
+
+### Install dependencies
+
+From the repository root, create the Python environment and install the
+project requirements:
+
+```powershell
 python -m venv .venv
-.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+```
 
-## Load data
-python src/ingest_world.py
-python src/ingest_fx.py
-python src/check_data.py
+Install the web app dependencies:
 
-## Run the web app
-From the `aurumwatch` project directory:
+```powershell
+npm --prefix web ci
+```
+
+### Start the web app
+
+From the repository root:
 
 ```powershell
 npm run dev
 ```
 
-The web app is in `web/`; the root npm scripts forward to it. You can also run npm commands directly from `web/`.
+The app runs locally at `http://localhost:3000`. The repository-level npm
+scripts forward web commands to `web/`.
 
-## Jewellery design studio
-The studio accepts STL, OBJ, 3MF, GLB/glTF, Rhino 3DM, STEP/STP, IGES/IGS, and DXF files.
-Files are parsed locally in the browser; the CAD file is not sent to a server. DXF
-is a 2D preview only. STL, OBJ, 3MF, and Rhino files require the correct model
-units to be selected. glTF uses metres and STEP/IGES are converted to millimetres.
-Rhino 3DM files must contain embedded mesh geometry; B-rep-only 3DM files need
-to be exported as a mesh (for example STL or 3MF) before they can be previewed.
+### Load and refresh market data
 
-Gold weight is estimated only from closed, manifold 3D mesh parts selected as
-gold. Open or unsupported surfaces are excluded; their weight must be entered
-manually. Gold density is an editable approximation and should be replaced with
-the jeweller's actual alloy density. Gemstones and other non-gold parts must be
-excluded from the gold-part selection. These limits mean the estimate is for
-planning, not a casting or manufacturing weight certificate.
+The repository includes generated market data in `web/public/data`, so the
+web app can display the saved snapshot without first running the full refresh.
+To fetch source data and validate the local dataset:
 
-The studio and Stock Risk page show daily world-gold and USD/LKR values with
-LKR benchmarks for 24K, 22K, and 18K. When fresh 22K selling/listed dealer
-rates are available, the app uses their per-institution median as a dated Sri
-Lankan market reference. It is not represented as a Pettah quote. If the dealer
-feed is missing or older than seven days, the app falls back to a clearly
-labeled world-gold/FX metal benchmark. Both exclude unquoted workmanship,
-stones, and taxes.
+```powershell
+python src/ingest_world.py
+python src/ingest_fx.py
+python src/check_data.py
+```
 
-The overview's daily candlesticks toggle between synthetic 22K and 24K OHLC in
-LKR/8g, derived from saved gold and USD/LKR OHLC data. Their high/low values
-are conservative non-synchronous envelopes, not observed local shop trading
-ranges or live ticks. Dated Pettah news quotes and published Sri Lankan dealer
-listings are overlaid as distinct local-price markers; when no Pettah report exists for
-a date and karat, the dealer listing is used as a clearly labeled local
-reference, never relabeled as Pettah. The market-history page reports both the
-latest Pettah-news date and latest local-reference date/source. The daily
-refresh trains an experimental standardized ridge-regression
-model to forecast the next seven joined gold/FX market observations for this
-synthetic 22K benchmark. It uses causal return lags and rolling statistics,
-chronological train/validation/holdout splits, and a no-change baseline. Its
-forecast and holdout metrics appear on Overview and Data Health; the latest
-holdout did not beat the baseline, so it is not presented as a proven
-improvement. It does not forecast Pettah or shop prices: the available dated
-Pettah history is too sparse and old to train a reliable local model. Fresh
-dealer quotes are direct references, not training labels.
+To run the complete daily refresh, including reports and the experimental
+forecast:
 
-The chart supports GoldAPI WebSocket streaming and its XAU/LKR REST quote.
-WebSocket streaming builds 1-minute through 4-hour OHLC candles from provider
-updates; the REST option refreshes periodically and is not tick-by-tick. REST
-refresh defaults to every three hours to conserve API quota. Its chart provides
-1D, 1W, 1M, 3M, 6M, and 1Y ranges using the app's dated daily gold/FX benchmark,
-with the newest daily candle updated by the latest REST quote. Earlier candles
-are not GoldAPI REST history. To change the polling cadence, set
-`GOLD_API_POLL_INTERVAL_MS` in milliseconds; the server enforces a minimum of
-one minute and maximum of 24 hours. Choose an interval supported by the
-account's current plan. The app does not animate or fabricate prices between
-updates. The 24K benchmark is gold spot converted to LKR per 8 g; 22K applies
-the 22/24 purity ratio to that same underlying gold price. These are metal
-benchmarks, not local shop offers, and exclude retail premiums, workmanship,
-and taxes. Without provider credentials, the app clearly stays on daily history.
+```powershell
+npm run refresh
+```
 
-For REST updates, add a regular GoldAPI REST key to `web/.env.local`:
+The refresh writes the public JSON files consumed by the web app. It uses
+Stooq and Yahoo Finance for world gold and USD/LKR data, and may use a local
+CBSL CSV when supplied. Dealer listings are collected separately; a dealer
+feed failure is reported in Data Health without blocking the other exports.
+
+To schedule the refresh daily on Windows:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\install_daily_refresh.ps1
+```
+
+The default schedule is 07:00 local time. Set a different time with
+`-At "08:30"`. The task runs while your Windows user is signed in, starts
+missed runs when available, and appends logs to `data/logs/daily-refresh.log`.
+
+### Configure saved accounts and Google sign-in
+
+Create `web/.env.local` with the server-side settings below. Never commit this
+file or expose secret values using a `NEXT_PUBLIC_` variable.
+
+```dotenv
+MONGODB_URI=your_mongodb_atlas_connection_string
+MONGODB_DB=aurumwatch
+AUTH_SECRET=your_random_secret_at_least_32_characters
+AUTH_GOOGLE_ID=your_google_oauth_client_id
+AUTH_GOOGLE_SECRET=your_google_oauth_client_secret
+GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
+```
+
+Generate a session secret with:
+
+```powershell
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+In Google Cloud, create a Web application OAuth client and add
+`http://localhost:3000/api/auth/google/callback` as an authorized redirect URI.
+The URI must exactly match the one configured for the app. Google sign-in
+verifies the ID token and email before creating or matching a MongoDB account.
+
+## Deploy the web app to Vercel
+
+Import this repository in Vercel and set the project's **Root Directory** to
+`web`. Vercel builds the Next.js app from that folder; it does not run the
+sibling Python refresh scripts.
+
+Add these variables to the Vercel Production environment:
+
+- `MONGODB_URI`
+- `MONGODB_DB`
+- `AUTH_SECRET`
+- `AUTH_GOOGLE_ID`
+- `AUTH_GOOGLE_SECRET`
+- `GOOGLE_REDIRECT_URI`
+
+GoldAPI credentials are optional. Add `GOLD_API_KEY` for REST quotes or
+`GOLD_API_WS_KEY` for WebSocket streaming, plus `GOLD_API_POLL_INTERVAL_MS`
+if you want to change the REST polling interval.
+
+The production callback for the current domain is:
+
+```text
+https://aurumwatchlk.vercel.app/api/auth/google/callback
+```
+
+Add the same URL to the Google OAuth client's authorized redirect URIs. After
+changing Vercel environment variables, redeploy so the new deployment uses
+them. Configure MongoDB Atlas Network Access so Vercel functions can connect.
+
+The Python refresh still needs to run separately to update the JSON snapshots
+served by the web app. For local Windows scheduling, see
+[`scripts/install_daily_refresh.ps1`](scripts/install_daily_refresh.ps1).
+
+## Optional GoldAPI live quotes
+
+For REST polling, add a GoldAPI REST key to `web/.env.local`:
 
 ```dotenv
 GOLD_API_KEY=your_private_rest_key
 GOLD_API_POLL_INTERVAL_MS=10800000
 ```
 
-For genuine streaming instead, use a dedicated WebSocket key:
+For WebSocket streaming, use a dedicated WebSocket key instead:
 
 ```dotenv
 GOLD_API_WS_KEY=your_private_websocket_key
 ```
 
-Restart the web app after changing environment variables. GoldAPI's published
-Free plan allows 300 monthly API/WebSocket-token requests and one simultaneous
-WebSocket connection; its Business plan lists up to five. Check the provider's
-current plans and market-data terms before choosing a polling cadence or running
-a multi-viewer demo. The app keeps both credential types server-side; WebSocket
-mode only returns the provider's short-lived connection token.
+Without a provider key, the chart uses the app's dated daily gold/FX history.
+REST polling refreshes periodically; WebSocket updates build intraday candles
+from provider updates. The app does not fabricate prices between updates.
 
-The What Changed page preserves the sparse Pettah-news archive and overlays
-dated local quotes on the daily gold/FX-derived market history. When Pettah
-reports are missing for a date and karat, a dated seller/listed
-median is shown with its dealer source, not relabeled as a Pettah shop quote.
-The latest Pettah report date and latest local quote date/source are both
-visible in the app.
+## Jewellery design studio
 
-The Design Studio can generate a downloadable PDF cost report with the jewelry
-preview, market sources and dates, gold allocation, budget breakdown, and a
-recent benchmark chart for the selected karat. Design Studio and Stock Risk can also use and compare
-fresh 22K per-8g selling/listed rates from the public dealer feed. Selecting
-a shop uses that dated rate as the estimate baseline; the PDF includes the
-selected shop and the current comparison set with source links. These are
-published dealer observations, not verified Pettah offers. Rates older than
-seven days are excluded, even when the feed was fetched recently. The report
-is a pro-forma estimate, not an invoice.
+The browser-based studio accepts STL, OBJ, 3MF, GLB/glTF, Rhino 3DM, STEP/STP,
+IGES/IGS, and DXF files. CAD files are parsed in the browser and are not sent
+to a server for preview. DXF is a 2D preview. Rhino 3DM previews require
+embedded mesh geometry; B-rep-only files should be exported as a mesh first.
 
-Five additional jewellers are listed in the Design Studio for manual quote
-comparison: Vogue, Swarnamahal, Mallika Hemachandra, Raja, and Imeeshi Jewellery.
-The directory does not imply a current price; a rate is used only when it has a
-verified date and is entered or collected from a source.
+Gold weight estimates include only selected closed, manifold 3D mesh parts.
+Open or unsupported surfaces are excluded and must be entered manually.
+Density is an editable approximation, so estimates are for planning and are
+not manufacturing or casting certificates.
 
-## Automatic market-data refresh
-Install the daily Windows Task Scheduler job from the project directory:
+## Data and model limits
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\install_daily_refresh.ps1
-```
+- The LKR karat prices are metal benchmarks derived from gold and FX, not shop
+  offers; they exclude workmanship, stones, taxes, and retail premiums.
+- Dealer listings are dated published observations, not verified Pettah
+  quotes. A quote is shown as a Pettah quote only when supported by the dated
+  local news archive or a manually verified entry.
+- Pettah prices have no dependable public live feed in this project. Add a
+  verified quote manually with:
 
-By default, it runs at 07:00 local time. Override the time with `-At "08:30"`.
-The job refreshes world gold and USD/LKR from Stooq / Yahoo Finance (and CBSL if
-`data/raw/cbsl_usdlkr.csv` is supplied), collects the public dealer CSV,
-reruns reports and the supervised benchmark model, and writes status to
-`web/public/data/refresh.json` and the derived benchmark to
-`web/public/data/market_reference.json`. The model is evaluated on a
-chronological holdout against a zero-return baseline before refitting on all
-available data. If model training fails, the refresh fails and marks its
-forecast unavailable rather than showing an old forecast as current. A
-dealer-feed failure is reported in Data health but does not stop the market/FX
-refresh or report export. The Gold
-prices page defaults to rates no more than seven days old and lets you reveal
-older dated listings. It runs while your Windows user is signed in;
-missed runs start when available. Run `npm run refresh` to refresh on demand.
-Run history is appended to `data/logs/daily-refresh.log`.
+  ```powershell
+  .\.venv\Scripts\python.exe src\add_quote.py YYYY-MM-DD 22 350000 "Shop name" "https://source.example/quote"
+  ```
 
-To generate the plain-language project, pages, data, libraries, and model guide
-PDF in the parent workspace folder, run `npm run project-guide`.
+- The ridge-regression forecast is experimental. It predicts the synthetic
+  gold/FX benchmark, not local shop prices, and is evaluated against a
+  no-change baseline. It is not presented as a proven improvement or financial
+  advice.
+- User-uploaded account records are stored separately from public model data
+  and are not used to train the market forecast.
 
-Pettah shop quotes are not available through a dependable public live API.
-They must be verified and entered manually before the reports treat them as
-local quotes. Add one using:
+## Checks
+
+Run the Python and web checks from the repository root:
 
 ```powershell
-.\.venv\Scripts\python.exe src\add_quote.py YYYY-MM-DD 22 350000 "Shop name" "https://source.example/quote"
+.\.venv\Scripts\python.exe -m pytest -q
+npm run lint
+npm --prefix web test
+npm run build
 ```
 
-Replace the example date, price, shop, and source URL with a verified quote.
-The jewellery estimator labels its reference date and lets you enter a current
-shop quote. Public feeds and model outputs are estimates, not guaranteed market
-prices; check the Data health page and source date before relying on them.
+## Project guide PDF
 
-The Gold prices page separately displays merchant observations from the
-public CSV tracker, including buying/selling side, karat, unit, the
-shop's rate date, and the tracker observation time. The tracker does not
-identify these quotes as Pettah-specific, so they are not added to Pettah
-history or used by the risk model. Old rates remain visibly aged even when
-the tracker has just been crawled.
+Generate a plain-language guide to the pages, data, libraries, and models:
 
-The current feed does not publish an Imeeshi Jewellery quote, and
-goldpricesrilanka.com denied automated access when checked. Neither is included
-as a current source; do not infer a rate from search snippets. Use the manual
-verified-shop quote field when a current rate is confirmed directly with a shop.
-The daily tracker refresh makes newly published rates selectable after a
-successful collection, while rate-date checks prevent stale observations from
-being presented as current.
+```powershell
+npm run project-guide
+```
 
-## Private accounts and saved work
-Accounts use MongoDB Atlas for records and GridFS for private profile photos,
-CAD files, CSV originals, and PDF reports. Create an Atlas database user and
-cluster, copy `web/.env.example` to `web/.env.local`, and configure
-`MONGODB_URI`, `MONGODB_DB`, and a unique `AUTH_SECRET` (at least 32 characters).
-For local development, allow your current IP in Atlas Network Access; for
-deployment, allow the hosting server's outbound IPs. Keep `.env.local` private
-and never expose the MongoDB URI or session secret in browser code.
-Generate a session secret with
-`node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
-
-To enable Google sign-in, create an OAuth 2.0 Client ID for a Web application
-in Google Cloud Console. Add `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, and
-`GOOGLE_REDIRECT_URI` to `web/.env.local` (the client ID and secret can also be
-named `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`). Set the redirect URI to
-`http://localhost:3000/api/auth/google/callback` for local development and add
-that exact URL to the OAuth client's authorized redirect URIs. For deployment,
-set the production callback URL and register the matching HTTPS URL in Google
-Cloud Console. Keep the client secret server-side.
-
-The sign-up form creates an account immediately using a hashed password and an
-HTTP-only session cookie; email confirmation is not configured. Signed-in users
-can save shop/profile settings, jewelry projects, validated Pettah/jewelry CSV
-datasets, and Design Studio PDFs. MongoDB records and GridFS file access are
-restricted to the signed-in account. CSV validation supports Pettah records
-(`date,karat,price_lkr_per_8g,shop_name,source_url`) and jewelry design records
-(`name,karat,weight_g`, with optional `material,notes`). Only validated rows are
-saved; dates, karat, positive price/weight values, source URLs, and row limits
-are checked. Rejected row numbers and reasons are retained for review. CSV
-uploads are limited to 5 MB and 1,000 records. Uploaded records and designs
-stay private and are not used to train models.
-
-To enable current Pettah retail prices, provide a dependable dated source
-(such as a participating shop's API/feed or verified daily quotes). No reliable
-public Pettah quote feed was available, so the app will not fabricate a quote
-or relabel the world-gold market estimate as a shop price.
-
-Signed-in users can save shop/profile settings, jewelry projects, validated
-Pettah/jewelry CSV datasets, and Design Studio PDFs. Row-level security and
-private storage policies scope the data to its account. CSV validation supports
-Pettah records (`date,karat,price_lkr_per_8g,shop_name,source_url`) and jewelry
-design records (`name,karat,weight_g`, with optional `material,notes`). Only
-validated rows are saved; dates, karat, positive price/weight values, source
-URLs, and row limits are checked. Rejected row numbers and reasons are retained
-for review. CSV uploads are limited to 5 MB and 1,000 records. Uploaded records
-and designs stay private and are not used to train models.
+The PDF is written to the parent directory of this repository.
