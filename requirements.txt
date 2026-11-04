@@ -2,7 +2,5 @@ pandas
 numpy
 scipy
 requests
-beautifulsoup4
-streamlit
 pytest
 yfinance

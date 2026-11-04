@@ -238,8 +238,8 @@ startPage("4. Technology used", "Libraries and frameworks identified in the proj
 section("Data and Python pipeline");
 paragraph(`Python requirements: ${pythonLibraries.join(", ")}.`);
 bullet("pandas and NumPy clean, join, transform, and simulate time-series data, and implement feature preparation and standardized ridge regression; SciPy supplies statistical distributions and backtest tests.");
-bullet("requests and yfinance collect the public feeds; BeautifulSoup is included for HTML/source processing; SQLite stores normalized observations and provenance.");
-bullet("pytest runs the Python validation and regression tests. Streamlit is listed in requirements for project tooling/legacy use; the current multi-page web UI is Next.js.");
+bullet("requests and yfinance collect configured public feeds; SQLite stores normalized observations and provenance.");
+bullet("pytest runs the Python validation and regression tests. The multi-page web UI is Next.js.");
 section("Web application");
 paragraph(`Frontend dependencies: ${frontendLibraries.join(", ")}.`);
 bullet("Next.js and React implement the pages and interactive UI; Three.js, OCCT Import JS, rhino3dm, and dxf-parser support 3D/CAD preview and import.");
