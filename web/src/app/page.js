@@ -68,6 +68,7 @@ export default function Home() {
   const risk = getData("risk")?.h7 || {};
   const flags = getData("anomalies") || [];
   const history = getData("history") || [];
+  const attribution = getData("attribution") || {};
   const localQuotes = getData("local_quotes") || [];
   const market = getData("market_reference") || {};
   const candles = getData("candles") || {};
@@ -81,12 +82,16 @@ export default function Home() {
     && forecast.market_as_of_date === market.fx_date;
   const pricing = resolveDashboardPricing({ history, market });
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
+  const dealerMove = attribution.moves?.at(-1);
   const currentPrice = pricing.currentPrice;
 
   const moves = lastMove
     ? [lastMove.ret_local, lastMove.ret_world, lastMove.ret_fx, lastMove.ret_premium].map((n) => Math.abs(n ?? 0))
     : [];
   const maxMove = Math.max(...moves, 1e-9);
+  const dealerMaxMove = dealerMove
+    ? Math.max(Math.abs(dealerMove.dealer_log_return), Math.abs(dealerMove.world_log_return), Math.abs(dealerMove.rupee_log_return), Math.abs(dealerMove.dealer_premium_log_return), 1e-9)
+    : 1e-9;
   const latestCandle = candles.rows?.at(-1);
   const previousCandle = candles.rows?.at(-2);
   const benchmarkClose22 = latestCandle?.close_22k ?? latestCandle?.close;
@@ -214,23 +219,41 @@ export default function Home() {
       </section>
 
       <div className="two-col">
+        <section className="card panel">
+          <div className="panel-head">
+            <h2 className="panel-title">Dealer price attribution{dealerMove?.date ? ` on ${dealerMove.date}` : ""}</h2>
+            <p className="panel-sub">
+              Source: {dealerMove?.source || "published dealer listings"}. Quote date: {dealerMove?.date || "not available"}.
+              {dealerMove?.institutions?.length ? ` Institutions: ${dealerMove.institutions.join(", ")}.` : ""}
+            </p>
+          </div>
+          {dealerMove ? (
+            <>
+              <Driver total name="Dealer 22K / 8 g change" hint="Published dealer listings" value={dealerMove.dealer_log_return} max={dealerMaxMove} gold />
+              <Driver name="World gold" hint={`USD/oz · ${dealerMove.gold_date}`} value={dealerMove.world_log_return} max={dealerMaxMove} />
+              <Driver name="Rupee" hint={`USD/LKR · ${dealerMove.fx_date}`} value={dealerMove.rupee_log_return} max={dealerMaxMove} />
+              <Driver name="Dealer premium" hint="Dealer price relative to world equivalent" value={dealerMove.dealer_premium_log_return} max={dealerMaxMove} />
+              <p className="panel-sub">Quote: {lkr(dealerMove.dealer_price_lkr_per_8g)} · {dealerMove.date}</p>
+              {dealerMove.source_urls?.map((url) => <p className="panel-sub" key={url}><a href={url} target="_blank" rel="noreferrer">{url}</a></p>)}
+            </>
+          ) : <p className="text-muted">At least two dated dealer observations with market data are needed for attribution.</p>}
+        </section>
+
         {/* ── Why the price moved ── */}
         <section className="card panel">
           <div className="panel-head">
             <h2 className="panel-title">
-              {pricing.quoteIsCurrent ? "Why the price moved" : "Historical Pettah price movement"}
+              Historical Pettah
               {lastMove?.date ? ` on ${lastMove.date}` : ""}
             </h2>
             <p className="panel-sub">
-              {pricing.quoteIsCurrent
-                ? "The three parts add up exactly to the total change in the Pettah price."
-                : "This historical breakdown is not a current shop quote or price assessment."}
+              Sparse press reports, shown separately from current dated dealer listings.
             </p>
           </div>
 
           {lastMove ? (
             <>
-              <Driver total name="Pettah price change" hint="What you saw at the counter" value={lastMove.ret_local} max={maxMove} gold />
+              <Driver total name="Reported Pettah price change" hint="Historical press observation" value={lastMove.ret_local} max={maxMove} gold />
               <Driver name="World gold price" hint="Gold in US dollars on world markets" value={lastMove.ret_world} max={maxMove} />
               <Driver name="Rupee against the dollar" hint="A weaker rupee pushes the local price up" value={lastMove.ret_fx} max={maxMove} />
               <Driver name="Local premium" hint="Extra charged in Pettah over the world price" value={lastMove.ret_premium} max={maxMove} />

@@ -1,0 +1,186 @@
+{
+  "status": "available",
+  "observations": [
+    {
+      "date": "2026-10-12",
+      "dealer_price_lkr_per_8g": 345000.0,
+      "world_equivalent_lkr_per_8g": 317270.29815741,
+      "dealer_premium": 0.0837903308999568,
+      "gold_usd_per_oz": 4190.60009765625,
+      "usd_lkr": 321.1153259277344,
+      "gold_date": "2026-10-12",
+      "fx_date": "2026-10-12",
+      "source": "Published dealer listings",
+      "institutions": [
+        "Vilva Gold"
+      ],
+      "source_urls": [
+        "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
+      ]
+    },
+    {
+      "date": "2026-10-19",
+      "dealer_price_lkr_per_8g": 330000.0,
+      "world_equivalent_lkr_per_8g": 315779.74311353994,
+      "dealer_premium": 0.04404769936530961,
+      "gold_usd_per_oz": 4160.10009765625,
+      "usd_lkr": 321.9499206542969,
+      "gold_date": "2026-10-19",
+      "fx_date": "2026-10-19",
+      "source": "Published dealer listings",
+      "institutions": [
+        "CMB Gold"
+      ],
+      "source_urls": [
+        "https://www.cmbgold.lk/srilanka-gold-price-today"
+      ]
+    },
+    {
+      "date": "2026-11-02",
+      "dealer_price_lkr_per_8g": 326600.0,
+      "world_equivalent_lkr_per_8g": 301778.9244244701,
+      "dealer_premium": 0.07904146956195568,
+      "gold_usd_per_oz": 3969.60009765625,
+      "usd_lkr": 322.4407958984375,
+      "gold_date": "2026-11-02",
+      "fx_date": "2026-11-02",
+      "source": "Published dealer listings",
+      "institutions": [
+        "CMB Gold",
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://cmbgold.lk/gold-price-sri-lanka",
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/",
+        "https://www.cmbgold.lk/srilanka-gold-price-today"
+      ]
+    },
+    {
+      "date": "2026-11-03",
+      "dealer_price_lkr_per_8g": 326600.0,
+      "world_equivalent_lkr_per_8g": 299650.7426896784,
+      "dealer_premium": 0.08611857511136911,
+      "gold_usd_per_oz": 3940.39990234375,
+      "usd_lkr": 322.53948974609375,
+      "gold_date": "2026-11-03",
+      "fx_date": "2026-11-03",
+      "source": "Published dealer listings",
+      "institutions": [
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/"
+      ]
+    },
+    {
+      "date": "2026-11-04",
+      "dealer_price_lkr_per_8g": 328000.0,
+      "world_equivalent_lkr_per_8g": 317677.00993283343,
+      "dealer_premium": 0.03197843380377563,
+      "gold_usd_per_oz": 4050.800048828125,
+      "usd_lkr": 332.6234130859375,
+      "gold_date": "2026-11-04",
+      "fx_date": "2026-11-04",
+      "source": "Published dealer listings",
+      "institutions": [
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/"
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "date": "2026-10-19",
+      "previous_date": "2026-10-12",
+      "dealer_log_return": -0.04445176257083361,
+      "world_log_return": -0.007304809156227449,
+      "rupee_log_return": 0.0025956781200406715,
+      "dealer_premium_log_return": -0.03974263153464683,
+      "dealer_price_lkr_per_8g": 330000.0,
+      "world_equivalent_lkr_per_8g": 315779.74311353994,
+      "source": "Published dealer listings",
+      "institutions": [
+        "CMB Gold"
+      ],
+      "source_urls": [
+        "https://www.cmbgold.lk/srilanka-gold-price-today"
+      ],
+      "gold_date": "2026-10-19",
+      "fx_date": "2026-10-19"
+    },
+    {
+      "date": "2026-11-02",
+      "previous_date": "2026-10-19",
+      "dealer_log_return": -0.010356473924161946,
+      "world_log_return": -0.04687377736385722,
+      "rupee_log_return": 0.0015235332430497044,
+      "dealer_premium_log_return": 0.03499377019664557,
+      "dealer_price_lkr_per_8g": 326600.0,
+      "world_equivalent_lkr_per_8g": 301778.9244244701,
+      "source": "Published dealer listings",
+      "institutions": [
+        "CMB Gold",
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://cmbgold.lk/gold-price-sri-lanka",
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/",
+        "https://www.cmbgold.lk/srilanka-gold-price-today"
+      ],
+      "gold_date": "2026-11-02",
+      "fx_date": "2026-11-02"
+    },
+    {
+      "date": "2026-11-03",
+      "previous_date": "2026-11-02",
+      "dealer_log_return": 0.0,
+      "world_log_return": -0.0073831423403770335,
+      "rupee_log_return": 0.0003060367909630514,
+      "dealer_premium_log_return": 0.007077105549413982,
+      "dealer_price_lkr_per_8g": 326600.0,
+      "world_equivalent_lkr_per_8g": 299650.7426896784,
+      "source": "Published dealer listings",
+      "institutions": [
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/"
+      ],
+      "gold_date": "2026-11-03",
+      "fx_date": "2026-11-03"
+    },
+    {
+      "date": "2026-11-04",
+      "previous_date": "2026-11-03",
+      "dealer_log_return": 0.004277427847778625,
+      "world_log_return": 0.02763218831388635,
+      "rupee_log_return": 0.030785380841485865,
+      "dealer_premium_log_return": -0.05414014130759359,
+      "dealer_price_lkr_per_8g": 328000.0,
+      "world_equivalent_lkr_per_8g": 317677.00993283343,
+      "source": "Published dealer listings",
+      "institutions": [
+        "Devi Jewellers",
+        "Ravi Jewellers"
+      ],
+      "source_urls": [
+        "https://devijewellers.lk/gold-rate",
+        "https://ravijewellers.lk/"
+      ],
+      "gold_date": "2026-11-04",
+      "fx_date": "2026-11-04"
+    }
+  ]
+}

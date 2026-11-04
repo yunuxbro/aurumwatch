@@ -8,6 +8,7 @@ from db import get_conn
 from market_reference import build_local_dealer_reference, build_market_reference
 from market_candles import build_market_candles
 from local_quotes import build_local_quote_history
+from analysis.attribution import build_attribution
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "web" / "public" / "data"
 
@@ -91,6 +92,24 @@ def local_quote_history():
         [dict(zip(dealer_columns, record)) for record in dealer_records],
     )
 
+def dealer_attribution():
+    with get_conn() as connection:
+        dealer_rows = connection.execute(
+            """
+            SELECT institution, karat, side, unit, price_lkr, currency,
+                   rate_date, source_url
+            FROM dealer_quotes
+            ORDER BY rate_date, institution
+            """
+        ).fetchall()
+        gold_rows = connection.execute(
+            "SELECT date, usd_oz FROM world_gold ORDER BY date"
+        ).fetchall()
+        fx_rows = connection.execute(
+            "SELECT date, lkr_per_usd FROM usdlkr ORDER BY date"
+        ).fetchall()
+    return build_attribution(dealer_rows, gold_rows, fx_rows)
+
 def main(price=None):
     j = pettah_joined(22)
     dealer_data = dealer_quotes()
@@ -116,6 +135,7 @@ def main(price=None):
     write("market_reference", reference)
     write("dealer_quotes", dealer_data)
     write("local_quotes", local_quote_history())
+    write("attribution", dealer_attribution())
     write("candles", build_market_candles())
 
 if __name__ == "__main__":
