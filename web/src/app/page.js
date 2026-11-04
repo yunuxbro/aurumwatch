@@ -4,6 +4,7 @@ import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
 import MarketCandles from "@/components/MarketCandles";
 import { resolveDashboardPricing } from "@/lib/dashboard-pricing";
+import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 
 export const dynamic = "force-dynamic";
 
@@ -70,6 +71,8 @@ export default function Home() {
   const history = getData("history") || [];
   const attribution = getData("attribution") || {};
   const localQuotes = getData("local_quotes") || [];
+  const lastPettahQuote = localQuotes.filter((quote) => quote.source_type === "pettah").at(-1);
+  const pettahAgeDays = daysSinceDate(lastPettahQuote?.date, todayInSriLanka());
   const market = getData("market_reference") || {};
   const candles = getData("candles") || {};
   const forecast = getData("ml_forecast") || {};
@@ -111,6 +114,21 @@ export default function Home() {
       </div>
 
       <Banner risk={risk} />
+
+      <section className="card panel" aria-label="Pettah report freshness">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">Pettah report freshness</h2>
+            <p className="section-sub">
+              Dealer listings are the current local reference. Pettah is sparse press data; no values are filled between reports.
+            </p>
+            <p className="section-sub">Latest Pettah report: {lastPettahQuote?.date || "not available"}</p>
+          </div>
+          <span className={`badge ${pettahAgeDays != null && pettahAgeDays > 30 ? "badge-warning" : "badge-info"}`}>
+            {pettahAgeDays == null ? "Pettah age unavailable" : `Days since last Pettah report: ${pettahAgeDays}`}
+          </span>
+        </div>
+      </section>
 
       {/* ── The tray: latest price + trend ── */}
       <section className="hero" aria-label="Current gold price">
