@@ -35,6 +35,9 @@ def build_market_reference(
         raise ValueError("Market observations cannot be dated in the future")
 
     lkr_per_gram_24k = gold_price * exchange_rate / OUNCE_TO_GRAMS
+    display_gold_source = gold_source
+    if "yfinance" in str(gold_source).lower() or "gc=f" in str(gold_source).lower():
+        display_gold_source = "futures proxy (GC=F), not spot"
     return {
         "status": (
             "current"
@@ -44,7 +47,7 @@ def build_market_reference(
         "gold_usd_per_oz": gold_price,
         "gold_date": gold_day.isoformat(),
         "gold_age_days": gold_age_days,
-        "gold_source": gold_source,
+        "gold_source": display_gold_source,
         "usd_lkr": exchange_rate,
         "fx_date": fx_day.isoformat(),
         "fx_age_days": fx_age_days,

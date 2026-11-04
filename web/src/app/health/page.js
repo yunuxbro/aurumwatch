@@ -4,8 +4,8 @@ import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 export const dynamic = "force-dynamic";
 
 const SOURCES = [
-  ["World gold", "Yahoo Finance GC=F futures close, used as a proxy for international spot prices."],
-  ["USD / LKR", "Yahoo Finance LKR=X or Central Bank of Sri Lanka market exchange rate."],
+  ["World gold", "Stooq XAU/USD; fallback: futures proxy (GC=F), not spot."],
+  ["USD / LKR", "CBSL CSV when configured; Yahoo Finance LKR=X fallback."],
   ["Pettah 22K", "Colombo Sea Street public quotes from Ada Derana and The Morning reports."],
   ["Dealer prices", "Public Sri Lankan dealer feed. Per-row rate dates and observation times are shown separately; it is not Pettah-specific."],
 ];
@@ -67,6 +67,7 @@ export default function Health() {
                   ` · ${daysSinceDate(item.latest_date, today)} ${daysSinceDate(item.latest_date, today) === 1 ? "day" : "days"} old`}
               </p>
               <p>{item?.rows ?? 0} stored observations</p>
+              {item?.source && <p>Source: {item.source}</p>}
             </div>
           ))}
         </div>
@@ -159,7 +160,10 @@ export default function Health() {
         <div className="section-header">
           <div>
             <h2 className="section-title">Data sources</h2>
-            <p className="section-sub">The source inventory used by the monitoring pipeline.</p>
+            <p className="section-sub">
+              The source inventory used by the monitoring pipeline. See the full licence and collection notes in{" "}
+              <a href="https://github.com/yunuxbro/aurumwatch/blob/main/DATA_SOURCES.md" target="_blank" rel="noreferrer">DATA_SOURCES.md</a>.
+            </p>
           </div>
         </div>
         <div className="source-grid">

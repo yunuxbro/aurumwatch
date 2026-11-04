@@ -51,6 +51,11 @@ def _latest_data():
                 "age_days": age_days,
                 "rows": count,
             }
+            if table in {"world_gold", "usdlkr"} and date:
+                source = connection.execute(
+                    f"SELECT source FROM {table} WHERE date = ?", (date,)
+                ).fetchone()
+                result[table]["source"] = source[0] if source else None
         latest_fetch, latest_date, latest_observation, latest_rows = connection.execute(
             """
             SELECT fetched_at, MAX(rate_date), MAX(observed_at), COUNT(*)
@@ -149,8 +154,8 @@ def refresh():
         "steps": steps,
         "data": _latest_data(),
         "source_notes": {
-            "world_gold": "Stooq XAU/USD; Yahoo Finance GC=F futures proxy is the fallback.",
-            "usdlkr": "Yahoo Finance LKR=X unless a CBSL CSV is configured.",
+            "world_gold": "Stooq XAU/USD; if unavailable, futures proxy (GC=F), not spot.",
+            "usdlkr": "CBSL CSV when data/raw/cbsl_usdlkr.csv is present; Yahoo Finance LKR=X fallback.",
             "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
             "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific.",
         },

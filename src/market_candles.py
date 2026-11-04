@@ -80,6 +80,16 @@ def _source_snapshot(table, source_column, source_label):
 
 
 def build_market_candles():
+    with get_conn() as connection:
+        gold_row = connection.execute(
+            "SELECT source FROM world_gold ORDER BY date DESC LIMIT 1"
+        ).fetchone()
+    gold_source = gold_row[0] if gold_row else ""
+    gold_label = (
+        "futures proxy (GC=F), not spot"
+        if "yfinance" in str(gold_source).lower() or "gc=f" in str(gold_source).lower()
+        else "Stooq XAU/USD"
+    )
     gold_path, gold_reason = _source_snapshot(
         "world_gold", "source", "world-gold"
     )
@@ -136,6 +146,7 @@ def build_market_candles():
         "status": "available",
         "basis": (
             "Synthetic 22K and 24K LKR/8g benchmarks from daily gold and USD/LKR OHLC. "
+            f"Gold source: {gold_label}. "
             "High/low are conservative, non-synchronous envelopes; these are not "
             "observed Pettah or intraday retail prices. Local quote markers distinguish "
             "Pettah news reports from published Sri Lankan dealer listings."
