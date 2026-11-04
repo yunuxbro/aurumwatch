@@ -100,6 +100,9 @@ export default function Home() {
   const benchmarkClose22 = latestCandle?.close_22k ?? latestCandle?.close;
   const benchmarkClose24 = latestCandle?.close_24k;
   const previousClose22 = previousCandle?.close_22k ?? previousCandle?.close;
+  const priorObservationGapDays = latestCandle && previousCandle
+    ? daysSinceDate(previousCandle.date, latestCandle.date)
+    : null;
   const benchmarkChange22 = Number.isFinite(benchmarkClose22) && Number.isFinite(previousClose22) && previousClose22 > 0
     ? (benchmarkClose22 - previousClose22) / previousClose22
     : null;
@@ -298,7 +301,8 @@ export default function Home() {
               <small>{latestCandle?.date || "No daily benchmark date"}</small>
               {benchmarkChange22 != null && (
                 <small>
-                  {benchmarkChange22 > 0 ? "+" : ""}{pct(benchmarkChange22)} from the prior observation
+                  {benchmarkChange22 > 0 ? "+" : ""}{pct(benchmarkChange22)} from the prior observed close
+                  {priorObservationGapDays != null && ` (${priorObservationGapDays} calendar days earlier)`}
                 </small>
               )}
             </div>

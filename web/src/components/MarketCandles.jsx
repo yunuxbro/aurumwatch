@@ -20,6 +20,18 @@ function shortPriceLabel(value) {
   return `Rs ${(value / 1000).toFixed(0)}k`;
 }
 
+function businessDaysBetween(startDate, endDate) {
+  const day = new Date(`${startDate}T00:00:00Z`);
+  const end = new Date(`${endDate}T00:00:00Z`);
+  let businessDays = 0;
+  while (day < end) {
+    day.setUTCDate(day.getUTCDate() + 1);
+    const weekday = day.getUTCDay();
+    if (weekday !== 0 && weekday !== 6) businessDays += 1;
+  }
+  return businessDays;
+}
+
 function HistoricalMarketCandles({
   snapshot,
   dealerReference,
@@ -45,12 +57,28 @@ function HistoricalMarketCandles({
     };
     return {
       ...row,
+      chartIndex: businessDaysBetween(visibleData[0].date, row.date),
       chartOpen: value("open"),
       chartHigh: value("high"),
       chartLow: value("low"),
       chartClose: value("close"),
     };
   }), [visibleData, selectedKarat]);
+  const noDataDates = useMemo(() => {
+    const observedDates = new Set(visibleData.map((row) => row.date));
+    const missingDates = [];
+    visibleData.slice(1).forEach((row, index) => {
+      const day = new Date(`${visibleData[index].date}T00:00:00Z`);
+      const end = new Date(`${row.date}T00:00:00Z`);
+      while (day < end) {
+        day.setUTCDate(day.getUTCDate() + 1);
+        const weekday = day.getUTCDay();
+        const date = day.toISOString().slice(0, 10);
+        if (weekday !== 0 && weekday !== 6 && !observedDates.has(date)) missingDates.push(date);
+      }
+    });
+    return missingDates;
+  }, [visibleData]);
   const quotePoints = useMemo(() => {
     if (!Array.isArray(localQuotes) || chartRows.length === 0) return [];
     return localQuotes.flatMap((quote) => {
@@ -100,9 +128,10 @@ function HistoricalMarketCandles({
   const bottom = 34;
   const plotWidth = width - left - right;
   const plotHeight = height - top - bottom;
-  const step = plotWidth / chartRows.length;
+  const slotCount = chartRows.at(-1).chartIndex + 1;
+  const step = plotWidth / slotCount;
   const candleWidth = Math.max(2, Math.min(12, step * 0.62));
-  const x = (index) => left + (index + 0.5) * step;
+  const x = (index) => left + (chartRows[index]?.chartIndex + 0.5) * step;
   const y = (value) => top + (1 - (value - low) / (high - low)) * plotHeight;
   const displayedRows = chartRows.slice(-8).reverse();
 
@@ -229,6 +258,11 @@ function HistoricalMarketCandles({
         <span>L {priceLabel(selected.chartLow)}</span>
         <span>C {priceLabel(selected.chartClose)}</span>
       </div>
+      {noDataDates.length > 0 && (
+        <p className="market-candle-basis" role="status">
+          No data for these business days in the selected range: {noDataDates.join(", ")}. Missing dates are left blank; no prices are interpolated.
+        </p>
+      )}
       {selectedLocalQuotes.length > 0 && (
         <div className="market-candle-local-quotes" aria-live="polite">
           {selectedLocalQuotes.map((quote) => (
