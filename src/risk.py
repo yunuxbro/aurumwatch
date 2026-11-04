@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from clean import market_daily
 from decompose import decompose
+from freshness import working_days_since
 
 LAMBDA = 0.94
 N_SIMS = 10_000
@@ -60,12 +61,12 @@ def stock_risk(
     else:
         quote_date = pd.Timestamp(start_date or today)
         source = start_source or "manual quote"
-    market_age = (today - pd.Timestamp(market_date)).days
+    market_age = working_days_since(market_date, today.date())
 
     status = "ok"
     if market_age > MAX_MARKET_AGE_DAYS:
         status = "cannot_assess"
-        notes.append(f"World gold / USD-LKR data is {market_age} days old.")
+        notes.append(f"World gold / USD-LKR data is {market_age} working days old.")
 
     paths = start_price * np.exp(total)
     q = {f"p{p}": float(np.percentile(paths, p)) for p in (1, 5, 25, 50, 75, 95, 99)}

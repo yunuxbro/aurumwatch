@@ -1,10 +1,11 @@
 import datetime as dt
 import math
 import statistics
+from freshness import working_days_since
 
 OUNCE_TO_GRAMS = 31.1034768
-MAX_MARKET_AGE_DAYS = 5
-MAX_DEALER_QUOTE_AGE_DAYS = 7
+MAX_MARKET_AGE_WORKING_DAYS = 5
+MAX_DEALER_AGE_WORKING_DAYS = 3
 
 
 def build_market_reference(
@@ -31,6 +32,8 @@ def build_market_reference(
     fx_day = dt.date.fromisoformat(fx_date)
     gold_age_days = (today - gold_day).days
     fx_age_days = (today - fx_day).days
+    gold_working_age = working_days_since(gold_day, today)
+    fx_working_age = working_days_since(fx_day, today)
     if gold_age_days < 0 or fx_age_days < 0:
         raise ValueError("Market observations cannot be dated in the future")
 
@@ -41,16 +44,18 @@ def build_market_reference(
     return {
         "status": (
             "current"
-            if max(gold_age_days, fx_age_days) <= MAX_MARKET_AGE_DAYS
+            if max(gold_working_age, fx_working_age) <= MAX_MARKET_AGE_WORKING_DAYS
             else "stale"
         ),
         "gold_usd_per_oz": gold_price,
         "gold_date": gold_day.isoformat(),
         "gold_age_days": gold_age_days,
+        "gold_age_working_days": gold_working_age,
         "gold_source": display_gold_source,
         "usd_lkr": exchange_rate,
         "fx_date": fx_day.isoformat(),
         "fx_age_days": fx_age_days,
+        "fx_age_working_days": fx_working_age,
         "fx_source": fx_source,
         "lkr_per_gram_24k": lkr_per_gram_24k,
         "lkr_per_gram_22k": lkr_per_gram_24k * 22 / 24,
@@ -79,7 +84,8 @@ def build_local_dealer_reference(rows, today=None):
         except (KeyError, TypeError, ValueError, OverflowError):
             continue
         age_days = (today - rate_date).days
-        if age_days < 0 or not math.isfinite(price) or price <= 0:
+        working_age = working_days_since(rate_date, today)
+        if working_age is None or not math.isfinite(price) or price <= 0:
             continue
 
         price_per_8g = price * 8 if unit == "gram" else price
@@ -89,6 +95,7 @@ def build_local_dealer_reference(rows, today=None):
         candidates.append({
             "institution": institution,
             "price_lkr_per_8g": price_per_8g,
+            "working_days_old": working_age,
             "rate_date": rate_date,
             "source_url": row.get("source_url"),
         })
@@ -102,13 +109,15 @@ def build_local_dealer_reference(rows, today=None):
 
     latest_date = max(row["rate_date"] for row in candidates)
     age_days = (today - latest_date).days
-    if age_days > MAX_DEALER_QUOTE_AGE_DAYS:
+    working_age = working_days_since(latest_date, today)
+    if working_age > MAX_DEALER_AGE_WORKING_DAYS:
         return {
             "status": "stale",
             "source": "Published Sri Lankan dealer rates",
             "rate_date": latest_date.isoformat(),
             "age_days": age_days,
-            "reason": "The latest 22K dealer rate is older than seven days.",
+            "working_days_old": working_age,
+            "reason": "The latest 22K dealer rate is older than three working days.",
         }
 
     latest_rows = [row for row in candidates if row["rate_date"] == latest_date]
@@ -134,6 +143,7 @@ def build_local_dealer_reference(rows, today=None):
         "source": "Published Sri Lankan dealer rates",
         "rate_date": latest_date.isoformat(),
         "age_days": age_days,
+        "working_days_old": working_age,
         "price_lkr_per_8g": statistics.median(
             row["price_lkr_per_8g"] for row in institutions
         ),

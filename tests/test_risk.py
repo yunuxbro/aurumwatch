@@ -20,6 +20,60 @@ def test_old_data_gives_cannot_assess():
     assert r["range_8g"] is None
 
 
+def test_range_widens_when_volatility_is_higher(monkeypatch):
+    market = pd.DataFrame([{
+        "date": pd.Timestamp("2026-11-02"),
+        "usd_oz": 4000,
+        "lkr_per_usd": 330,
+    }])
+    monkeypatch.setattr(risk_module, "market_daily", lambda: market)
+    monkeypatch.setattr(
+        risk_module,
+        "decompose",
+        lambda karat: pd.DataFrame({"ret_premium": [-0.01]}),
+    )
+    small_moves = np.array([-0.01, -0.005, 0, 0.005, 0.01])
+    large_moves = np.array([-0.10, -0.05, 0, 0.05, 0.10])
+    monkeypatch.setattr(
+        risk_module,
+        "simulate",
+        lambda horizon: (small_moves, 0.01, 0.01, pd.Timestamp("2026-11-02")),
+    )
+    small_range = stock_risk(today="2026-11-03", start_price=300000)["range_8g"]
+    monkeypatch.setattr(
+        risk_module,
+        "simulate",
+        lambda horizon: (large_moves, 0.10, 0.10, pd.Timestamp("2026-11-02")),
+    )
+    large_range = stock_risk(today="2026-11-03", start_price=300000)["range_8g"]
+
+    assert large_range["p95"] - large_range["p5"] > small_range["p95"] - small_range["p5"]
+
+
+def test_old_market_data_triggers_cannot_assess(monkeypatch):
+    market = pd.DataFrame([{
+        "date": pd.Timestamp("2026-10-28"),
+        "usd_oz": 4000,
+        "lkr_per_usd": 330,
+    }])
+    monkeypatch.setattr(risk_module, "market_daily", lambda: market)
+    monkeypatch.setattr(
+        risk_module,
+        "simulate",
+        lambda horizon: (np.zeros(10), 0.01, 0.01, pd.Timestamp("2026-10-28")),
+    )
+    monkeypatch.setattr(
+        risk_module,
+        "decompose",
+        lambda karat: pd.DataFrame({"ret_premium": [-0.01]}),
+    )
+
+    result = stock_risk(today="2026-11-05", start_price=300000)
+
+    assert result["status"] == "cannot_assess"
+    assert result["range_8g"] is None
+
+
 def test_risk_accepts_a_dated_local_dealer_baseline(monkeypatch):
     market = pd.DataFrame([{
         "date": pd.Timestamp("2026-11-02"),

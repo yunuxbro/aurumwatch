@@ -6,6 +6,7 @@ import sys
 import time
 
 from db import get_conn, init_db
+from freshness import source_freshness
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 STATUS_FILE = PROJECT_ROOT / "web" / "public" / "data" / "refresh.json"
@@ -51,6 +52,10 @@ def _latest_data():
                 "age_days": age_days,
                 "rows": count,
             }
+            source_type = {"world_gold": "gold", "usdlkr": "fx", "pettah": "pettah"}[table]
+            result[table]["freshness"] = source_freshness(
+                source_type, date, dt.datetime.now().astimezone().date()
+            )
             if table in {"world_gold", "usdlkr"} and date:
                 source = connection.execute(
                     f"SELECT source FROM {table} WHERE date = ?", (date,)
@@ -74,6 +79,9 @@ def _latest_data():
             "observed_at": latest_observation,
             "fetched_at": latest_fetch,
             "rows": latest_rows or 0,
+            "freshness": source_freshness(
+                "dealer", latest_date, dt.datetime.now().astimezone().date()
+            ),
         }
     return result
 

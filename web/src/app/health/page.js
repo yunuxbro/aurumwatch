@@ -69,6 +69,10 @@ export default function Health() {
               </p>
               <p>{item?.rows ?? 0} stored observations</p>
               {item?.source && <p>Source: {item.source}</p>}
+              <span className={`badge ${item?.freshness?.status === "current" ? "badge-success" : item?.freshness?.status === "stale" ? "badge-warning" : "badge-neutral"}`}>
+                {item?.freshness?.status || "freshness unavailable"}
+                {item?.freshness?.working_days_old != null && ` · ${item.freshness.working_days_old} working days old`}
+              </span>
             </div>
           ))}
         </div>
