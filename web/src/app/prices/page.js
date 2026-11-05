@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getData } from "@/lib/data";
 import DealerPriceTable from "@/components/DealerPriceTable";
+import DealerKaratSummary from "@/components/DealerKaratSummary";
 import { ADDITIONAL_GOLD_SHOPS } from "@/lib/dealer-pricing";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,8 @@ export default function Prices() {
           Each price keeps its own rate date and the separate time it was observed.
         </p>
       </header>
+
+      <DealerKaratSummary items={items} />
 
       <section className="card panel">
         <div className="section-header">

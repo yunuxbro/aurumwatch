@@ -170,8 +170,8 @@ def refresh():
         "steps": steps,
         "data": _latest_data(),
         "source_notes": {
-            "world_gold": "Stooq XAU/USD; if unavailable, futures proxy (GC=F), not spot.",
-            "usdlkr": "CBSL CSV when data/raw/cbsl_usdlkr.csv is present; Yahoo Finance LKR=X fallback.",
+            "world_gold": "Yahoo Finance GC=F futures proxy, not spot.",
+            "usdlkr": "Yahoo Finance LKR=X daily closes; CBSL cross-checks correct 2026-11-02 through 2026-11-04 in derived analytics.",
             "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
             "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific.",
         },

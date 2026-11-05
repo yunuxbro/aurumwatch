@@ -75,7 +75,7 @@ def main():
         bad = m.outside_95 > 0.10 or m.outside_95 < 0.01
         print(f"h={h}: 95% range misses {m.outside_95:.1%} (target 5%).",
               "NOT WORKING by the proposal's rule." if bad else "Within the proposal's tolerance.",
-              "Better pinball than B1." if m.pinball < b1.pinball else "NOT better than B1.")
+              f"B1 outside={b1.outside_95:.1%}, width={b1.width_95:.1%}; model width={m.width_95:.1%}. No superiority claim.")
 
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ export default function RiskRangeCard({ risk, title = "Stock Risk range" }) {
           <h2 className="section-title">{title}</h2>
           <p className="section-sub">
             Starting baseline: {lkr(risk?.start_price_8g)} per 8 g · {risk?.quote_date || "date unavailable"} · {risk?.start_source || "source unavailable"}
+            {risk?.start_source === "current Sri Lankan 22K dealer median" && Number.isFinite(risk?.dealer_quote_count) && ` · ${risk.dealer_quote_count} shops`}
           </p>
         </div>
         <span className={`badge ${risk?.status === "ok" ? "badge-success" : "badge-warning"}`}>

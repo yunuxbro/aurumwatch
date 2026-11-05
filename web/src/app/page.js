@@ -4,6 +4,7 @@ import Banner from "@/components/Banner";
 import JewellerCalculator from "@/components/JewellerCalculator";
 import MarketCandles from "@/components/MarketCandles";
 import RiskRangeCard from "@/components/RiskRangeCard";
+import CbslGoldReference from "@/components/CbslGoldReference";
 import { resolveDashboardPricing } from "@/lib/dashboard-pricing";
 import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 
@@ -67,7 +68,8 @@ function Driver({ name, hint, value, max, total, gold }) {
 }
 
 export default function Home() {
-  const risk = getData("risk")?.h7 || {};
+  const allRisk = getData("risk") || {};
+  const risk = allRisk.h7 || {};
   const flags = getData("anomalies") || [];
   const history = getData("history") || [];
   const attribution = getData("attribution") || {};
@@ -78,7 +80,11 @@ export default function Home() {
   const candles = getData("candles") || {};
   const pricing = resolveDashboardPricing({ history, market });
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
-  const dealerMove = attribution.moves?.at(-1);
+  const latestDealerMove = attribution.moves?.at(-1);
+  const latestSuppressedMove = attribution.suppressed_moves?.at(-1);
+  const dealerMove = latestSuppressedMove && (!latestDealerMove || latestSuppressedMove.date > latestDealerMove.date)
+    ? null
+    : latestDealerMove;
   const currentPrice = pricing.currentPrice;
 
   const moves = lastMove
@@ -150,7 +156,7 @@ export default function Home() {
               World gold: <b>{pricing.goldDate || "feed unavailable"}{market.gold_source ? ` · ${market.gold_source}` : ""}</b>
             </span>
             <span className="chip">
-              USD/LKR: <b>{pricing.fxDate || "feed unavailable"}</b>
+              USD/LKR: <b>{pricing.fxDate || "feed unavailable"}{market.fx_source ? ` · ${market.fx_source}` : ""}</b>
             </span>
           </div>
         </div>
@@ -193,6 +199,31 @@ export default function Home() {
         </div>
       </section>
 
+      <div className="two-col market-price-comparison">
+        <section className="card panel">
+          <div className="section-header">
+            <div>
+              <h2 className="section-title">Market benchmark by purity</h2>
+              <p className="section-sub">
+                Derived from {market.gold_source || "gold feed"} and {market.fx_source || "USD/LKR feed"} · {market.gold_date || "date unavailable"}
+              </p>
+            </div>
+          </div>
+          <div className="metric-grid">
+            {[24, 22, 18].map((karat) => (
+              <div className="metric-tile" key={karat}>
+                <span className="stat-label">{karat}K · LKR / 8 g</span>
+                <p className="stat-value">{lkr(market[`lkr_per_8g_${karat}k`])}</p>
+              </div>
+            ))}
+          </div>
+          <p className="section-sub" style={{ marginTop: ".75rem" }}>
+            World-gold and USD/LKR conversion only; dealer premiums, workmanship, and taxes are excluded.
+          </p>
+        </section>
+        <CbslGoldReference />
+      </div>
+
       <div className="two-col">
         <section className="card panel">
           <div className="panel-head">
@@ -208,9 +239,16 @@ export default function Home() {
               <Driver name="World gold" hint={`USD/oz · ${dealerMove.gold_date}`} value={dealerMove.world_log_return} max={dealerMaxMove} />
               <Driver name="Rupee" hint={`USD/LKR · ${dealerMove.fx_date}`} value={dealerMove.rupee_log_return} max={dealerMaxMove} />
               <Driver name="Dealer premium" hint="Dealer price relative to world equivalent" value={dealerMove.dealer_premium_log_return} max={dealerMaxMove} />
+              {attribution.fx_crosscheck_dates?.includes(dealerMove.date) && (
+                <p className="panel-sub">
+                  CBSL cross-check applied to USD/LKR: Rs 332.60 on 2 and 3 Nov and Rs 332.64 on 4 Nov. Yahoo LKR=X had Rs 322.44 and Rs 322.54 on 2 and 3 Nov; those two prints were corrected in derived returns.
+                </p>
+              )}
               <p className="panel-sub">Quote: {lkr(dealerMove.dealer_price_lkr_per_8g)} · {dealerMove.date}</p>
               {dealerMove.source_urls?.map((url) => <p className="panel-sub" key={url}><a href={url} target="_blank" rel="noreferrer">{url}</a></p>)}
             </>
+          ) : attribution.suppressed_moves?.length ? (
+            <p className="text-muted">Attribution for {attribution.suppressed_moves.at(-1).previous_date} to {attribution.suppressed_moves.at(-1).date} is suppressed because Yahoo Finance LKR=X has an unverified move above 1.5%. Compare this interval with CBSL before using the split.</p>
           ) : <p className="text-muted">At least two dated dealer observations with market data are needed for attribution.</p>}
         </section>
 
@@ -281,7 +319,7 @@ export default function Home() {
       <JewellerCalculator
         initialPrice={currentPrice}
         initialPriceLabel={pricing.priceInputLabel}
-        riskData={risk}
+        riskData={allRisk}
       />
     </div>
   );

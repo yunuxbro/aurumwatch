@@ -5,8 +5,9 @@ import { daysSinceDate, todayInSriLanka } from "@/lib/date";
 export const dynamic = "force-dynamic";
 
 const SOURCES = [
-  ["World gold", "Stooq XAU/USD; fallback: futures proxy (GC=F), not spot."],
-  ["USD / LKR", "CBSL CSV when configured; Yahoo Finance LKR=X fallback."],
+  ["World gold", "Yahoo Finance GC=F futures closes (proxy, not spot)."],
+  ["USD / LKR", "Yahoo Finance LKR=X daily closes."],
+  ["CBSL gold reference", "CBSL indicative XAU/LKR daily table, fetched through AllRatesToday and refreshed hourly; a link to the provider is shown with the rate."],
   ["Pettah 22K", "Colombo Sea Street public quotes from Ada Derana and The Morning reports."],
   ["Dealer prices", "Public Sri Lankan dealer feed. Per-row rate dates and observation times are shown separately; it is not Pettah-specific."],
 ];
@@ -27,6 +28,20 @@ export default function Health() {
   const lastRun = refresh.finished_at
     ? new Date(refresh.finished_at).toLocaleString()
     : "No refresh run recorded";
+  const freshness = (item, sourceType) => {
+    if (item?.freshness?.status) return item.freshness;
+    const age = daysSinceDate(item?.latest_date, today);
+    if (age == null) return { status: "unavailable", working_days_old: null };
+    const observed = new Date(`${item.latest_date}T00:00:00Z`);
+    const current = new Date(`${today}T00:00:00Z`);
+    let weekdays = 0;
+    for (let day = new Date(observed); day < current; day.setUTCDate(day.getUTCDate() + 1)) {
+      const weekday = day.getUTCDay();
+      if (weekday !== 0 && weekday !== 6) weekdays += 1;
+    }
+    const limit = sourceType === "dealer" ? 3 : sourceType === "pettah" ? 3 : 5;
+    return { status: weekdays > limit ? "stale" : "current", working_days_old: weekdays };
+  };
 
   return (
     <div className="page">
@@ -55,11 +70,13 @@ export default function Health() {
         {refresh.error && <p className="refresh-error">{refresh.error}</p>}
         <div className="refresh-grid">
           {[
-            ["World gold", refreshData.world_gold],
-            ["USD / LKR", refreshData.usdlkr],
-            ["Pettah quotes", refreshData.pettah],
-            ["Dealer prices", refreshData.dealer_quotes],
-          ].map(([label, item]) => (
+            ["World gold", refreshData.world_gold, "gold"],
+            ["USD / LKR", refreshData.usdlkr, "fx"],
+            ["Pettah quotes", refreshData.pettah, "pettah"],
+            ["Dealer prices", refreshData.dealer_quotes, "dealer"],
+          ].map(([label, item, sourceType]) => {
+            const state = freshness(item, sourceType);
+            return (
             <div className="source-card" key={label}>
               <strong>{label}</strong>
               <p>
@@ -69,12 +86,12 @@ export default function Health() {
               </p>
               <p>{item?.rows ?? 0} stored observations</p>
               {item?.source && <p>Source: {item.source}</p>}
-              <span className={`badge ${item?.freshness?.status === "current" ? "badge-success" : item?.freshness?.status === "stale" ? "badge-warning" : "badge-neutral"}`}>
-                {item?.freshness?.status || "freshness unavailable"}
-                {item?.freshness?.working_days_old != null && ` · ${item.freshness.working_days_old} working days old`}
+              <span className={`badge ${state.status === "current" ? "badge-success" : state.status === "stale" ? "badge-warning" : "badge-neutral"}`}>
+                {state.status}
+                {state.working_days_old != null && ` · ${state.working_days_old} working days old`}
               </span>
             </div>
-          ))}
+          );})}
         </div>
         {refresh.warnings?.length > 0 && (
           <ul className="refresh-warnings" aria-label="Optional feed warnings">
@@ -95,7 +112,7 @@ export default function Health() {
           </ul>
         )}
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          Automatic scheduling requires installing the Windows Task Scheduler job from the project README.
+          Scheduled refresh runs through GitHub Actions at 12:00 Colombo time; each successful source update is committed and triggers the Vercel deployment.
           Feeds can fail or lag; a successful download does not guarantee a current Pettah retail price.
         </p>
       </section>
@@ -229,7 +246,7 @@ export default function Health() {
           <div>
             <h2 className="section-title">Walk-forward backtest</h2>
             <p className="section-sub">
-              Kupiec calibration for the proposed model against fixed-volatility and EWMA-normal baselines.
+              Calibration, interval width, and pinball loss for the joint gold/FX resampling model and two baselines.
             </p>
           </div>
           <span className="badge badge-neutral">5% / 1% tail targets</span>
@@ -242,6 +259,7 @@ export default function Health() {
                 <th scope="col">Horizon</th>
                 <th scope="col">Windows</th>
                 <th scope="col">Outside 95%</th>
+                <th scope="col">95% width</th>
                 <th scope="col">Outside 99%</th>
                 <th scope="col">Kupiec p · 95%</th>
                 <th scope="col">Kupiec p · 99%</th>
@@ -258,6 +276,7 @@ export default function Health() {
                     <td>{row.horizon} days</td>
                     <td>{row.n ?? "—"}</td>
                     <td>{row.outside_95 != null ? `${(row.outside_95 * 100).toFixed(1)}%` : "—"}</td>
+                    <td>{row.width_95 != null ? `${(row.width_95 * 100).toFixed(1)}%` : "—"}</td>
                     <td>{row.outside_99 != null ? `${(row.outside_99 * 100).toFixed(1)}%` : "—"}</td>
                     <td>{row.kupiec_p_95 != null ? row.kupiec_p_95.toFixed(3) : "—"}</td>
                     <td>{row.kupiec_p_99 != null ? row.kupiec_p_99.toFixed(3) : "—"}</td>
@@ -267,13 +286,16 @@ export default function Health() {
                 );
               })}
               {backtest.length === 0 && (
-                <tr><td colSpan={9}>No backtest results are available yet.</td></tr>
+                <tr><td colSpan={10}>No backtest results are available yet.</td></tr>
               )}
             </tbody>
           </table>
         </div>
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          If the outside-95% rate is below 5%, the interval was slightly conservative in this sample. Calibration is an empirical model check, not a guarantee of future performance.
+          The proposed model matches the baselines on calibration and pinball loss in this sample. It adds joint gold/FX resampling and current-volatility scaling, but these results do not prove it is better. Width is the mean 95% log-return interval as a percentage.
+        </p>
+        <p className="section-sub">
+          Close-based risk and backtest inputs use the full aligned market history ({health.market_rows_after_alignment ?? "—"} aligned gold/FX dates). The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.
         </p>
       </section>
     </div>

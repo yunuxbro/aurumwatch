@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 from db import get_conn
+from fx_review import reviewed_rate
 
 GRAMS_PER_OZ = 31.1035
 SOVEREIGN_G = 8
@@ -14,9 +15,13 @@ def market_daily():
     g = load("world_gold").dropna(subset=["usd_oz"]).drop_duplicates("date").sort_values("date")
     f = load("usdlkr").dropna(subset=["lkr_per_usd"]).drop_duplicates("date").sort_values("date")
     m = g[["date", "usd_oz"]].merge(f[["date", "lkr_per_usd"]], on="date", how="inner")
+    m["lkr_per_usd"] = [reviewed_rate(date, rate) for date, rate in zip(m.date, m.lkr_per_usd)]
     m["ret_world"] = np.log(m.usd_oz).diff()
     m["ret_fx"] = np.log(m.lkr_per_usd).diff()
-    m["flag_spike"] = (m.ret_world.abs() > 0.05) | (m.ret_fx.abs() > 0.05)  # flagged, never deleted
+    m["fx_crosscheck_corrected"] = m.date.dt.strftime("%Y-%m-%d").isin(
+        {"2026-11-02", "2026-11-03", "2026-11-04"}
+    )
+    m["flag_spike"] = (m.ret_world.abs() > 0.05) | (m.ret_fx.abs() > 0.05)
     return m
 
 def pettah_joined(karat=22):

@@ -170,8 +170,8 @@ function HistoricalMarketCandles({
           role="img"
           aria-label={`Daily ${selectedKarat} karat Sri Lankan rupee benchmark with dated Pettah and dealer observations`}
         >
-          {[0, 1, 2, 3].map((index) => {
-            const value = high - ((high - low) * index) / 3;
+          {[0, 1, 2, 3, 4].map((index) => {
+            const value = high - ((high - low) * index) / 4;
             const lineY = y(value);
             return (
               <g key={index}>
@@ -244,10 +244,17 @@ function HistoricalMarketCandles({
               )}
             </g>
           ))}
-          <text x={left} y={height - 8} className="candle-axis-label">{chartRows[0].date}</text>
-          <text x={width - right} y={height - 8} textAnchor="end" className="candle-axis-label">
-            {chartRows.at(-1).date}
-          </text>
+          {[0, 1, 2, 3, 4].map((tick) => {
+            const index = Math.round((chartRows.length - 1) * tick / 4);
+            const row = chartRows[index];
+            const tickX = x(index);
+            return (
+              <g key={`${tick}-${row.date}`}>
+                <line x1={tickX} x2={tickX} y1={top} y2={height - bottom} className="candle-grid candle-grid-x" />
+                <text x={tickX} y={height - 8} textAnchor="middle" className="candle-axis-label">{row.date.slice(0, 7)}</text>
+              </g>
+            );
+          })}
         </svg>
       </div>
 
@@ -341,7 +348,7 @@ export default function MarketCandles({ snapshot, dealerReference, localQuotes =
           </button>
         </div>
         <div className="market-candle-ranges" role="group" aria-label="Gold purity">
-          {[22, 24].map((karat) => (
+          {[24, 22, 18].map((karat) => (
             <button
               key={karat}
               type="button"

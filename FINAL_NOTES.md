@@ -10,8 +10,8 @@ revision adds:
 
 - Dated dealer price attribution, with the historical press-based Pettah
   breakdown retained under its own label.
-- Source and terms notes, visible feed provenance, and the explicit futures
-  proxy label when Stooq is unavailable.
+- Source and terms notes, visible feed provenance, and explicit Yahoo `GC=F`
+  futures proxy and `LKR=X` FX source labels.
 - Pettah report age, explicit no-data business days in candle history, and a
   stated gap length for the market close comparison.
 - The stock risk range at the top of Overview, and the ridge forecast and
@@ -43,13 +43,22 @@ revision adds:
   holidays. Missing market observations remain visible and are not estimated.
 - The risk simulation and ridge forecast are experimental. Historical
   resampling and a no-change comparison do not establish future performance.
+- On the 7-day holdout, outside-95% rates are 3.7% for the model, 4.0% for
+  fixed volatility, and 5.7% for EWMA-normal. Pinball loss rounds to 0.0033
+  for all three. Mean 95% widths are 13.9%, 11.8%, and 12.7%, respectively.
+  The model adds joint gold/FX resampling and current-volatility scaling, but
+  these results do not prove it is better.
+- The 2–4 November Yahoo USD/LKR closes were checked against CBSL: the 2nd
+  and 3rd were both Rs 332.60 and the 4th was Rs 332.64. Yahoo printed
+  Rs 322.44 and Rs 322.54 on the 2nd and 3rd, so derived market returns use
+  the CBSL cross-check values on those dates. The 4th Yahoo close is retained.
 
 ## Likely panel questions
 
-1. **Why use GC=F as a spot proxy?**
-   Stooq XAU/USD is preferred. If it fails, GC=F is only a futures proxy; its
-   basis can differ from spot, so the app labels it “futures proxy (GC=F), not
-   spot.” A licensed spot feed would be better.
+1. **What market data sources are running?**
+   Yahoo Finance `LKR=X` provides daily USD/LKR closes and `GC=F` provides gold
+   futures closes. `GC=F` is a futures proxy, not spot. CBSL is a cross-check,
+   not a configured feed.
 
 2. **Why is Pettah data stale?**
    The stored reports are dated news observations, not a dependable daily
@@ -81,6 +90,11 @@ revision adds:
    premium part is the residual, and an assertion checks that the three
    components sum exactly to the dealer move. The premium level is
    `ln(dealer) - ln(world equivalent)`.
+   Yahoo printed Rs 322.44 and Rs 322.54 on 2–3 November, while CBSL published
+   Rs 332.60 on both dates and Rs 332.64 on 4 November. We use those CBSL
+   cross-check values in derived returns; the 4 November Yahoo close is also
+   consistent. Attribution uses matched close-to-close dates, while dealer
+   prices are dated published listings.
 
 8. **Are the data sources licensed for production?**
    Not established for every source. Yahoo automation and redistribution need

@@ -27,7 +27,7 @@ src/                  Python ingestion, validation, analytics, and modelling
 tests/                Python tests
 data/                 Local source data, quote records, and refresh logs
 web/                  Next.js app, API routes, assets, and Node.js tests
-scripts/              Windows Task Scheduler setup for daily refresh
+scripts/              Local refresh utilities; scheduled refresh runs in GitHub Actions
 ```
 
 ## Architecture
@@ -92,24 +92,34 @@ forecast:
 npm run refresh
 ```
 
-The refresh writes the public JSON files consumed by the web app. It uses
-Stooq for world gold and labels Yahoo Finance `GC=F` as a futures proxy, not
-spot, when Stooq is unavailable. For USD/LKR, it uses
-`data/raw/cbsl_usdlkr.csv` when present and otherwise uses Yahoo Finance
-`LKR=X`; Data Health shows which source supplied the latest observation.
+The refresh writes the public JSON files consumed by the web app. The current
+refresh uses Yahoo Finance `GC=F` futures closes for gold (a proxy, not spot)
+and Yahoo Finance `LKR=X` daily closes for USD/LKR. A successful commit to the
+default branch triggers the Vercel deployment.
+Derived USD/LKR returns cross-check 2–4 November 2026 against CBSL; see
+[`DATA_SOURCES.md`](DATA_SOURCES.md) and the visible attribution note.
+Risk and backtest calculations use the aligned full daily close tables. The
+chart uses a separate OHLC export with fewer dates; missing chart candles do
+not mean those closes are missing from the risk engine.
 Dealer listings are collected separately; a dealer feed failure is reported
 in Data Health without blocking the other exports. Review
 [`DATA_SOURCES.md`](DATA_SOURCES.md) for terms notes and production alternatives.
 
-To schedule the refresh daily on Windows:
+GitHub Actions runs the refresh at 12:00 Colombo time on weekdays. Use
+`workflow_dispatch` in the Actions tab for a manual run before a presentation.
+The workflow commits refreshed JSON exports, which triggers Vercel's Git
+deployment. The former Windows Task Scheduler script remains available for
+local runs.
+
+To install a local Windows refresh instead:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\scripts\install_daily_refresh.ps1
 ```
 
-The default schedule is 07:00 local time. Set a different time with
+The default local schedule is 07:00. Set a different time with
 `-At "08:30"`. The task runs while your Windows user is signed in, starts
-missed runs when available, and appends logs to `data/logs/daily-refresh.log`.
+appends logs to `data/logs/daily-refresh.log`.
 
 ### Configure saved accounts and Google sign-in
 
@@ -165,9 +175,9 @@ Add the same URL to the Google OAuth client's authorized redirect URIs. After
 changing Vercel environment variables, redeploy so the new deployment uses
 them. Configure MongoDB Atlas Network Access so Vercel functions can connect.
 
-The Python refresh still needs to run separately to update the JSON snapshots
-served by the web app. For local Windows scheduling, see
-[`scripts/install_daily_refresh.ps1`](scripts/install_daily_refresh.ps1).
+The GitHub Actions refresh commits updated JSON snapshots; Vercel's Git
+integration deploys those changes. Configure GitHub Actions to allow the
+workflow to write repository contents.
 
 ## Optional GoldAPI live quotes
 

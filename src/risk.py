@@ -38,6 +38,7 @@ def stock_risk(
     today=None,
     start_source=None,
     start_date=None,
+    dealer_quote_count=None,
 ):
     today = pd.Timestamp(today or dt.date.today())
     total, sw, sf, market_date = simulate(horizon)
@@ -80,6 +81,7 @@ def stock_risk(
         "horizon_days": horizon,
         "start_price_8g": start_price,
         "start_source": source,
+        "dealer_quote_count": dealer_quote_count,
         "quote_date": str(quote_date.date()),
         "market_date": str(market_date.date()),
         "daily_vol": {"world": float(sw), "fx": float(sf)},

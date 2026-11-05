@@ -1,6 +1,6 @@
 {
   "status": "available",
-  "basis": "Synthetic 22K and 24K LKR/8g benchmarks from daily gold and USD/LKR OHLC. High/low are conservative, non-synchronous envelopes; these are not observed Pettah or intraday retail prices. Local quote markers distinguish Pettah news reports from published Sri Lankan dealer listings.",
+  "basis": "Synthetic 22K and 24K LKR/8g benchmarks from daily gold and USD/LKR OHLC. Gold source: futures proxy (GC=F), not spot. High/low are conservative, non-synchronous envelopes; these are not observed Pettah or intraday retail prices. Local quote markers distinguish Pettah news reports from published Sri Lankan dealer listings.",
   "rows": [
     {
       "date": "2015-01-05",

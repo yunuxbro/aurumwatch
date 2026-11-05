@@ -12,11 +12,6 @@ const WEIGHT_PRESETS = [
   { label: "1 kg",        grams: 1000 },
 ];
 
-const MODEL = {
-  7:  { p5: 0.932, p50: 1.001, p95: 1.071, fall5: 0.168, fall10: 0.032, worstPremium: -0.0812 },
-  14: { p5: 0.902, p50: 1.002, p95: 1.102, fall5: 0.245, fall10: 0.076, worstPremium: -0.0812 },
-};
-
 function Metric({ label, value, sub, valueStyle }) {
   return (
     <div className="metric-tile">
@@ -32,6 +27,7 @@ export default function JewellerCalculator({
   initialPriceLabel = "22K price input",
   dealerQuoteRows = [],
   today,
+  riskData = {},
 }) {
   const [horizon, setHorizon]     = useState(7);
   const [karat, setKarat]         = useState(22);
@@ -46,16 +42,26 @@ export default function JewellerCalculator({
   const selectedShop = dealerShopQuotes.find((quote) => quote.id === selectedShopId) || null;
   const hasPrice = Number.isFinite(price) && price > 0;
 
-  const f                = MODEL[horizon];
+  const activeRisk = riskData[`h${horizon}`]
+    || (riskData.horizon_days === horizon ? riskData : null);
+  const baselinePrice = activeRisk?.start_price_8g;
+  const f = activeRisk?.status === "ok" && baselinePrice > 0 ? {
+    p5: activeRisk.range_8g.p5 / baselinePrice,
+    p50: activeRisk.range_8g.p50 / baselinePrice,
+    p95: activeRisk.range_8g.p95 / baselinePrice,
+    fall5: activeRisk.prob_fall_5pct,
+    fall10: activeRisk.prob_fall_10pct,
+    worstPremium: activeRisk.worst_premium_move,
+  } : null;
   const karatMult        = karat === 24 ? 24 / 22 : 1;
   const pricePer8g       = hasPrice ? price * karatMult : null;
   const sovereigns       = grams / 8;
   const totalValue       = hasPrice ? sovereigns * pricePer8g : null;
-  const valP5            = totalValue == null ? null : totalValue * f.p5;
-  const valP50           = totalValue == null ? null : totalValue * f.p50;
-  const valP95           = totalValue == null ? null : totalValue * f.p95;
-  const varDownside      = totalValue == null ? null : totalValue - valP5;
-  const premiumStressLoss= totalValue == null ? null : totalValue * (1 - Math.exp(f.worstPremium));
+  const valP5            = totalValue == null || !f ? null : totalValue * f.p5;
+  const valP50           = totalValue == null || !f ? null : totalValue * f.p50;
+  const valP95           = totalValue == null || !f ? null : totalValue * f.p95;
+  const varDownside      = totalValue == null || !f ? null : totalValue - valP5;
+  const premiumStressLoss= totalValue == null || !f ? null : totalValue * (1 - Math.exp(f.worstPremium));
 
   const s = {
     card: {
@@ -307,10 +313,10 @@ export default function JewellerCalculator({
             </div>
 
             {/* 95% range */}
-            <div className="card-inset" style={{ padding: "1rem" }}>
+            {f ? <div className="card-inset" style={{ padding: "1rem" }}>
               <p style={{ fontSize: "0.75rem", fontWeight: 600, color: "var(--text-secondary)",
                 marginBottom: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                {horizon}-Day Simulated 95% Range
+                {horizon}-Day Backend risk range
               </p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem" }}>
                 {[
@@ -363,7 +369,7 @@ export default function JewellerCalculator({
                   </div>
                 ))}
               </div>
-            </div>
+            </div> : <p className="section-sub">The backend risk range is unavailable for this horizon.</p>}
           </div>
         </div>
 

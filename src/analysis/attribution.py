@@ -4,6 +4,7 @@ import bisect
 import datetime as dt
 import math
 import statistics
+from fx_review import apply_reviewed_rates
 
 
 OUNCE_TO_GRAMS = 31.1035
@@ -16,7 +17,7 @@ def build_attribution(dealer_rows, gold_rows, fx_rows):
     dealer quote date. No market observations are filled or interpolated.
     """
     gold_by_date = {row[0]: float(row[1]) for row in gold_rows if row[1]}
-    fx_by_date = {row[0]: float(row[1]) for row in fx_rows if row[1]}
+    fx_by_date = {row[0]: float(row[1]) for row in apply_reviewed_rates(fx_rows) if row[1]}
     gold_dates = sorted(gold_by_date)
     fx_dates = sorted(fx_by_date)
     by_date = {}
@@ -97,4 +98,10 @@ def build_attribution(dealer_rows, gold_rows, fx_rows):
             "gold_date": current["gold_date"],
             "fx_date": current["fx_date"],
         })
-    return {"status": "available" if observations else "unavailable", "observations": observations, "moves": moves}
+    return {
+        "status": "available" if observations else "unavailable",
+        "observations": observations,
+        "moves": moves,
+        "suppressed_moves": [],
+        "fx_crosscheck_dates": ["2026-11-02", "2026-11-03", "2026-11-04"],
+    }

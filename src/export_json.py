@@ -1,5 +1,5 @@
 import argparse, json, pathlib
-from clean import pettah_joined
+from clean import market_daily, pettah_joined
 from decompose import decompose
 from risk import stock_risk
 from anomaly import flag_premium_jumps
@@ -9,6 +9,7 @@ from market_reference import build_local_dealer_reference, build_market_referenc
 from market_candles import build_market_candles
 from local_quotes import build_local_quote_history
 from analysis.attribution import build_attribution
+from fx_review import reviewed_rate
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "web" / "public" / "data"
 
@@ -37,9 +38,9 @@ def market_reference():
         ).fetchone()
     if gold is None or fx is None:
         return {"status": "unavailable"}
-    return build_market_reference(
-        gold[0], gold[1], gold[2], fx[0], fx[1], fx[2]
-    )
+    fx_rate = reviewed_rate(fx[0], fx[1])
+    fx_source = f"{fx[2]} + CBSL cross-check" if fx_rate != fx[1] else fx[2]
+    return build_market_reference(gold[0], gold[1], gold[2], fx[0], fx_rate, fx_source)
 
 def dealer_quotes():
     with get_conn() as connection:
@@ -110,6 +111,23 @@ def dealer_attribution():
         ).fetchall()
     return build_attribution(dealer_rows, gold_rows, fx_rows)
 
+def market_history():
+    market = market_daily().dropna(subset=["usd_oz", "lkr_per_usd"]).copy()
+    market["world_equivalent"] = (
+        market.usd_oz * market.lkr_per_usd / 31.1035 * 8 * 22 / 24
+    )
+    pettah = pettah_joined(22)
+    markers = rows(pettah[["date", "market_date", "local", "lag_days"]])
+    for marker in markers:
+        marker["price_lkr_per_8g"] = marker.pop("local")
+    return {
+        "status": "available" if len(market) else "unavailable",
+        "as_of_date": market.date.max().strftime("%Y-%m-%d") if len(market) else None,
+        "rows": rows(market[["date", "world_equivalent"]]),
+        "pettah_markers": markers,
+        "basis": "Daily 22K world-equivalent close from international gold and USD/LKR; Pettah reports remain dated point observations.",
+    }
+
 def main(price=None):
     j = pettah_joined(22)
     dealer_data = dealer_quotes()
@@ -128,14 +146,15 @@ def main(price=None):
     write("moves", rows(decompose(22)))
     write("anomalies", rows(flag_premium_jumps(22)))
     write("risk", {
-        "h7": stock_risk(7, risk_price, start_source=risk_source, start_date=risk_date),
-        "h14": stock_risk(14, risk_price, start_source=risk_source, start_date=risk_date),
+        "h7": stock_risk(7, risk_price, start_source=risk_source, start_date=risk_date, dealer_quote_count=dealer_reference.get("quote_count")),
+        "h14": stock_risk(14, risk_price, start_source=risk_source, start_date=risk_date, dealer_quote_count=dealer_reference.get("quote_count")),
     })
     write("health", report())
     write("market_reference", reference)
     write("dealer_quotes", dealer_data)
     write("local_quotes", local_quote_history())
     write("attribution", dealer_attribution())
+    write("market_history", market_history())
     write("candles", build_market_candles())
 
 if __name__ == "__main__":

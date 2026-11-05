@@ -38,10 +38,10 @@
     {
       "date": "2026-11-02",
       "dealer_price_lkr_per_8g": 326600.0,
-      "world_equivalent_lkr_per_8g": 301778.9244244701,
-      "dealer_premium": 0.07904146956195568,
+      "world_equivalent_lkr_per_8g": 311287.1309720805,
+      "dealer_premium": 0.048020443576843874,
       "gold_usd_per_oz": 3969.60009765625,
-      "usd_lkr": 322.4407958984375,
+      "usd_lkr": 332.6,
       "gold_date": "2026-11-02",
       "fx_date": "2026-11-02",
       "source": "Published dealer listings",
@@ -60,10 +60,10 @@
     {
       "date": "2026-11-03",
       "dealer_price_lkr_per_8g": 326600.0,
-      "world_equivalent_lkr_per_8g": 299650.7426896784,
-      "dealer_premium": 0.08611857511136911,
+      "world_equivalent_lkr_per_8g": 308997.3171875586,
+      "dealer_premium": 0.05540358591722061,
       "gold_usd_per_oz": 3940.39990234375,
-      "usd_lkr": 322.53948974609375,
+      "usd_lkr": 332.6,
       "gold_date": "2026-11-03",
       "fx_date": "2026-11-03",
       "source": "Published dealer listings",
@@ -79,10 +79,10 @@
     {
       "date": "2026-11-04",
       "dealer_price_lkr_per_8g": 328000.0,
-      "world_equivalent_lkr_per_8g": 317677.00993283343,
-      "dealer_premium": 0.03197843380377563,
+      "world_equivalent_lkr_per_8g": 317692.85151540424,
+      "dealer_premium": 0.0319285681002377,
       "gold_usd_per_oz": 4050.800048828125,
-      "usd_lkr": 332.6234130859375,
+      "usd_lkr": 332.64,
       "gold_date": "2026-11-04",
       "fx_date": "2026-11-04",
       "source": "Published dealer listings",
@@ -121,10 +121,10 @@
       "previous_date": "2026-10-19",
       "dealer_log_return": -0.010356473924161946,
       "world_log_return": -0.04687377736385722,
-      "rupee_log_return": 0.0015235332430497044,
-      "dealer_premium_log_return": 0.03499377019664557,
+      "rupee_log_return": 0.032544559228161546,
+      "dealer_premium_log_return": 0.003972744211533728,
       "dealer_price_lkr_per_8g": 326600.0,
-      "world_equivalent_lkr_per_8g": 301778.9244244701,
+      "world_equivalent_lkr_per_8g": 311287.1309720805,
       "source": "Published dealer listings",
       "institutions": [
         "CMB Gold",
@@ -145,10 +145,10 @@
       "previous_date": "2026-11-02",
       "dealer_log_return": 0.0,
       "world_log_return": -0.0073831423403770335,
-      "rupee_log_return": 0.0003060367909630514,
-      "dealer_premium_log_return": 0.007077105549413982,
+      "rupee_log_return": 0.0,
+      "dealer_premium_log_return": 0.0073831423403770335,
       "dealer_price_lkr_per_8g": 326600.0,
-      "world_equivalent_lkr_per_8g": 299650.7426896784,
+      "world_equivalent_lkr_per_8g": 308997.3171875586,
       "source": "Published dealer listings",
       "institutions": [
         "Devi Jewellers",
@@ -166,10 +166,10 @@
       "previous_date": "2026-11-03",
       "dealer_log_return": 0.004277427847778625,
       "world_log_return": 0.02763218831388635,
-      "rupee_log_return": 0.030785380841485865,
-      "dealer_premium_log_return": -0.05414014130759359,
+      "rupee_log_return": 0.00012025735087527955,
+      "dealer_premium_log_return": -0.023475017816983003,
       "dealer_price_lkr_per_8g": 328000.0,
-      "world_equivalent_lkr_per_8g": 317677.00993283343,
+      "world_equivalent_lkr_per_8g": 317692.85151540424,
       "source": "Published dealer listings",
       "institutions": [
         "Devi Jewellers",
@@ -182,5 +182,11 @@
       "gold_date": "2026-11-04",
       "fx_date": "2026-11-04"
     }
+  ],
+  "suppressed_moves": [],
+  "fx_crosscheck_dates": [
+    "2026-11-02",
+    "2026-11-03",
+    "2026-11-04"
   ]
 }

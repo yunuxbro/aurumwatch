@@ -4,6 +4,8 @@
   "dates_in_gold_not_fx": 4,
   "dates_in_fx_not_gold": 108,
   "market_rows_after_alignment": 2974,
+  "risk_engine_close_rows": 2973,
+  "fx_crosscheck_dates_corrected": 3,
   "spike_days_flagged": 12,
   "nonpositive_values": 0,
   "pettah_rows": 14,

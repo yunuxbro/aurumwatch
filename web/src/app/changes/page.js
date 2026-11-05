@@ -2,6 +2,7 @@ import { getData } from "@/lib/data";
 import { pct, lkr } from "@/lib/format";
 import LineChart from "@/components/LineChart";
 import MarketCandles from "@/components/MarketCandles";
+import CbslGoldReference from "@/components/CbslGoldReference";
 
 export const dynamic = "force-dynamic";
 
@@ -10,6 +11,7 @@ export default function ChangesPage() {
   const localQuotes = getData("local_quotes") || [];
   const moves = getData("moves") || [];
   const candles = getData("candles") || {};
+  const marketHistory = getData("market_history") || {};
   const market = getData("market_reference") || {};
   const latestPettahDate = history.at(-1)?.date;
   const latestLocalQuote = localQuotes.at(-1);
@@ -19,8 +21,7 @@ export default function ChangesPage() {
     : null;
 
   const chartLines = [
-    { key: "local", label: "Pettah 22K (8g)", color: "var(--chart-gold)" },
-    { key: "local_equiv", label: "World equivalent (LKR)", color: "var(--chart-world)" },
+    { key: "world_equivalent", label: "Daily world equivalent · 22K / 8 g", color: "var(--chart-world)" },
   ];
 
   return (
@@ -34,28 +35,37 @@ export default function ChangesPage() {
       <section className="card panel">
         <div className="section-header">
           <div>
-            <h2 className="section-title">Reported Pettah news history</h2>
+            <h2 className="section-title">Pettah reports and daily world equivalent</h2>
             <p className="section-sub">
-              LKR per 8 g · reported Pettah quote versus the world-equivalent value on that quote date
+              Daily 22K world-equivalent closes with dated Pettah reports overlaid as individual points.
+              {marketHistory.as_of_date ? ` · market data through ${marketHistory.as_of_date}` : ""}
               {latestPettahDate ? ` · last Pettah report ${latestPettahDate}` : ""}
             </p>
           </div>
-          <span className="badge badge-neutral">{history.length} quotes</span>
+          <span className="badge badge-neutral">{history.length} Pettah reports</span>
         </div>
         <div className="chart-frame">
-          <LineChart data={history} lines={chartLines} height={280} />
+          <LineChart
+            data={marketHistory.rows || []}
+            markers={marketHistory.pettah_markers || []}
+            lines={chartLines}
+            height={330}
+            dataUrl="/data/market_history.json"
+          />
         </div>
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          This archive contains only news-reported Pettah observations. When no recent report exists, the benchmark below shows dated Sri Lankan dealer listings as a separate local reference instead of presenting the old Pettah date as today&apos;s price.
+          The market line refreshes from the daily gold/FX exports while this page is open. Pettah points update when a new dated report is added to the source archive; no prices are interpolated. Dealer listings remain a separate local reference.
         </p>
       </section>
+
+      <CbslGoldReference />
 
       <section className="card panel">
         <div className="section-header">
           <div>
             <h2 className="section-title">Daily market benchmark</h2>
             <p className="section-sub">
-              Select either 22K or 24K daily OHLC candles (LKR/8 g), derived from international gold and USD/LKR data and overlaid with dated local observations.
+              Select 24K, 22K, or 18K daily OHLC candles (LKR/8 g), derived from international gold and USD/LKR data and overlaid with dated local observations.
               {candles.rows?.length ? ` · feed through ${candles.rows.at(-1).date}` : ""}
               {latestLocalQuote ? ` · latest local observation ${latestLocalQuote.date} (${latestLocalQuote.source})` : ""}
             </p>

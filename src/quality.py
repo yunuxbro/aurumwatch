@@ -9,6 +9,8 @@ def report():
     out["dates_in_gold_not_fx"] = len(set(g.date) - set(f.date))
     out["dates_in_fx_not_gold"] = len(set(f.date) - set(g.date))
     out["market_rows_after_alignment"] = len(m)
+    out["risk_engine_close_rows"] = int(m.dropna(subset=["ret_world", "ret_fx"]).shape[0])
+    out["fx_crosscheck_dates_corrected"] = int(m.fx_crosscheck_corrected.sum())
     out["spike_days_flagged"] = int(m.flag_spike.sum())
     out["nonpositive_values"] = int((g.usd_oz <= 0).sum() + (f.lkr_per_usd <= 0).sum())
     out["pettah_rows"] = len(p)
