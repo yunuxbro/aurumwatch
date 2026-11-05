@@ -1,90 +1,89 @@
 {
   "status": "success",
-  "started_at": "2026-11-04T15:02:01+00:00",
-  "finished_at": "2026-11-04T15:02:46+00:00",
-  "duration_seconds": 45.5,
-  "last_success_at": "2026-11-04T15:02:46+00:00",
+  "started_at": "2026-11-05T14:50:11+00:00",
+  "finished_at": "2026-11-05T14:50:19+00:00",
+  "duration_seconds": 7.7,
+  "last_success_at": "2026-11-05T14:50:19+00:00",
   "error": null,
   "warnings": [],
   "steps": [
     {
       "name": "load_pettah",
       "status": "success",
-      "started_at": "2026-11-04T15:02:01+00:00",
+      "started_at": "2026-11-05T14:50:11+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "world_gold",
       "status": "success",
-      "started_at": "2026-11-04T15:02:02+00:00",
+      "started_at": "2026-11-05T14:50:11+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "usd_lkr",
       "status": "success",
-      "started_at": "2026-11-04T15:02:18+00:00",
+      "started_at": "2026-11-05T14:50:13+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "dealer_prices",
       "status": "success",
-      "started_at": "2026-11-04T15:02:25+00:00",
+      "started_at": "2026-11-05T14:50:14+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "backtest",
       "status": "success",
-      "started_at": "2026-11-04T15:02:31+00:00",
+      "started_at": "2026-11-05T14:50:16+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "market_model",
       "status": "success",
-      "started_at": "2026-11-04T15:02:39+00:00",
+      "started_at": "2026-11-05T14:50:18+00:00",
       "return_code": 0,
       "error": null
     },
     {
       "name": "export",
       "status": "success",
-      "started_at": "2026-11-04T15:02:42+00:00",
+      "started_at": "2026-11-05T14:50:18+00:00",
       "return_code": 0,
       "error": null
     }
   ],
   "data": {
     "world_gold": {
-      "latest_date": "2026-11-04",
+      "latest_date": "2026-11-05",
       "age_days": 0,
-      "rows": 2978,
-      "source": "futures proxy (GC=F), not spot",
+      "rows": 2979,
       "freshness": {
         "status": "current",
-        "working_days_old": 1,
+        "working_days_old": 0,
         "max_working_days": 5
-      }
+      },
+      "source": "futures proxy (GC=F), not spot"
     },
     "usdlkr": {
-      "latest_date": "2026-11-04",
+      "latest_date": "2026-11-05",
       "age_days": 0,
-      "rows": 3082,
-      "source": "Yahoo Finance LKR=X + CBSL cross-check",
+      "rows": 3083,
       "freshness": {
         "status": "current",
-        "working_days_old": 1,
+        "working_days_old": 0,
         "max_working_days": 5
-      }
+      },
+      "source": "Yahoo Finance LKR=X fallback"
     },
     "pettah": {
       "latest_date": "2026-05-06",
-      "age_days": 182,
+      "age_days": 183,
       "rows": 14,
-      "source": "Public-source press quotes",
       "freshness": {
         "status": "stale",
         "working_days_old": 131,
@@ -92,22 +91,21 @@
       }
     },
     "dealer_quotes": {
-      "latest_date": "2026-11-04",
+      "latest_date": "2026-11-05",
       "age_days": 0,
-      "observed_at": "2026-11-04T11:23:00+00:00",
-      "fetched_at": "2026-11-04T15:02:31+00:00",
+      "observed_at": "2026-11-05T10:48:00+00:00",
+      "fetched_at": "2026-11-05T14:50:16+00:00",
       "rows": 51,
-      "source": "Published Sri Lankan dealer feed",
       "freshness": {
         "status": "current",
-        "working_days_old": 1,
+        "working_days_old": 0,
         "max_working_days": 3
       }
     }
   },
   "source_notes": {
-    "world_gold": "Yahoo Finance GC=F futures closes (proxy, not spot).",
-    "usdlkr": "Yahoo Finance LKR=X daily closes; CBSL cross-check corrections applied to 2026-11-02 through 2026-11-04 in derived analytics.",
+    "world_gold": "Yahoo Finance GC=F futures proxy, not spot.",
+    "usdlkr": "Yahoo Finance LKR=X daily closes; CBSL cross-checks correct 2026-11-02 through 2026-11-04 in derived analytics.",
     "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
     "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific."
   }
