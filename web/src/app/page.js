@@ -161,6 +161,11 @@ export default function Home() {
             </span>
           </div>
         </div>
+        {market.fx_date === "2026-11-05" && market.fx_source?.includes("Yahoo") && (
+          <p className="section-sub" style={{ marginTop: ".5rem" }}>
+            5 Nov FX input: Yahoo LKR=X Rs {Number(market.usd_lkr).toFixed(4)} (fallback; CBSL CSV was not configured). Manual CBSL cross-check: Rs 332.7858 via <a href="https://allratestoday.com/central-bank-rates-api/cbsl/" target="_blank" rel="noreferrer">AllRatesToday</a>; the reference was not substituted.
+          </p>
+        )}
 
         {(candles.rows?.length > 0 || history.length > 1) && (
           <div className="hero-chart">

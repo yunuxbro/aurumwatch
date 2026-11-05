@@ -78,7 +78,8 @@
         "working_days_old": 0,
         "max_working_days": 5
       },
-      "source": "Yahoo Finance LKR=X fallback"
+      "source": "Yahoo Finance LKR=X fallback",
+      "source_reason": "No configured data/raw/cbsl_usdlkr.csv was present in the scheduled runner; its FX loader therefore used Yahoo Finance LKR=X. CBSL was not fetched by this pipeline run."
     },
     "pettah": {
       "latest_date": "2026-05-06",
@@ -88,7 +89,8 @@
         "status": "stale",
         "working_days_old": 131,
         "max_working_days": 3
-      }
+      },
+      "source": "Pettah press archive (Ada Derana and The Morning)"
     },
     "dealer_quotes": {
       "latest_date": "2026-11-05",
@@ -100,13 +102,14 @@
         "status": "current",
         "working_days_old": 0,
         "max_working_days": 3
-      }
+      },
+      "source": "Published Sri Lankan dealer feed"
     }
   },
   "source_notes": {
     "world_gold": "Yahoo Finance GC=F futures proxy, not spot.",
-    "usdlkr": "Yahoo Finance LKR=X daily closes; CBSL cross-checks correct 2026-11-02 through 2026-11-04 in derived analytics.",
-    "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
-    "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific."
+    "usdlkr": "No configured data/raw/cbsl_usdlkr.csv was present in the scheduled runner; its FX loader therefore used Yahoo Finance LKR=X. CBSL was not fetched by this pipeline run. A manual same-date check via AllRatesToday found CBSL Rs 332.7858 and Yahoo Rs 332.5034 on 2026-11-05; this was not substituted. Historical CBSL overrides in derived analytics are limited to 2-4 Nov 2026.",
+    "pettah": "Public-source dated press quotes from Ada Derana and The Morning; loaded from data/pettah_quotes.csv.",
+    "dealer_quotes": "Published Sri Lankan dealer feed; each observation retains its rate date and fetched time and is not identified as Pettah-specific."
   }
 }

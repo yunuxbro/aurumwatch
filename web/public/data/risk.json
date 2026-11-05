@@ -3,39 +3,40 @@
     "status": "ok",
     "notes": [],
     "horizon_days": 7,
-    "start_price_8g": 338536.0,
+    "start_price_8g": 328000.0,
     "start_source": "current Sri Lankan 22K dealer median",
-    "dealer_quote_count": 4,
-    "quote_date": "2026-11-05",
+    "dealer_quote_count": 2,
+    "quote_date": "2026-11-04",
     "market_date": "2026-11-05",
     "daily_vol": {
-      "world": 0.015233842163004078,
-      "fx": 0.006978793413518015
+      "world": 0.015106401874751908,
+      "fx": 0.006978793398542812
     },
     "range_8g": {
-      "p1": 302595.74297823204,
-      "p5": 314757.3262847638,
-      "p25": 330904.24813224724,
-      "p50": 341015.40683826414,
-      "p75": 351808.27457548206,
-      "p95": 367811.5371292558,
-      "p99": 381614.50098305056
+      "p1": 293232.3591130257,
+      "p5": 305026.909272671,
+      "p25": 320429.56644004787,
+      "p50": 330468.09108143114,
+      "p75": 340912.0563787178,
+      "p95": 356745.13832988404,
+      "p99": 369596.3172936707
     },
     "stock_1kg_lkr": {
-      "p1": 37824467.872279,
-      "p5": 39344665.78559548,
-      "p25": 41363031.01653091,
-      "p50": 42626925.85478302,
-      "p75": 43976034.32193526,
-      "p95": 45976442.14115698,
-      "p99": 47701812.62288132
+      "p1": 36654044.889128216,
+      "p5": 38128363.65908387,
+      "p25": 40053695.80500598,
+      "p50": 41308511.385178894,
+      "p75": 42614007.04733973,
+      "p95": 44593142.29123551,
+      "p99": 46199539.66170884
     },
-    "prob_fall_5pct": 0.1085,
-    "prob_fall_10pct": 0.0127,
+    "prob_fall_5pct": 0.1084,
+    "prob_fall_10pct": 0.0133,
     "worst_premium_move": -0.08122848100353863,
-    "premium_stress_8g": 312124.44087378663,
+    "premium_stress_8g": 302410.42786174006,
     "assumptions": [
       "Premium held constant in the range; range covers world gold and rupee only.",
+      "Risk FX input applies the documented Yahoo reversal filter; market history and attribution remain unfiltered.",
       "Premium stress uses the worst move seen in a very short history (experimental).",
       "Volatility held at the latest EWMA level over the horizon. No point forecast. Not advice."
     ]
@@ -44,39 +45,40 @@
     "status": "ok",
     "notes": [],
     "horizon_days": 14,
-    "start_price_8g": 338536.0,
+    "start_price_8g": 328000.0,
     "start_source": "current Sri Lankan 22K dealer median",
-    "dealer_quote_count": 4,
-    "quote_date": "2026-11-05",
+    "dealer_quote_count": 2,
+    "quote_date": "2026-11-04",
     "market_date": "2026-11-05",
     "daily_vol": {
-      "world": 0.015233842163004078,
-      "fx": 0.006978793413518015
+      "world": 0.015106401874751908,
+      "fx": 0.006978793398542812
     },
     "range_8g": {
-      "p1": 291781.0897111484,
-      "p5": 307244.7399376524,
-      "p25": 328462.074185008,
-      "p50": 343188.6894006101,
-      "p75": 358380.09790153283,
-      "p95": 381900.0407443548,
-      "p99": 402744.211589359
+      "p1": 283216.5929950592,
+      "p5": 297579.608983976,
+      "p25": 318487.2047978081,
+      "p50": 332903.36632817134,
+      "p75": 347968.9566439064,
+      "p95": 370707.4628036469,
+      "p99": 389739.4900257679
     },
     "stock_1kg_lkr": {
-      "p1": 36472636.21389355,
-      "p5": 38405592.49220655,
-      "p25": 41057759.273126,
-      "p50": 42898586.17507626,
-      "p75": 44797512.2376916,
-      "p95": 47737505.09304435,
-      "p99": 50343026.44866987
+      "p1": 35402074.1243824,
+      "p5": 37197451.122997,
+      "p25": 39810900.59972601,
+      "p50": 41612920.791021414,
+      "p75": 43496119.5804883,
+      "p95": 46338432.850455865,
+      "p99": 48717436.25322098
     },
-    "prob_fall_5pct": 0.1602,
-    "prob_fall_10pct": 0.0397,
+    "prob_fall_5pct": 0.1668,
+    "prob_fall_10pct": 0.0379,
     "worst_premium_move": -0.08122848100353863,
-    "premium_stress_8g": 312124.44087378663,
+    "premium_stress_8g": 302410.42786174006,
     "assumptions": [
       "Premium held constant in the range; range covers world gold and rupee only.",
+      "Risk FX input applies the documented Yahoo reversal filter; market history and attribution remain unfiltered.",
       "Premium stress uses the worst move seen in a very short history (experimental).",
       "Volatility held at the latest EWMA level over the horizon. No point forecast. Not advice."
     ]

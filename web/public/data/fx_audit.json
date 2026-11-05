@@ -5,15 +5,15 @@
   "reference": "CBSL USD/LKR indicative spot via Macro Lab",
   "reference_url": "https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/",
   "reference_points": 3529,
-  "yahoo_rows": 3082,
+  "yahoo_rows": 3083,
   "matched_dates": 2853,
-  "absolute_level_gap_median_pct": 1.3173323207168242,
-  "absolute_level_gap_p95_pct": 2.816355335273093,
+  "absolute_level_gap_median_pct": 1.3177452258396283,
+  "absolute_level_gap_p95_pct": 2.816775538117302,
   "absolute_level_gap_max_pct": 11.973854347511569,
-  "level_gap_over_1pct_dates": 1909,
-  "daily_log_return_correlation": 0.3384632310078077,
+  "level_gap_over_1pct_dates": 1910,
+  "daily_log_return_correlation": 0.33947914625506964,
   "return_difference_threshold_bps": 100,
-  "return_difference_over_threshold_dates": 282,
+  "return_difference_over_threshold_dates": 281,
   "return_difference_dates": [
     {
       "date": "2015-01-29",
@@ -1981,13 +1981,6 @@
       "cbsl_return_pct": -1.9832245955937466,
       "absolute_difference_bps": 126.97891459222177,
       "overlaps_spike_flag": false
-    },
-    {
-      "date": "2026-11-04",
-      "yahoo_return_pct": 3.07853808414853,
-      "cbsl_return_pct": 0.012025735087561884,
-      "absolute_difference_bps": 306.6512349060968,
-      "overlaps_spike_flag": false
     }
   ],
   "existing_spike_flag_dates": [
@@ -2011,7 +2004,7 @@
     "2023-03-22"
   ],
   "return_difference_spike_overlap_count": 4,
-  "yahoo_dates_without_cbsl_observation": 229,
+  "yahoo_dates_without_cbsl_observation": 230,
   "cbsl_dates_without_yahoo_observation": 676,
   "interpretation": "Differences are not automatically erroneous prints: Yahoo LKR=X and CBSL indicative spot are distinct published series.",
   "licence_note": "Macro Lab charts and text are CC BY 4.0; underlying values belong to CBSL. CBSL reuse terms were not independently verified."

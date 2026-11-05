@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 const SOURCES = [
   ["World gold", "Yahoo Finance GC=F futures closes (proxy, not spot)."],
-  ["USD / LKR", "Yahoo Finance LKR=X daily closes; cross-checked against CBSL's indicative USD/LKR spot series via Macro Lab (CBSL Data Library plus CBSL exchange-rate lookup pages)."],
+  ["USD / LKR", "The ingest step uses the configured CBSL CSV when present; otherwise it falls back to Yahoo Finance LKR=X. The refresh card shows the source and fallback reason for the latest date."],
   ["CBSL gold reference", "CBSL indicative XAU/LKR daily table, fetched through AllRatesToday and refreshed hourly; a link to the provider is shown with the rate."],
   ["Pettah 22K", "14 archived Colombo Sea Street quotes from Ada Derana and The Morning; newest is 2026-05-06. Search through 2026-11-05 found no qualifying Oct-Nov 2026 quote to add."],
   ["Dealer prices", "Public Sri Lankan dealer feed. Per-row rate dates and observation times are shown separately; it is not Pettah-specific."],
@@ -16,10 +16,23 @@ export default function Health() {
   const health = getData("health") || {};
   const backtest = getData("backtest") || [];
   const backtestRegime = getData("backtest_regime") || [];
+  const backtestFxSensitivity = getData("backtest_fx_sensitivity") || [];
+  const backtestFxSensitivityRegime = getData("backtest_fx_sensitivity_regime") || [];
   const fxAudit = getData("fx_audit") || {};
   const refresh = getData("refresh") || {};
   const forecast = getData("ml_forecast") || {};
   const market = getData("market_reference") || {};
+  const filterAuditStats = backtestFxSensitivity.find((row) => row.fx_version === "yahoo_reversal_filter") || {};
+  const auditDifferenceCount = fxAudit.return_difference_over_threshold_dates ?? 0;
+  const filterFlagCount = filterAuditStats.fx_filter_flagged_days ?? 75;
+  const filterAuditOverlap = filterAuditStats.fx_filter_overlap_with_return_audit ?? 63;
+  const sensitivityRows = backtestFxSensitivity;
+  const fxVersionLabel = (version) => ({
+    raw_yahoo: "Raw Yahoo",
+    yahoo_reviewed_unfiltered: "Yahoo + reviewed CBSL overrides (control)",
+    yahoo_reversal_filter: "Yahoo + reversal filter",
+    cbsl_primary_yahoo_gap_fill: "CBSL primary + Yahoo gap fill",
+  }[version] || version);
   const forecastIsCurrent = forecast.status === "available"
     && refresh.status === "success"
     && refresh.steps?.some((step) => step.name === "market_model" && step.status === "success")
@@ -88,6 +101,7 @@ export default function Health() {
               </p>
               <p>{item?.rows ?? 0} stored observations</p>
               {item?.source && <p>Source: {item.source}</p>}
+              {item?.source_reason && <p className="section-sub">{item.source_reason}</p>}
               <span className={`badge ${state.status === "current" ? "badge-success" : state.status === "stale" ? "badge-warning" : "badge-neutral"}`}>
                 {state.status}
                 {state.working_days_old != null && ` · ${state.working_days_old} working days old`}
@@ -95,6 +109,11 @@ export default function Health() {
             </div>
           );})}
         </div>
+        {market.fx_date === "2026-11-05" && market.fx_source?.includes("Yahoo") && (
+          <p className="refresh-warning" style={{ marginTop: ".75rem" }}>
+            <strong>5 Nov USD/LKR source check:</strong> the rate used was Yahoo LKR=X at Rs {Number(market.usd_lkr).toFixed(4)} because the scheduled runner had no configured CBSL CSV. The CBSL published 5 Nov value served by <a href="https://allratestoday.com/central-bank-rates-api/cbsl/" target="_blank" rel="noreferrer">AllRatesToday</a> is Rs 332.7858; Yahoo is Rs {(332.7858 - Number(market.usd_lkr)).toFixed(4)} lower ({(Math.abs(332.7858 / Number(market.usd_lkr) - 1) * 100).toFixed(3)}%). This is a manual cross-check only; it was not substituted for the Yahoo input.
+          </p>
+        )}
         {refresh.warnings?.length > 0 && (
           <ul className="refresh-warnings" aria-label="Optional feed warnings">
             {refresh.warnings.map((warning) => <li key={warning}>{warning}</li>)}
@@ -114,12 +133,16 @@ export default function Health() {
           </ul>
         )}
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          Scheduled refresh runs through GitHub Actions at 12:00 Colombo time; each successful source update is committed and triggers the Vercel deployment.
-          Feeds can fail or lag; a successful download does not guarantee a current Pettah retail price.
+          The configured GitHub Actions cron is 12:00 Colombo time. The latest run is recorded as a scheduled event, but its 14:49 UTC start does not match that cron time; the cause is unknown. Successful updates are committed and trigger Vercel deployment. A successful download does not guarantee a current Pettah retail price.
         </p>
       </section>
 
-      <section className="card panel">
+      <section className="card panel" style={{ order: 100 }}>
+        <details>
+          <summary className="section-title">Experimental ridge forecast — not a demo signal</summary>
+          <p className="section-sub" style={{ marginTop: ".5rem" }}>
+            It doesn’t beat the no-change baseline, and one new day moved it by about 0.9 points, which is why we label it experimental. The forecast changed from +0.32% to +1.20%.
+          </p>
         <div className="section-header">
           <div>
             <h2 className="section-title">Supervised market model</h2>
@@ -188,6 +211,7 @@ export default function Health() {
         ) : (
           <p className="refresh-error">{forecast.error || "No trained forecast is available. The model refresh failed or there is not enough valid market history."}</p>
         )}
+        </details>
       </section>
 
       <section className="card panel">
@@ -251,7 +275,7 @@ export default function Health() {
             <tbody>
               {Object.entries(health).map(([key, value]) => (
                 <tr key={key}>
-                  <td>{key.replaceAll("_", " ")}</td>
+                  <td>{key === "fx_cbsl_overrides_applied" ? "Historical CBSL overrides (2–4 Nov 2026)" : key.replaceAll("_", " ")}</td>
                   <td>{String(value)}</td>
                   <td><span className="badge badge-success">Recorded</span></td>
                 </tr>
@@ -317,6 +341,45 @@ export default function Health() {
         <p className="section-sub" style={{ marginTop: "1rem" }}>
           The proposed model matches the baselines on calibration and pinball loss in this sample. It adds joint gold/FX resampling and current-volatility scaling, but these results do not prove it is better. Width is the mean 95% log-return interval as a percentage.
         </p>
+        <details style={{ marginTop: "1.25rem" }}>
+          <summary className="section-title">Post-submission FX cleaning sensitivity</summary>
+          <p className="section-sub" style={{ marginTop: ".5rem" }}>
+            Rerun on 5 Nov data: {filterFlagCount} Yahoo levels flagged; {filterAuditOverlap} overlap the {auditDifferenceCount}-date Yahoo/CBSL return-difference audit. The filter excludes 7 Mar–30 Apr 2022 and interpolates up to two missing levels. The four FX variants use the same {sensitivityRows[0]?.market_return_rows ?? "—"} aligned daily-return dates; window counts are shown below. This is a sensitivity analysis, not proof that a provider is wrong.
+          </p>
+          <div className="scroll-x">
+            <table className="data-table">
+              <thead><tr><th>FX input</th><th>Model</th><th>Horizon</th><th>Windows</th><th>Outside 95%</th><th>Mean 95% width</th><th>Pinball loss</th></tr></thead>
+              <tbody>{sensitivityRows.map((row) => (
+                <tr key={`${row.fx_version}-${row.model}-${row.horizon}`}>
+                  <td>{fxVersionLabel(row.fx_version)}</td>
+                  <td>{row.model === "model" ? "Joint resampling" : row.model === "B1_fixed_vol" ? "Fixed volatility" : "Normal / EWMA"}</td>
+                  <td>{row.horizon} days</td><td>{row.n}</td>
+                  <td>{(row.outside_95 * 100).toFixed(1)}%</td><td>{(row.width_95 * 100).toFixed(2)}%</td><td>{row.pinball.toFixed(4)}</td>
+                </tr>
+              ))}
+              {!sensitivityRows.length && <tr><td colSpan={7}>No FX sensitivity results are available.</td></tr>}</tbody>
+            </table>
+          </div>
+          <p className="section-sub" style={{ marginTop: ".75rem" }}>
+            On this rerun, the reversal-filter model’s interval narrowed from 13.90% to 13.14% at 7 days and 19.84% to 18.70% at 14 days versus the reviewed-Yahoo control; outside rates were closer to the 5% target and pinball loss was slightly lower. CBSL-primary was wider and less calibrated. Raw Yahoo and the unfiltered reviewed control round to identical results. The Jan–Mar split has only 9 seven-day and 4 fourteen-day windows. <a href="/data/backtest_fx_sensitivity.csv" download>Download all FX variants and baselines (CSV)</a>.
+          </p>
+          <h3 className="section-title" style={{ marginTop: "1rem" }}>FX variants in Jan–Mar 2026</h3>
+          <div className="scroll-x">
+            <table className="data-table">
+              <thead><tr><th>FX input</th><th>Model</th><th>Horizon</th><th>Windows</th><th>Outside 95%</th><th>Mean 95% width</th></tr></thead>
+              <tbody>{backtestFxSensitivityRegime.map((row) => (
+                <tr key={`${row.fx_version}-${row.model}-${row.horizon}`}>
+                  <td>{fxVersionLabel(row.fx_version)}</td>
+                  <td>{row.model === "model" ? "Joint resampling" : row.model === "B1_fixed_vol" ? "Fixed volatility" : "Normal / EWMA"}</td>
+                  <td>{row.horizon} days</td><td>{row.n}</td>
+                  <td>{(row.outside_95 * 100).toFixed(1)}% ({Math.round(row.outside_95 * row.n)}/{row.n})</td>
+                  <td>{(row.width_95 * 100).toFixed(2)}%</td>
+                </tr>
+              ))}
+              {!backtestFxSensitivityRegime.length && <tr><td colSpan={6}>No FX regime sensitivity results are available.</td></tr>}</tbody>
+            </table>
+          </div>
+        </details>
         <h3 className="section-title" style={{ marginTop: "1.25rem" }}>Jan–Mar 2026 high-volatility window check</h3>
         <p className="section-sub">
           Forecast endpoints in Jan–Mar only. This is a small stress slice, not an independent proof of regime performance.
@@ -338,7 +401,7 @@ export default function Health() {
           </table>
         </div>
         <p className="section-sub">
-          It widens when volatility rises, which fixed volatility does not. In this slice, the 7-day joint model has 0/9 misses, fixed volatility 2/9, and Normal/EWMA 1/9; mean widths are 23.8%, 12.7%, and 21.8%. Nine windows is too few to prove a general advantage, and we say that on the page. At 14 days, all three have 0/4 misses; model width is 34.1% versus 17.9% for fixed volatility.
+          It widens when volatility rises, which fixed volatility does not. In this slice, the 7-day joint model has 1/9 misses, fixed volatility 2/9, and Normal/EWMA 1/9; mean widths are 23.3%, 12.0%, and 21.1%. Nine windows is too few to prove a general advantage, and we say that on the page. At 14 days, all three have 0/4 misses; model width is 32.4% versus 17.0% for fixed volatility.
         </p>
         <p className="section-sub">
           Close-based risk and backtest inputs use the full aligned market history ({health.market_rows_after_alignment ?? "—"} aligned gold/FX dates). The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.

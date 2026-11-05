@@ -4,7 +4,7 @@
   "dates_in_gold_not_fx": 4,
   "dates_in_fx_not_gold": 108,
   "market_rows_after_alignment": 2975,
-  "risk_engine_close_rows": 2974,
+  "risk_engine_close_rows": 2972,
   "fx_cbsl_overrides_applied": 3,
   "spike_days_flagged": 12,
   "nonpositive_values": 0,

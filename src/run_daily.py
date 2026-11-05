@@ -56,6 +56,8 @@ def _latest_data():
             result[table]["freshness"] = source_freshness(
                 source_type, date, dt.datetime.now().astimezone().date()
             )
+            if table == "pettah":
+                result[table]["source"] = "Pettah press archive (Ada Derana and The Morning)"
             if table in {"world_gold", "usdlkr"} and date:
                 source = connection.execute(
                     f"SELECT source FROM {table} WHERE date = ?", (date,)
@@ -69,6 +71,12 @@ def _latest_data():
                 elif table == "usdlkr" and label:
                     label = "CBSL CSV" if "cbsl" in label.lower() else "Yahoo Finance LKR=X fallback"
                 result[table]["source"] = label
+                if table == "usdlkr":
+                    result[table]["source_reason"] = (
+                        "Loaded from the configured data/raw/cbsl_usdlkr.csv file."
+                        if label == "CBSL CSV"
+                        else "No CBSL CSV was present at data/raw/cbsl_usdlkr.csv; the loader used Yahoo Finance LKR=X fallback."
+                    )
         latest_fetch, latest_date, latest_observation, latest_rows = connection.execute(
             """
             SELECT fetched_at, MAX(rate_date), MAX(observed_at), COUNT(*)
@@ -87,6 +95,7 @@ def _latest_data():
             "observed_at": latest_observation,
             "fetched_at": latest_fetch,
             "rows": latest_rows or 0,
+            "source": "Published Sri Lankan dealer feed",
             "freshness": source_freshness(
                 "dealer", latest_date, dt.datetime.now().astimezone().date()
             ),
@@ -159,6 +168,8 @@ def refresh():
                 break
 
     succeeded = failure is None
+    data_snapshot = _latest_data()
+    fx_source_reason = data_snapshot.get("usdlkr", {}).get("source_reason")
     status = {
         "status": "success" if succeeded else "failed",
         "started_at": started_at,
@@ -168,10 +179,10 @@ def refresh():
         "error": failure,
         "warnings": warnings,
         "steps": steps,
-        "data": _latest_data(),
+        "data": data_snapshot,
         "source_notes": {
             "world_gold": "Yahoo Finance GC=F futures proxy, not spot.",
-            "usdlkr": "Yahoo Finance LKR=X daily closes; CBSL cross-checks correct 2026-11-02 through 2026-11-04 in derived analytics.",
+            "usdlkr": f"{fx_source_reason} Historical CBSL overrides in derived analytics are limited to 2-4 Nov 2026 and do not override the 5 Nov Yahoo fallback.",
             "pettah": "Public-source shop quotes require verification and are loaded from data/pettah_quotes.csv.",
             "dealer_quotes": "Published dealer feed; each row retains its own rate date and crawl time and is not identified as Pettah-specific.",
         },
