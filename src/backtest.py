@@ -24,7 +24,7 @@ def kupiec(x, n, p):
     return lr, float(1 - stats.chi2.cdf(lr, 1))
 
 def run(h, seed=0, include_dates=False):
-    m = market_daily().dropna(subset=["ret_world", "ret_fx"]).reset_index(drop=True)
+    m = market_daily(fx_mode="risk_filtered").dropna(subset=["ret_world", "ret_fx"]).reset_index(drop=True)
     rw, rf = m.ret_world.to_numpy(), m.ret_fx.to_numpy()
     rc = rw + rf                                   # log move of the world-based local price
     s2w, s2f, s2c = ewma_variance(rw), ewma_variance(rf), ewma_variance(rc)

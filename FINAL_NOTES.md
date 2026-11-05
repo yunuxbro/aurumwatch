@@ -43,6 +43,15 @@ revision adds:
   four overlap the 12 existing spike flags (10-11 and 16 Mar 2022; 22 Mar 2023).
   The series are not interchangeable; this comparison identifies review dates,
   not which provider is wrong. Only 2-4 Nov 2026 have CBSL overrides.
+- After the 1 Nov submission, compared raw Yahoo, Yahoo with the documented
+  reversal filter, and CBSL-primary/Yahoo-gap-fill FX, plus an unfiltered
+  reviewed-Yahoo control, on 2,971 common daily return dates. The filter
+  identified 75 Yahoo observations (the 7 Mar–30 Apr
+  2022 float window was excluded). Filtered Yahoo narrowed the proposed
+  model's 95% width from 13.90% to 13.14% at 7 days and 19.84% to 18.70% at
+  14 days; coverage moved closer to the 5% target at both horizons and
+  pinball loss was slightly lower. This filter is now used for risk and
+  backtest inputs; market history and attribution remain unfiltered.
 - Yahoo Finance through `yfinance` is an undocumented data path with uncertain
   automation and redistribution rights. A licensed market-data source is
   needed before production redistribution.
@@ -52,19 +61,18 @@ revision adds:
   holidays. Missing market observations remain visible and are not estimated.
 - The risk simulation and ridge forecast are experimental. Historical
   resampling and a no-change comparison do not establish future performance.
-- Broad-sample backtest: 7-day outside-95% rates are 3.7% model, 4.0% fixed
-  volatility, and 5.7% EWMA-normal; rounded pinball loss is 0.0033 for all.
-  Mean widths are 13.9%, 11.8%, and 12.7%. At 14 days, model/B1 widths are
-  19.8%/16.6%. The model matches calibration but is wider; describe joint
-  gold/FX resampling and current-volatility scaling as its approach, not a
-  proven advantage. Jan-Mar daily realized volatility was 2.58% vs 1.89% over
-  Oct 2025-Oct 2026. In Jan-Mar 2026, 7-day miss counts are 0/9 model vs 2/9 B1
-  with widths 23.8% vs 12.7%; 14-day misses are 0/4 both, widths 34.1% vs
-  17.9%. The tiny sample and wider intervals do not prove regime superiority.
-  Safe panel answer: "It widens when volatility rises, which fixed volatility
-  does not. Nine windows is too few to prove a general advantage, and we say
-  that on the page." Normal/EWMA had 1 miss in 9 and a 21.8% interval, close
-  to the model's 23.8% in the stress slice.
+- On the selected filtered FX input, the 7-day outside-95% rates are 4.0%
+  model, 5.1% fixed volatility, and 6.0% EWMA-normal; widths are 13.1%, 11.0%,
+  and 11.9%. At 14 days, outside-95% rates are 4.5%, 7.4%, and 7.4%; widths
+  are 18.7%, 15.6%, and 17.0%. The selected input sensitivity improves width
+  and calibration relative to raw Yahoo, but the model is not proven better
+  than the baselines. In the Jan-Mar 2026 slice, 7-day miss counts are 1/9
+  model, 2/9 fixed, and 1/9 EWMA; widths are 23.3%, 12.0%, and 21.1%. At 14
+  days, all have 0/4 misses; model width is 32.4% vs 17.0% fixed and 29.8%
+  EWMA. Nine and four windows are too few to prove a general advantage. Safe
+  panel answer: "It widens when volatility rises, which fixed volatility does
+  not. Nine windows is too few to prove a general advantage, and we say that
+  on the page."
 - CBSL published Rs 332.60 on 2-3 Nov and Rs 332.64 on 4 Nov. Yahoo printed
   Rs 322.44 and Rs 322.54 on 2-3 Nov; its 4 Nov close Rs 332.623 is about
   Rs 0.02 below CBSL. Candles now use the same reviewed rates as benchmark
