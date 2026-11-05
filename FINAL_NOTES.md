@@ -2,7 +2,7 @@
 
 ## Pitch lead: Best Data Vision
 
-Lead with the data-quality discovery: Yahoo Finance LKR=X printed Rs 322.44 and Rs 322.54 on 2-3 Nov 2026 while CBSL published Rs 332.60 both days. That is about a 3% difference and materially distorted that attribution. A full comparison found 2,758 of 2,853 matched Yahoo/CBSL dates differ by more than Rs 0.05; Yahoo and CBSL indicative spot are distinct rate series, so this is a discrepancy count, not a count of proven errors. The remaining history cannot be described as validated.
+Lead with the data-quality finding: the full matched-history comparison found a 1.32% median absolute Yahoo/CBSL level gap (2.82% at p95), only 0.338 daily log-return correlation, and 282 dates with return differences above 100 bps. Four dates overlap the existing spike flags. This shows the series are not interchangeable and gives four dates to review; it does not prove a provider is wrong on every discrepant date.
 
 
 ## Changes since the 1 November submission
@@ -37,11 +37,12 @@ revision adds:
 - `robots.txt` contents could not be retrieved in this environment. The source
   inventory records these checks as not completed, not as permission to
   collect data.
-- Full Yahoo/CBSL comparison was performed on 5 Nov 2026. Of 3,082 Yahoo
-  rows, 2,853 dates match the CBSL-sourced series; 2,758 differ by more than
-  Rs 0.05, 95 are within tolerance, and 229 Yahoo dates have no dated CBSL
-  observation. This does not establish which distinct rate source is correct
-  on every day. Only 2-4 Nov 2026 have manual overrides.
+- Full FX audit (5 Nov 2026, 2,853 matched dates): median absolute level gap
+  1.317%, p95 2.816%, maximum 11.974%; daily log-return correlation 0.338.
+  There are 282 dates with absolute daily log-return differences over 100 bps;
+  four overlap the 12 existing spike flags (10-11 and 16 Mar 2022; 22 Mar 2023).
+  The series are not interchangeable; this comparison identifies review dates,
+  not which provider is wrong. Only 2-4 Nov 2026 have CBSL overrides.
 - Yahoo Finance through `yfinance` is an undocumented data path with uncertain
   automation and redistribution rights. A licensed market-data source is
   needed before production redistribution.

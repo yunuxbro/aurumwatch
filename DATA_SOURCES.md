@@ -23,19 +23,20 @@ permission from robots.txt alone.
 
 ## Full-history FX audit status
 
-Checked **2026-11-05**, using Yahoo rows through 2026-11-04 and the CBSL-sourced Macro Lab series last published 2026-11-04. Macro Lab's public series page exposes all dated points in its page data. The audit compares raw stored Yahoo closes with the published CBSL values before applying the three recent overrides.
+Checked **2026-11-05**, using Yahoo rows through 2026-11-04 and the CBSL-sourced Macro Lab series last published 2026-11-04. The audit compares the raw Yahoo and CBSL series on their 2,853 common dates and computes daily log returns on those matched observations.
 
-| Comparison | Count |
+| Diagnostic | Result |
 | --- | ---: |
-| Yahoo `LKR=X` rows | 3,082 |
-| Dates present in both series | 2,853 |
-| Matched dates differing by more than Rs 0.05 | **2,758** |
-| Matched dates within Rs 0.05 | 95 |
-| Yahoo dates without a dated CBSL observation | 229 |
-| CBSL dates without a Yahoo row | 676 |
+| Absolute level gap, median | 1.317% |
+| Absolute level gap, 95th percentile | 2.816% |
+| Absolute level gap, maximum | 11.974% |
+| Matched dates with level gap above 1% | 1,909 / 2,853 |
+| Correlation of daily log returns | 0.338 |
+| Dates with absolute daily log-return difference above 100 bps | 282 |
+| Those dates overlapping the 12 existing spike flags | 4 |
 
-The mismatch threshold is **absolute difference greater than Rs 0.05 per USD** (five paisa), above the CBSL series' two-decimal display precision. At stricter cent-level comparison, 2,844 matched dates differ after rounding both series to two decimals. This is a source discrepancy count, not a count of proven Yahoo bad prints: Yahoo's `LKR=X` market quote and CBSL's indicative spot series are distinct published series. We therefore cannot claim that Yahoo was right on the other dates, or that every difference should be replaced blindly. Only 2-4 Nov 2026 have explicit overrides in the live derived series; the remaining history is still Yahoo-sourced and not CBSL-verified.
+The four overlap dates are **2022-03-10, 2022-03-11, 2022-03-16, and 2023-03-22**. The discrepancy list, including both daily returns, absolute difference in basis points, and spike overlap, is exposed in Data Health and downloadable as `web/public/data/fx_return_discrepancies.csv`. This comparison says the two series do not track closely enough to treat as interchangeable. It identifies dates to review, but does not alone prove which provider is wrong. The live derived series applies CBSL overrides only on 2-4 Nov 2026; the remaining history is Yahoo-sourced, not CBSL-verified.
 
-The reference series is attributed to CBSL's Economic Data Library and CBSL exchange-rate lookup pages. Macro Lab documents that its combined source series agree on 1,376 of 1,381 dates where both CBSL sources overlap; those source-to-source discrepancies are separate from the Yahoo comparison above. Macro Lab charts/text are CC BY 4.0 and its page specifies citing CBSL via Macro Lab; it says the underlying figures belong to the publishing agencies. CBSL reuse terms for the underlying values have not been independently verified. See [Macro Lab's series and licensing notes](https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/) and [About/data use](https://macrolab.lk/about/).
+The CBSL reference is attributed to its Economic Data Library and exchange-rate lookup pages, compiled by Macro Lab. Macro Lab says its combined CBSL sources agree on 1,376 of 1,381 common dates; those are source-to-source discrepancies, separate from this Yahoo comparison. Macro Lab charts/text are CC BY 4.0, but its page says underlying figures belong to the publishing agencies. CBSL reuse terms for those values have not been independently verified. See [Macro Lab's series and licensing notes](https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/) and [About/data use](https://macrolab.lk/about/).
 
-The comparison is reproducible with `.venv/Scripts/python.exe src/audit_fx_history.py`; it fetches Macro Lab's public series page and compares the full embedded date/value series with stored Yahoo rows. The summary used by Data Health is `web/public/data/fx_audit.json`.
+Re-run with `.venv/Scripts/python.exe src/audit_fx_history.py`. It fetches Macro Lab's public series page and compares it with the stored Yahoo rows. The summary and full mismatch list used by Data Health are in `web/public/data/fx_audit.json` and `web/public/data/fx_return_discrepancies.csv`.

@@ -209,8 +209,26 @@ export default function Health() {
           ))}
         </div>
         <p className="section-sub" style={{ marginTop: "1rem" }}>
-          Full-history FX audit checked {fxAudit.checked_at || "date unavailable"} against the <a href={fxAudit.reference_url || "https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/"} target="_blank" rel="noreferrer">CBSL indicative series via Macro Lab</a> through {fxAudit.reference_as_of || "date unavailable"}: {fxAudit.mismatched_dates ?? "—"} of {fxAudit.matched_dates ?? "—"} matched dates differ by more than Rs {Number(fxAudit.mismatch_tolerance_lkr ?? 0.05).toFixed(2)}; {fxAudit.yahoo_dates_without_cbsl_observation ?? "—"} Yahoo dates have no CBSL observation. Yahoo LKR=X and CBSL indicative spot are distinct series, so differences are not automatically Yahoo errors. The three recent overrides apply only to 2-4 Nov 2026; they do not validate the rest of the history. Macro Lab charts/text are CC BY 4.0; CBSL reuse rights for the underlying values have not been independently verified. See DATA_SOURCES.md for method and terms.
+          Full-history FX comparison checked {fxAudit.checked_at || "date unavailable"} against the <a href={fxAudit.reference_url || "https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/"} target="_blank" rel="noreferrer">CBSL indicative series via Macro Lab</a> through {fxAudit.reference_as_of || "date unavailable"}. Across {fxAudit.matched_dates ?? "—"} matched dates, the median absolute level gap is {Number(fxAudit.absolute_level_gap_median_pct ?? 0).toFixed(2)}%, p95 {Number(fxAudit.absolute_level_gap_p95_pct ?? 0).toFixed(2)}%, and max {Number(fxAudit.absolute_level_gap_max_pct ?? 0).toFixed(2)}%. Daily log-return correlation is {Number(fxAudit.daily_log_return_correlation ?? 0).toFixed(3)}. {fxAudit.return_difference_over_threshold_dates ?? "—"} dates differ by more than 100 bps in daily log returns. {fxAudit.return_difference_spike_overlap_count ?? "—"} of {fxAudit.existing_spike_flag_dates?.length ?? "—"} current spike-flag dates overlap: {fxAudit.return_difference_spike_overlap_dates?.join(", ") || "none"}. The series do not track closely enough to treat as interchangeable. This comparison identifies dates for review; it does not prove which provider is wrong. The three recent CBSL overrides apply only to 2-4 Nov 2026. Macro Lab charts/text are CC BY 4.0; CBSL reuse rights for the underlying values have not been independently verified. See DATA_SOURCES.md for method and terms.
         </p>
+        <details className="section-sub" style={{ marginTop: ".5rem" }}>
+          <summary>Show all {fxAudit.return_difference_over_threshold_dates ?? 0} dates with daily return differences over 100 bps</summary>
+          <div className="scroll-x" style={{ maxHeight: "24rem", overflow: "auto", marginTop: ".75rem" }}>
+            <table className="data-table">
+              <thead><tr><th>Date</th><th>Yahoo return</th><th>CBSL return</th><th>Absolute difference</th><th>Spike flag</th></tr></thead>
+              <tbody>
+                {(fxAudit.return_difference_dates || []).map((row) => (
+                  <tr key={row.date}>
+                    <td>{row.date}</td><td>{row.yahoo_return_pct.toFixed(2)}%</td>
+                    <td>{row.cbsl_return_pct.toFixed(2)}%</td><td>{row.absolute_difference_bps.toFixed(1)} bps</td>
+                    <td>{row.overlaps_spike_flag ? "Yes" : "No"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </details>
+        <p className="section-sub"><a href="/data/fx_return_discrepancies.csv" download>Download the complete return-difference date list (CSV)</a>. {fxAudit.yahoo_dates_without_cbsl_observation ?? "—"} Yahoo dates have no CBSL observation. Only the three recent overrides use CBSL values in the app; the remaining history is not represented as CBSL-verified.</p>
       </section>
 
       <section className="card panel">
