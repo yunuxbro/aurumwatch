@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { lkr } from "@/lib/format";
 
 const KARATS = [24, 22, 18];
+const CACHE_KEY = "aurumwatch-cbsl-gold-last-success";
 
 export default function CbslGoldReference() {
   const [quote, setQuote] = useState(null);
@@ -17,8 +18,24 @@ export default function CbslGoldReference() {
       const result = await response.json();
       if (!response.ok || result.status !== "available") throw new Error(result.message || "CBSL gold rate is unavailable.");
       setQuote(result);
+      try {
+        window.localStorage.setItem(CACHE_KEY, JSON.stringify(result));
+      } catch {
+        // The live quote remains usable when browser storage is unavailable.
+      }
       setMessage("");
     } catch (error) {
+      try {
+        const cached = window.localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const lastQuote = JSON.parse(cached);
+          if (lastQuote?.status === "available" && lastQuote?.rate_date) {
+            setQuote((current) => current || lastQuote);
+          }
+        }
+      } catch {
+        // Show the provider error even if a cached quote cannot be read.
+      }
       setMessage(error instanceof Error ? error.message : "Provider unavailable.");
     } finally {
       setLoading(false);
