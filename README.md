@@ -107,8 +107,11 @@ in Data Health without blocking the other exports. Review
 
 GitHub Actions runs the refresh at 12:00 Colombo time on weekdays. Use
 `workflow_dispatch` in the Actions tab for a manual run before a presentation.
+Changes to `data/pettah_quotes.csv` also trigger an immediate export refresh.
 The workflow commits refreshed JSON exports, which triggers Vercel's Git
-deployment. The former Windows Task Scheduler script remains available for
+deployment. The Market history chart refreshes from those deployed exports
+while open; new Pettah markers appear after a dated report is added to that
+source file. The former Windows Task Scheduler script remains available for
 local runs.
 
 To install a local Windows refresh instead:
