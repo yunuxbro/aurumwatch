@@ -1,0 +1,18 @@
+{
+  "status": "available",
+  "checked_at": "2026-11-05",
+  "reference_as_of": "2026-11-04",
+  "reference": "CBSL USD/LKR indicative spot via Macro Lab",
+  "reference_url": "https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/",
+  "reference_points": 3529,
+  "yahoo_rows": 3082,
+  "matched_dates": 2853,
+  "mismatch_tolerance_lkr": 0.05,
+  "mismatched_dates": 2758,
+  "within_tolerance_dates": 95,
+  "rounded_to_cent_differences": 2844,
+  "yahoo_dates_without_cbsl_observation": 229,
+  "cbsl_dates_without_yahoo_observation": 676,
+  "interpretation": "Differences are not automatically erroneous prints: Yahoo LKR=X and CBSL indicative spot are distinct published series.",
+  "licence_note": "Macro Lab charts and text are CC BY 4.0; underlying values belong to CBSL. CBSL reuse terms were not independently verified."
+}

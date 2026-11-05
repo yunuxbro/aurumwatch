@@ -13,13 +13,13 @@ export default function CbslGoldReference() {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("/api/cbsl-gold", { cache: "no-store" });
+      const response = await fetch("/api/cbsl-gold", { cache: "no-store", signal: AbortSignal.timeout(12_000) });
       const result = await response.json();
       if (!response.ok || result.status !== "available") throw new Error(result.message || "CBSL gold rate is unavailable.");
       setQuote(result);
       setMessage("");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "CBSL gold rate is unavailable.");
+      setMessage(error instanceof Error ? error.message : "Provider unavailable.");
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ export default function CbslGoldReference() {
       </div>
       {quote ? (
         <>
-          {message && <p className="refresh-error" role="status">Refresh failed: {message} Showing the last successful quote.</p>}
+          {message && <p className="refresh-error" role="status">CBSL gold provider unavailable. Showing the last value from {quote.rate_date}. {message}</p>}
           <div className="metric-grid">
             {KARATS.map((karat) => (
               <div className="metric-tile" key={karat}>
@@ -67,7 +67,7 @@ export default function CbslGoldReference() {
         </>
       ) : (
         <p className={message ? "refresh-error" : "section-sub"} role="status">
-          {message || "Fetching the latest CBSL indicative gold rate…"}
+          {message ? `CBSL gold provider unavailable. ${message}` : "Fetching the latest CBSL indicative gold rate…"}
         </p>
       )}
     </section>

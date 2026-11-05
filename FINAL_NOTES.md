@@ -2,7 +2,7 @@
 
 ## Pitch lead: Best Data Vision
 
-Lead with the data-quality discovery: Yahoo Finance LKR=X printed Rs 322.44 and Rs 322.54 on 2-3 Nov 2026 while CBSL published Rs 332.60 both days. That is roughly a 3% FX input error, enough to distort attribution and the local benchmark. The project caught and corrected the known prints in derived prices. Only 2-4 Nov are cross-checked; full-history reconciliation remains outstanding.
+Lead with the data-quality discovery: Yahoo Finance LKR=X printed Rs 322.44 and Rs 322.54 on 2-3 Nov 2026 while CBSL published Rs 332.60 both days. That is about a 3% difference and materially distorted that attribution. A full comparison found 2,758 of 2,853 matched Yahoo/CBSL dates differ by more than Rs 0.05; Yahoo and CBSL indicative spot are distinct rate series, so this is a discrepancy count, not a count of proven errors. The remaining history cannot be described as validated.
 
 
 ## Changes since the 1 November submission
@@ -37,9 +37,11 @@ revision adds:
 - `robots.txt` contents could not be retrieved in this environment. The source
   inventory records these checks as not completed, not as permission to
   collect data.
-- The CBSL results page offers a CSV download, but full-history retrieval was
-  blocked in this workspace. The Yahoo history has 3,082 rows; only 2?4 Nov 2026
-  have explicit CBSL cross-checks, so a full-history mismatch count is unknown.
+- Full Yahoo/CBSL comparison was performed on 5 Nov 2026. Of 3,082 Yahoo
+  rows, 2,853 dates match the CBSL-sourced series; 2,758 differ by more than
+  Rs 0.05, 95 are within tolerance, and 229 Yahoo dates have no dated CBSL
+  observation. This does not establish which distinct rate source is correct
+  on every day. Only 2-4 Nov 2026 have manual overrides.
 - Yahoo Finance through `yfinance` is an undocumented data path with uncertain
   automation and redistribution rights. A licensed market-data source is
   needed before production redistribution.
@@ -58,10 +60,13 @@ revision adds:
   Oct 2025-Oct 2026. In Jan-Mar 2026, 7-day miss counts are 0/9 model vs 2/9 B1
   with widths 23.8% vs 12.7%; 14-day misses are 0/4 both, widths 34.1% vs
   17.9%. The tiny sample and wider intervals do not prove regime superiority.
+  Safe panel answer: "It widens when volatility rises, which fixed volatility
+  does not. Nine windows is too few to prove a general advantage, and we say
+  that on the page." Normal/EWMA had 1 miss in 9 and a 21.8% interval, close
+  to the model's 23.8% in the stress slice.
 - CBSL published Rs 332.60 on 2-3 Nov and Rs 332.64 on 4 Nov. Yahoo printed
   Rs 322.44 and Rs 322.54 on 2-3 Nov; its 4 Nov close Rs 332.623 is about
   Rs 0.02 below CBSL. Candles now use the same reviewed rates as benchmark
-  cards. Full-history Yahoo/CBSL reconciliation remains outstanding.
 
 ## Likely panel questions
 
@@ -99,8 +104,8 @@ revision adds:
    Gold, FX, and the dealer premium residual sum exactly to the dealer log move.
    The premium level is ln(dealer) - ln(world equivalent). Yahoo printed Rs
    322.44 and Rs 322.54 on 2-3 Nov; CBSL published Rs 332.60 on both dates
-   and Rs 332.64 on 4 Nov. Derived returns use reviewed rates. Full-history
-   FX reconciliation remains outstanding.
+   and Rs 332.64 on 4 Nov. Derived returns use reviewed rates. Data Health
+   reports the full-history matched-date discrepancy count and tolerance.
 8. **Are the data sources licensed for production?**
    Not established for every source. Yahoo automation/redistribution and CBSL
    reuse terms need review. AllRatesToday endpoint response and Terms conflict

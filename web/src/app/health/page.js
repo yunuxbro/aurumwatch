@@ -6,9 +6,9 @@ export const dynamic = "force-dynamic";
 
 const SOURCES = [
   ["World gold", "Yahoo Finance GC=F futures closes (proxy, not spot)."],
-  ["USD / LKR", "Yahoo Finance LKR=X daily closes."],
+  ["USD / LKR", "Yahoo Finance LKR=X daily closes; cross-checked against CBSL's indicative USD/LKR spot series via Macro Lab (CBSL Data Library plus CBSL exchange-rate lookup pages)."],
   ["CBSL gold reference", "CBSL indicative XAU/LKR daily table, fetched through AllRatesToday and refreshed hourly; a link to the provider is shown with the rate."],
-  ["Pettah 22K", "Colombo Sea Street public quotes from Ada Derana and The Morning reports."],
+  ["Pettah 22K", "14 archived Colombo Sea Street quotes from Ada Derana and The Morning; newest is 2026-05-06. Search through 2026-11-05 found no qualifying Oct-Nov 2026 quote to add."],
   ["Dealer prices", "Public Sri Lankan dealer feed. Per-row rate dates and observation times are shown separately; it is not Pettah-specific."],
 ];
 
@@ -16,6 +16,7 @@ export default function Health() {
   const health = getData("health") || {};
   const backtest = getData("backtest") || [];
   const backtestRegime = getData("backtest_regime") || [];
+  const fxAudit = getData("fx_audit") || {};
   const refresh = getData("refresh") || {};
   const forecast = getData("ml_forecast") || {};
   const market = getData("market_reference") || {};
@@ -207,6 +208,9 @@ export default function Health() {
             </article>
           ))}
         </div>
+        <p className="section-sub" style={{ marginTop: "1rem" }}>
+          Full-history FX audit checked {fxAudit.checked_at || "date unavailable"} against the <a href={fxAudit.reference_url || "https://macrolab.lk/data/series/LK.EXT.FX.USD.SPOT.D/"} target="_blank" rel="noreferrer">CBSL indicative series via Macro Lab</a> through {fxAudit.reference_as_of || "date unavailable"}: {fxAudit.mismatched_dates ?? "—"} of {fxAudit.matched_dates ?? "—"} matched dates differ by more than Rs {Number(fxAudit.mismatch_tolerance_lkr ?? 0.05).toFixed(2)}; {fxAudit.yahoo_dates_without_cbsl_observation ?? "—"} Yahoo dates have no CBSL observation. Yahoo LKR=X and CBSL indicative spot are distinct series, so differences are not automatically Yahoo errors. The three recent overrides apply only to 2-4 Nov 2026; they do not validate the rest of the history. Macro Lab charts/text are CC BY 4.0; CBSL reuse rights for the underlying values have not been independently verified. See DATA_SOURCES.md for method and terms.
+        </p>
       </section>
 
       <section className="card panel">
@@ -316,7 +320,7 @@ export default function Health() {
           </table>
         </div>
         <p className="section-sub">
-          In this slice, the 7-day joint model has 0/9 misses versus 2/9 for fixed volatility, with a wider 23.8% interval versus 12.7%. At 14 days both have 0/4 misses, while widths are 34.1% versus 17.9%. The very small sample and wider model range do not establish an advantage.
+          It widens when volatility rises, which fixed volatility does not. In this slice, the 7-day joint model has 0/9 misses, fixed volatility 2/9, and Normal/EWMA 1/9; mean widths are 23.8%, 12.7%, and 21.8%. Nine windows is too few to prove a general advantage, and we say that on the page. At 14 days, all three have 0/4 misses; model width is 34.1% versus 17.9% for fixed volatility.
         </p>
         <p className="section-sub">
           Close-based risk and backtest inputs use the full aligned market history ({health.market_rows_after_alignment ?? "—"} aligned gold/FX dates). The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.
