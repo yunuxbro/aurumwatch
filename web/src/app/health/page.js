@@ -16,6 +16,7 @@ export default function Health() {
   const health = getData("health") || {};
   const backtest = getData("backtest") || [];
   const backtestRegime = getData("backtest_regime") || [];
+  const backtestFxSensitivity = getData("backtest_fx_sensitivity") || [];
   const fxAudit = getData("fx_audit") || {};
   const refresh = getData("refresh") || {};
   const forecast = getData("ml_forecast") || {};
@@ -338,10 +339,49 @@ export default function Health() {
           </table>
         </div>
         <p className="section-sub">
-          It widens when volatility rises, which fixed volatility does not. In this slice, the 7-day joint model has 0/9 misses, fixed volatility 2/9, and Normal/EWMA 1/9; mean widths are 23.8%, 12.7%, and 21.8%. Nine windows is too few to prove a general advantage, and we say that on the page. At 14 days, all three have 0/4 misses; model width is 34.1% versus 17.9% for fixed volatility.
+          It widens when volatility rises, which fixed volatility does not. On the selected filtered FX input, the 7-day joint model has 1/9 misses, fixed volatility 2/9, and Normal/EWMA 1/9; mean widths are 23.3%, 12.0%, and 21.1%. Nine windows is too few to prove a general advantage. At 14 days, all three have 0/4 misses; model width is 32.4% versus 17.0% for fixed volatility.
         </p>
         <p className="section-sub">
-          Close-based risk and backtest inputs use the full aligned market history ({health.market_rows_after_alignment ?? "—"} aligned gold/FX dates). The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.
+          The risk engine and backtest use {health.risk_engine_close_rows ?? "—"} filtered aligned daily returns. The source series has {health.market_rows_after_alignment ?? "—"} gold/FX date rows before the documented FX filter. The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.
+        </p>
+      </section>
+
+      <section className="card panel">
+        <div className="section-header">
+          <div>
+            <h2 className="section-title">FX-series sensitivity</h2>
+            <p className="section-sub">Walk-forward comparison added after the 1 Nov submission. It compares the three requested variants plus an unfiltered reviewed-Yahoo control, all on the same 2,971 daily-return dates and forecast endpoints. <a href="/data/backtest_fx_sensitivity.csv" download>Download results CSV</a>.</p>
+          </div>
+          <span className="badge badge-neutral">Research comparison</span>
+        </div>
+        <div className="scroll-x">
+          <table className="data-table">
+            <thead><tr><th>FX history</th><th>Horizon</th><th>Model</th><th>Windows</th><th>Outside 95%</th><th>Mean 95% width</th><th>Outside 99%</th><th>Pinball</th></tr></thead>
+            <tbody>
+              {backtestFxSensitivity.map((row) => (
+                <tr key={`${row.fx_version}-${row.horizon}-${row.model}`} className={row.model === "model" ? "row-highlight" : ""}>
+                  <td>{row.fx_version === "raw_yahoo" ? "Raw Yahoo LKR=X" : row.fx_version === "yahoo_reviewed_unfiltered" ? "Yahoo + reviewed overrides" : row.fx_version === "yahoo_reversal_filter" ? "Yahoo filter + reviewed overrides" : "CBSL primary; Yahoo fills gaps"}</td>
+                  <td>{row.horizon} days</td>
+                  <td>{row.model === "model" ? "Joint resampling" : row.model === "B1_fixed_vol" ? "Fixed volatility" : "Normal / EWMA"}</td>
+                  <td>{row.n}</td>
+                  <td>{(row.outside_95 * 100).toFixed(1)}%</td>
+                  <td>{(row.width_95 * 100).toFixed(1)}%</td>
+                  <td>{(row.outside_99 * 100).toFixed(1)}%</td>
+                  <td>{row.pinball.toFixed(4)}</td>
+                </tr>
+              ))}
+              {backtestFxSensitivity.length === 0 && <tr><td colSpan={8}>No FX sensitivity results are available.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+        <p className="section-sub" style={{ marginTop: "1rem" }}>
+          The reversal rule flags Yahoo daily returns above 1% that reverse at least 70% on the next observation; 7 Mar–30 Apr 2022 is excluded as a genuine regime break. It flagged 75 Yahoo observations; 63 overlap the 282-date Yahoo/CBSL &gt;100 bps list, 12 do not, and 219 audit dates do not meet the reversal rule. These are different tests, not proof that every discrepancy is a bad print. One flagged level remains missing after the two-observation interpolation limit, so its adjacent returns are omitted from the common-date comparison. The CBSL-primary variant uses Yahoo on 204 of the common Yahoo/gold dates where the cross-check series has no observation; CBSL-only dates are excluded to keep the tests on the same dates. The CBSL underlying-data reuse terms remain unverified.
+        </p>
+        <p className="section-sub">
+          One flagged level remains missing after the two-observation interpolation limit; its adjacent returns are omitted from all variants to keep the comparison on common dates.
+        </p>
+        <p className="section-sub">
+          The filtered Yahoo risk input is now selected: versus unfiltered Yahoo with the same reviewed overrides, its 95% width falls from 13.90% to 13.14% at 7 days and from 19.84% to 18.70% at 14 days; 95% coverage moves closer to its 5% target at both horizons, and pinball loss is slightly lower. Raw Yahoo results match the unfiltered reviewed control in this sample. CBSL-primary intervals are wider and coverage is less close to target. This is a sensitivity result, not proof of general superiority; the selected FX filter applies to risk/backtest inputs, while displayed market history and attribution retain their reviewed source values.
         </p>
       </section>
     </div>

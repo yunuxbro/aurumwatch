@@ -22,7 +22,7 @@ def ewma_variance(r, lam=LAMBDA):
     return s2
 
 def simulate(horizon, n=N_SIMS, seed=42):
-    m = market_daily().dropna(subset=["ret_world", "ret_fx"]).reset_index(drop=True)
+    m = market_daily(fx_mode="risk_filtered").dropna(subset=["ret_world", "ret_fx"]).reset_index(drop=True)
     rw, rf = m.ret_world.to_numpy(), m.ret_fx.to_numpy()
     s2w, s2f = ewma_variance(rw), ewma_variance(rf)
     zw, zf = rw / np.sqrt(s2w[:-1]), rf / np.sqrt(s2f[:-1])   # standardised moves
@@ -93,6 +93,7 @@ def stock_risk(
         "premium_stress_8g": start_price * float(np.exp(worst)) if (ok and worst is not None) else None,
         "assumptions": [
             "Premium held constant in the range; range covers world gold and rupee only.",
+            "Risk FX input applies the documented Yahoo reversal filter; market history and attribution remain unfiltered.",
             "Premium stress uses the worst move seen in a very short history (experimental).",
             "Volatility held at the latest EWMA level over the horizon. No point forecast. Not advice.",
         ],
