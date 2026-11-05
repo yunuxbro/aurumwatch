@@ -46,6 +46,7 @@ export default function CbslGoldReference() {
       </div>
       {quote ? (
         <>
+          {message && <p className="refresh-error" role="status">Refresh failed: {message} Showing the last successful quote.</p>}
           <div className="metric-grid">
             {KARATS.map((karat) => (
               <div className="metric-tile" key={karat}>

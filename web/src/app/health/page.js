@@ -15,6 +15,7 @@ const SOURCES = [
 export default function Health() {
   const health = getData("health") || {};
   const backtest = getData("backtest") || [];
+  const backtestRegime = getData("backtest_regime") || [];
   const refresh = getData("refresh") || {};
   const forecast = getData("ml_forecast") || {};
   const market = getData("market_reference") || {};
@@ -293,6 +294,29 @@ export default function Health() {
         </div>
         <p className="section-sub" style={{ marginTop: "1rem" }}>
           The proposed model matches the baselines on calibration and pinball loss in this sample. It adds joint gold/FX resampling and current-volatility scaling, but these results do not prove it is better. Width is the mean 95% log-return interval as a percentage.
+        </p>
+        <h3 className="section-title" style={{ marginTop: "1.25rem" }}>Jan–Mar 2026 high-volatility window check</h3>
+        <p className="section-sub">
+          Forecast endpoints in Jan–Mar only. This is a small stress slice, not an independent proof of regime performance.
+        </p>
+        <div className="scroll-x">
+          <table className="data-table">
+            <thead><tr><th>Model</th><th>Horizon</th><th>Windows</th><th>Outside 95%</th><th>Mean 95% width</th></tr></thead>
+            <tbody>
+              {backtestRegime.map((row) => (
+                <tr key={`${row.model}-${row.horizon}`}>
+                  <td>{row.model === "model" ? "Joint resampling" : row.model === "B1_fixed_vol" ? "Fixed volatility" : "Normal / EWMA"}</td>
+                  <td>{row.horizon} days</td><td>{row.n}</td>
+                  <td>{(row.outside_95 * 100).toFixed(1)}%</td>
+                  <td>{(row.width_95 * 100).toFixed(1)}%</td>
+                </tr>
+              ))}
+              {backtestRegime.length === 0 && <tr><td colSpan={5}>No regime split is available.</td></tr>}
+            </tbody>
+          </table>
+        </div>
+        <p className="section-sub">
+          In this slice, the 7-day joint model has 0/9 misses versus 2/9 for fixed volatility, with a wider 23.8% interval versus 12.7%. At 14 days both have 0/4 misses, while widths are 34.1% versus 17.9%. The very small sample and wider model range do not establish an advantage.
         </p>
         <p className="section-sub">
           Close-based risk and backtest inputs use the full aligned market history ({health.market_rows_after_alignment ?? "—"} aligned gold/FX dates). The chart's OHLC export has {getData("candles")?.rows?.length ?? "—"} candles and is a separate, sparser display series.

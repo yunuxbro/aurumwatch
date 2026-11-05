@@ -1,0 +1,80 @@
+[
+  {
+    "model": "model",
+    "horizon": 7,
+    "n": 9,
+    "outside_95": 0.0,
+    "kupiec_p_95": 0.33661540607929363,
+    "width_95": 0.2383259881665689,
+    "outside_99": 0.0,
+    "kupiec_p_99": 0.6705957529998119,
+    "width_99": 0.3219639267810561,
+    "pinball": 0.005519552481908808,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  },
+  {
+    "model": "B1_fixed_vol",
+    "horizon": 7,
+    "n": 9,
+    "outside_95": 0.2222222222222222,
+    "kupiec_p_95": 0.07517147789776657,
+    "width_95": 0.12709656343302,
+    "outside_99": 0.1111111111111111,
+    "kupiec_p_99": 0.07866992692578478,
+    "width_99": 0.1670331980860152,
+    "pinball": 0.0056751939325475785,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  },
+  {
+    "model": "B2_ewma_normal",
+    "horizon": 7,
+    "n": 9,
+    "outside_95": 0.1111111111111111,
+    "kupiec_p_95": 0.4652731770500712,
+    "width_95": 0.21782621763283228,
+    "outside_99": 0.0,
+    "kupiec_p_99": 0.6705957529998119,
+    "width_99": 0.2862721758591596,
+    "pinball": 0.005258710797472852,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  },
+  {
+    "model": "model",
+    "horizon": 14,
+    "n": 4,
+    "outside_95": 0.0,
+    "kupiec_p_95": 0.5217937615347963,
+    "width_95": 0.3411564546940895,
+    "outside_99": 0.0,
+    "kupiec_p_99": 0.7767524421278029,
+    "width_99": 0.4595365693336805,
+    "pinball": 0.006037640489821626,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  },
+  {
+    "model": "B1_fixed_vol",
+    "horizon": 14,
+    "n": 4,
+    "outside_95": 0.0,
+    "kupiec_p_95": 0.5217937615347963,
+    "width_95": 0.17932614602725708,
+    "outside_99": 0.0,
+    "kupiec_p_99": 0.7767524421278029,
+    "width_99": 0.23567450497713888,
+    "pinball": 0.004914005158979114,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  },
+  {
+    "model": "B2_ewma_normal",
+    "horizon": 14,
+    "n": 4,
+    "outside_95": 0.0,
+    "kupiec_p_95": 0.5217937615347963,
+    "width_95": 0.3138844041584031,
+    "outside_99": 0.0,
+    "kupiec_p_99": 0.7767524421278029,
+    "width_99": 0.4125140321636752,
+    "pinball": 0.006327490385877015,
+    "regime": "Jan-Mar 2026 forecast endpoints"
+  }
+]

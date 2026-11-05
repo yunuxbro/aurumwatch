@@ -5,6 +5,7 @@ import pathlib
 
 from db import get_conn
 from market_reference import OUNCE_TO_GRAMS
+from fx_review import reviewed_rate
 
 PROJECT_ROOT = pathlib.Path(__file__).resolve().parent.parent
 GRAMS_PER_SOVEREIGN = 8
@@ -111,6 +112,11 @@ def build_market_candles():
     for day in sorted(gold_by_date.keys() & fx_by_date.keys()):
         gold = gold_by_date[day]
         fx = fx_by_date[day]
+        # For reviewed Yahoo bad prints, use CBSL's published daily rate for
+        # every synthetic OHLC value so the candle close matches the cards.
+        reviewed_fx = reviewed_rate(day, fx["close"])
+        if reviewed_fx != fx["close"]:
+            fx = {"open": reviewed_fx, "high": reviewed_fx, "low": reviewed_fx, "close": reviewed_fx}
         opening_24k = gold["open"] * fx["open"] * factor_24k
         closing_24k = gold["close"] * fx["close"] * factor_24k
         high_24k = max(gold["high"] * fx["high"] * factor_24k, opening_24k, closing_24k)

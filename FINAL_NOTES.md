@@ -1,5 +1,10 @@
 # Final notes — ModelX 2.0
 
+## Pitch lead: Best Data Vision
+
+Lead with the data-quality discovery: Yahoo Finance LKR=X printed Rs 322.44 and Rs 322.54 on 2-3 Nov 2026 while CBSL published Rs 332.60 both days. That is roughly a 3% FX input error, enough to distort attribution and the local benchmark. The project caught and corrected the known prints in derived prices. Only 2-4 Nov are cross-checked; full-history reconciliation remains outstanding.
+
+
 ## Changes since the 1 November submission
 
 The repository does not contain a tag, commit, or archived copy identified as
@@ -32,8 +37,9 @@ revision adds:
 - `robots.txt` contents could not be retrieved in this environment. The source
   inventory records these checks as not completed, not as permission to
   collect data.
-- The CBSL CSV must be supplied locally as `data/raw/cbsl_usdlkr.csv`; the
-  repository does not automate its download or establish its reuse licence.
+- The CBSL results page offers a CSV download, but full-history retrieval was
+  blocked in this workspace. The Yahoo history has 3,082 rows; only 2?4 Nov 2026
+  have explicit CBSL cross-checks, so a full-history mismatch count is unknown.
 - Yahoo Finance through `yfinance` is an undocumented data path with uncertain
   automation and redistribution rights. A licensed market-data source is
   needed before production redistribution.
@@ -43,15 +49,19 @@ revision adds:
   holidays. Missing market observations remain visible and are not estimated.
 - The risk simulation and ridge forecast are experimental. Historical
   resampling and a no-change comparison do not establish future performance.
-- On the 7-day holdout, outside-95% rates are 3.7% for the model, 4.0% for
-  fixed volatility, and 5.7% for EWMA-normal. Pinball loss rounds to 0.0033
-  for all three. Mean 95% widths are 13.9%, 11.8%, and 12.7%, respectively.
-  The model adds joint gold/FX resampling and current-volatility scaling, but
-  these results do not prove it is better.
-- The 2–4 November Yahoo USD/LKR closes were checked against CBSL: the 2nd
-  and 3rd were both Rs 332.60 and the 4th was Rs 332.64. Yahoo printed
-  Rs 322.44 and Rs 322.54 on the 2nd and 3rd, so derived market returns use
-  the CBSL cross-check values on those dates. The 4th Yahoo close is retained.
+- Broad-sample backtest: 7-day outside-95% rates are 3.7% model, 4.0% fixed
+  volatility, and 5.7% EWMA-normal; rounded pinball loss is 0.0033 for all.
+  Mean widths are 13.9%, 11.8%, and 12.7%. At 14 days, model/B1 widths are
+  19.8%/16.6%. The model matches calibration but is wider; describe joint
+  gold/FX resampling and current-volatility scaling as its approach, not a
+  proven advantage. Jan-Mar daily realized volatility was 2.58% vs 1.89% over
+  Oct 2025-Oct 2026. In Jan-Mar 2026, 7-day miss counts are 0/9 model vs 2/9 B1
+  with widths 23.8% vs 12.7%; 14-day misses are 0/4 both, widths 34.1% vs
+  17.9%. The tiny sample and wider intervals do not prove regime superiority.
+- CBSL published Rs 332.60 on 2-3 Nov and Rs 332.64 on 4 Nov. Yahoo printed
+  Rs 322.44 and Rs 322.54 on 2-3 Nov; its 4 Nov close Rs 332.623 is about
+  Rs 0.02 below CBSL. Candles now use the same reviewed rates as benchmark
+  cards. Full-history Yahoo/CBSL reconciliation remains outstanding.
 
 ## Likely panel questions
 
@@ -86,21 +96,16 @@ revision adds:
    recorded as a warning. A stale risk input leads to “Cannot assess.”
 
 7. **How does attribution add up exactly?**
-   The dealer log move is split into gold and FX log returns. The dealer
-   premium part is the residual, and an assertion checks that the three
-   components sum exactly to the dealer move. The premium level is
-   `ln(dealer) - ln(world equivalent)`.
-   Yahoo printed Rs 322.44 and Rs 322.54 on 2–3 November, while CBSL published
-   Rs 332.60 on both dates and Rs 332.64 on 4 November. We use those CBSL
-   cross-check values in derived returns; the 4 November Yahoo close is also
-   consistent. Attribution uses matched close-to-close dates, while dealer
-   prices are dated published listings.
-
+   Gold, FX, and the dealer premium residual sum exactly to the dealer log move.
+   The premium level is ln(dealer) - ln(world equivalent). Yahoo printed Rs
+   322.44 and Rs 322.54 on 2-3 Nov; CBSL published Rs 332.60 on both dates
+   and Rs 332.64 on 4 Nov. Derived returns use reviewed rates. Full-history
+   FX reconciliation remains outstanding.
 8. **Are the data sources licensed for production?**
-   Not established for every source. Yahoo automation and redistribution need
-   review, CBSL CSV reuse terms need confirmation, and publisher and dealer
-   rights need permission or agreements. `DATA_SOURCES.md` records the gaps.
-
+   Not established for every source. Yahoo automation/redistribution and CBSL
+   reuse terms need review. AllRatesToday endpoint response and Terms conflict
+   on keyless public display. Publisher and dealer rights need agreements.
+   See DATA_SOURCES.md.
 9. **What is the difference between dealer and Pettah data?**
    Dealer data are dated prices published by named dealers. Pettah data are
    separate dated press reports. A dealer listing is never presented as a
@@ -111,3 +116,8 @@ revision adds:
     agree data rights with dealers and publishers, use a Sri Lanka holiday
     calendar, and extend rolling evaluation before changing the forecasting
     model.
+
+
+## Pettah source check (5 Nov 2026)
+
+Searches of Ada Derana and The Morning found no qualifying Oct-Nov 2026 Pettah gold price article. The archive remains at 14 rows, last dated 6 May 2026. No quote has been inferred or invented.

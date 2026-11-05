@@ -82,6 +82,7 @@ export default function Home() {
   const lastMove = flags.length > 0 ? flags.at(-1) : null;
   const latestDealerMove = attribution.moves?.at(-1);
   const latestSuppressedMove = attribution.suppressed_moves?.at(-1);
+  const latestDealerObservation = attribution.observations?.at(-1);
   const dealerMove = latestSuppressedMove && (!latestDealerMove || latestSuppressedMove.date > latestDealerMove.date)
     ? null
     : latestDealerMove;
@@ -238,7 +239,15 @@ export default function Home() {
               <Driver total name="Dealer 22K / 8 g change" hint="Published dealer listings" value={dealerMove.dealer_log_return} max={dealerMaxMove} gold />
               <Driver name="World gold" hint={`USD/oz · ${dealerMove.gold_date}`} value={dealerMove.world_log_return} max={dealerMaxMove} />
               <Driver name="Rupee" hint={`USD/LKR · ${dealerMove.fx_date}`} value={dealerMove.rupee_log_return} max={dealerMaxMove} />
-              <Driver name="Dealer premium" hint="Dealer price relative to world equivalent" value={dealerMove.dealer_premium_log_return} max={dealerMaxMove} />
+              <Driver name="Dealer premium change" hint="Daily change in dealer premium" value={dealerMove.dealer_premium_log_return} max={dealerMaxMove} />
+              {latestDealerObservation && (
+                <p className="panel-sub">
+                  Premium level: {pct(Math.expm1(latestDealerObservation.dealer_premium))} above the world equivalent.
+                  {dealerMove.world_log_return > 0.02 && dealerMove.dealer_premium_log_return < 0
+                    ? " Dealers repriced with a lag after the roughly 2.8% world-gold rise, so the premium narrowed."
+                    : ""}
+                </p>
+              )}
               {attribution.fx_crosscheck_dates?.includes(dealerMove.date) && (
                 <p className="panel-sub">
                   CBSL cross-check applied to USD/LKR: Rs 332.60 on 2 and 3 Nov and Rs 332.64 on 4 Nov. Yahoo LKR=X had Rs 322.44 and Rs 322.54 on 2 and 3 Nov; those two prints were corrected in derived returns.

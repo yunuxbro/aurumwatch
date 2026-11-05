@@ -23,7 +23,7 @@ def kupiec(x, n, p):
     lr = -2 * (_ll(x, n, p) - _ll(x, n, x / n))
     return lr, float(1 - stats.chi2.cdf(lr, 1))
 
-def run(h, seed=0):
+def run(h, seed=0, include_dates=False):
     m = market_daily().dropna(subset=["ret_world", "ret_fx"]).reset_index(drop=True)
     rw, rf = m.ret_world.to_numpy(), m.ret_fx.to_numpy()
     rc = rw + rf                                   # log move of the world-based local price
@@ -31,15 +31,18 @@ def run(h, seed=0):
     zw, zf = rw / np.sqrt(s2w[:-1]), rf / np.sqrt(s2f[:-1])
     rng = np.random.default_rng(seed)
     zq = stats.norm.ppf(QS)
-    ys, Qm, Q1, Q2 = [], [], [], []
+    ys, Qm, Q1, Q2, end_dates = [], [], [], [], []
     for t in range(BURN, len(rc) - h, h):          # non-overlapping windows
         ys.append(rc[t + 1:t + 1 + h].sum())       # what actually happened
+        end_dates.append(m.date.iloc[t + h])
         idx = rng.integers(0, t + 1, size=(SIMS, h))   # only data up to day t
         sim = (zw[idx] * np.sqrt(s2w[t + 1]) + zf[idx] * np.sqrt(s2f[t + 1])).sum(axis=1)
         Qm.append(np.quantile(sim, QS))
         Q1.append(zq * rc[:t + 1].std() * np.sqrt(h))          # B1: fixed volatility
         Q2.append(zq * np.sqrt(s2c[t + 1]) * np.sqrt(h))       # B2: EWMA, normal
     models = {"model": np.array(Qm), "B1_fixed_vol": np.array(Q1), "B2_ewma_normal": np.array(Q2)}
+    if include_dates:
+        return np.array(ys), models, pd.to_datetime(end_dates)
     return np.array(ys), models
 
 def score(y, Q, name, h):
@@ -55,10 +58,16 @@ def score(y, Q, name, h):
     return out
 
 def main():
-    rows = []
+    rows, regime_rows = [], []
     for h in (7, 14):
-        y, models = run(h)
+        y, models, dates = run(h, include_dates=True)
         rows += [score(y, Q, name, h) for name, Q in models.items()]
+        stress = (dates >= "2026-01-01") & (dates <= "2026-03-31")
+        if stress.any():
+            for name, Q in models.items():
+                result = score(y[stress], Q[stress], name, h)
+                result["regime"] = "Jan-Mar 2026 forecast endpoints"
+                regime_rows.append(result)
     df = pd.DataFrame(rows)
     base = pathlib.Path(__file__).resolve().parent.parent
     docs_dir = base / "docs"
@@ -67,8 +76,13 @@ def main():
     out = base / "web" / "public" / "data"
     out.mkdir(parents=True, exist_ok=True)
     (out / "backtest.json").write_text(json.dumps(rows, indent=2))
+    pd.DataFrame(regime_rows).to_csv(docs_dir / "backtest_regime_results.csv", index=False)
+    (out / "backtest_regime.json").write_text(json.dumps(regime_rows, indent=2))
     pd.set_option("display.width", 220)
     print(df.round(4).to_string(index=False))
+    if regime_rows:
+        print("\nJan-Mar 2026 regime split (forecast endpoints):")
+        print(pd.DataFrame(regime_rows).round(4).to_string(index=False))
     for h in (7, 14):
         m = df[(df.horizon == h) & (df.model == "model")].iloc[0]
         b1 = df[(df.horizon == h) & (df.model == "B1_fixed_vol")].iloc[0]
