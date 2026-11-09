@@ -1,43 +1,43 @@
 {
   "status": "current",
-  "gold_usd_per_oz": 4041.10009765625,
-  "gold_date": "2026-11-06",
+  "gold_usd_per_oz": 4126.89990234375,
+  "gold_date": "2026-11-09",
   "gold_age_days": 0,
   "gold_age_working_days": 0,
   "gold_source": "futures proxy (GC=F), not spot",
-  "usd_lkr": 332.53338623046875,
-  "fx_date": "2026-11-06",
+  "usd_lkr": 332.54339599609375,
+  "fx_date": "2026-11-09",
   "fx_age_days": 0,
   "fx_age_working_days": 0,
   "fx_source": "Yahoo Finance LKR=X",
-  "lkr_per_gram_24k": 43204.19573061719,
-  "lkr_per_gram_22k": 39603.84608639909,
-  "lkr_per_gram_18k": 32403.146797962894,
-  "lkr_per_8g_24k": 345633.5658449375,
-  "lkr_per_8g_22k": 316830.76869119273,
-  "lkr_per_8g_18k": 259225.17438370315,
+  "lkr_per_gram_24k": 44122.82643789,
+  "lkr_per_gram_22k": 40445.9242347325,
+  "lkr_per_gram_18k": 33092.1198284175,
+  "lkr_per_8g_24k": 352982.61150312,
+  "lkr_per_8g_22k": 323567.39387786,
+  "lkr_per_8g_18k": 264736.95862734,
   "dealer_reference": {
     "status": "current",
     "source": "Published Sri Lankan dealer rates",
-    "rate_date": "2026-11-06",
+    "rate_date": "2026-11-09",
     "age_days": 0,
     "working_days_old": 0,
-    "price_lkr_per_8g": 336700.0,
+    "price_lkr_per_8g": 338600.0,
     "quote_count": 3,
     "institutions": [
       {
         "name": "CMB Gold",
-        "price_lkr_per_8g": 336600.0,
+        "price_lkr_per_8g": 338472.0,
         "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
       },
       {
         "name": "Devi Jewellers",
-        "price_lkr_per_8g": 336700.0,
+        "price_lkr_per_8g": 338600.0,
         "source_url": "https://devijewellers.lk/gold-rate"
       },
       {
         "name": "Ravi Jewellers",
-        "price_lkr_per_8g": 336700.0,
+        "price_lkr_per_8g": 338600.0,
         "source_url": "https://ravijewellers.lk/"
       }
     ]
