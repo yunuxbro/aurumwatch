@@ -224,64 +224,64 @@
     "quote_count": 1
   },
   {
-    "date": "2026-11-05",
+    "date": "2026-11-09",
     "karat": 22,
-    "price_lkr_per_8g": 337000.0,
+    "price_lkr_per_8g": 338472.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "Vilva Gold"
+      "CMB Gold"
     ],
     "source_urls": [
-      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
-    ],
-    "quote_count": 1
-  },
-  {
-    "date": "2026-11-05",
-    "karat": 24,
-    "price_lkr_per_8g": 368000.0,
-    "source_type": "dealer",
-    "source": "Published dealer listings",
-    "contributors": [
-      "Vilva Gold"
-    ],
-    "source_urls": [
-      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
+      "https://cmbgold.lk/gold-price-sri-lanka"
     ],
     "quote_count": 1
   },
   {
     "date": "2026-11-09",
+    "karat": 24,
+    "price_lkr_per_8g": 369240.0,
+    "source_type": "dealer",
+    "source": "Published dealer listings",
+    "contributors": [
+      "CMB Gold"
+    ],
+    "source_urls": [
+      "https://cmbgold.lk/gold-price-sri-lanka"
+    ],
+    "quote_count": 1
+  },
+  {
+    "date": "2026-11-10",
     "karat": 22,
     "price_lkr_per_8g": 338600.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "CMB Gold",
       "Devi Jewellers",
-      "Ravi Jewellers"
+      "Ravi Jewellers",
+      "Vilva Gold"
     ],
     "source_urls": [
-      "https://cmbgold.lk/gold-price-sri-lanka",
       "https://devijewellers.lk/gold-rate",
-      "https://ravijewellers.lk/"
+      "https://ravijewellers.lk/",
+      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     ],
     "quote_count": 3
   },
   {
-    "date": "2026-11-09",
+    "date": "2026-11-10",
     "karat": 24,
-    "price_lkr_per_8g": 368620.0,
+    "price_lkr_per_8g": 368000.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "CMB Gold",
-      "Devi Jewellers"
+      "Devi Jewellers",
+      "Vilva Gold"
     ],
     "source_urls": [
-      "https://cmbgold.lk/gold-price-sri-lanka",
-      "https://devijewellers.lk/gold-rate"
+      "https://devijewellers.lk/gold-rate",
+      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     ],
     "quote_count": 2
   }
