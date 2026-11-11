@@ -1,6 +1,6 @@
 {
   "status": "available",
-  "as_of_date": "2026-11-10",
+  "as_of_date": "2026-11-11",
   "rows": [
     {
       "date": "2015-01-02",
@@ -11912,7 +11912,11 @@
     },
     {
       "date": "2026-11-10",
-      "world_equivalent": 317251.1471079573
+      "world_equivalent": 306629.43144147965
+    },
+    {
+      "date": "2026-11-11",
+      "world_equivalent": 316456.9837397774
     }
   ],
   "pettah_markers": [
