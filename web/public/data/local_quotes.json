@@ -224,9 +224,9 @@
     "quote_count": 1
   },
   {
-    "date": "2026-11-09",
+    "date": "2026-11-13",
     "karat": 22,
-    "price_lkr_per_8g": 338472.0,
+    "price_lkr_per_8g": 329120.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
@@ -238,9 +238,9 @@
     "quote_count": 1
   },
   {
-    "date": "2026-11-09",
+    "date": "2026-11-13",
     "karat": 24,
-    "price_lkr_per_8g": 369240.0,
+    "price_lkr_per_8g": 359040.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
@@ -252,61 +252,37 @@
     "quote_count": 1
   },
   {
-    "date": "2026-11-10",
+    "date": "2026-11-18",
     "karat": 22,
-    "price_lkr_per_8g": 337000.0,
-    "source_type": "dealer",
-    "source": "Published dealer listings",
-    "contributors": [
-      "Vilva Gold"
-    ],
-    "source_urls": [
-      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
-    ],
-    "quote_count": 1
-  },
-  {
-    "date": "2026-11-10",
-    "karat": 24,
-    "price_lkr_per_8g": 368000.0,
-    "source_type": "dealer",
-    "source": "Published dealer listings",
-    "contributors": [
-      "Vilva Gold"
-    ],
-    "source_urls": [
-      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
-    ],
-    "quote_count": 1
-  },
-  {
-    "date": "2026-11-11",
-    "karat": 22,
-    "price_lkr_per_8g": 336700.0,
+    "price_lkr_per_8g": 326600.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
       "Devi Jewellers",
-      "Ravi Jewellers"
+      "Ravi Jewellers",
+      "Vilva Gold"
     ],
     "source_urls": [
       "https://devijewellers.lk/gold-rate",
-      "https://ravijewellers.lk/"
+      "https://ravijewellers.lk/",
+      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     ],
-    "quote_count": 2
+    "quote_count": 3
   },
   {
-    "date": "2026-11-11",
+    "date": "2026-11-18",
     "karat": 24,
-    "price_lkr_per_8g": 366000.0,
+    "price_lkr_per_8g": 355000.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "Devi Jewellers"
+      "Devi Jewellers",
+      "Vilva Gold"
     ],
     "source_urls": [
-      "https://devijewellers.lk/gold-rate"
+      "https://devijewellers.lk/gold-rate",
+      "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     ],
-    "quote_count": 1
+    "quote_count": 2
   }
 ]

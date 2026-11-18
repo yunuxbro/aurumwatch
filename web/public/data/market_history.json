@@ -1,6 +1,6 @@
 {
   "status": "available",
-  "as_of_date": "2026-11-11",
+  "as_of_date": "2026-11-18",
   "rows": [
     {
       "date": "2015-01-02",
@@ -11916,7 +11916,27 @@
     },
     {
       "date": "2026-11-11",
-      "world_equivalent": 316456.9837397774
+      "world_equivalent": 304275.1003128448
+    },
+    {
+      "date": "2026-11-12",
+      "world_equivalent": 298883.7232782329
+    },
+    {
+      "date": "2026-11-13",
+      "world_equivalent": 295768.4322657657
+    },
+    {
+      "date": "2026-11-16",
+      "world_equivalent": 293942.6369864896
+    },
+    {
+      "date": "2026-11-17",
+      "world_equivalent": 294010.7026712044
+    },
+    {
+      "date": "2026-11-18",
+      "world_equivalent": 294742.53874559765
     }
   ],
   "pettah_markers": [
