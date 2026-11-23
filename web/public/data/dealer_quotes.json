@@ -1,7 +1,7 @@
 {
   "status": "available",
   "source": "Published Sri Lankan dealer feed",
-  "last_fetched_at": "2026-11-20T15:40:05+00:00",
+  "last_fetched_at": "2026-11-23T18:34:06+00:00",
   "rows": [
     {
       "institution": "CMB Gold",
@@ -11,10 +11,10 @@
       "side": "buying",
       "unit": "gram",
       "unit_label": "24ct 1 gram",
-      "price_lkr": 42500.0,
+      "price_lkr": 42250.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -25,10 +25,10 @@
       "side": "buying",
       "unit": "pawn_8g",
       "unit_label": "24ct 8g (1 pawn)",
-      "price_lkr": 340000.0,
+      "price_lkr": 338000.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -67,10 +67,10 @@
       "side": "selling",
       "unit": "gram",
       "unit_label": "24ct 1 gram",
-      "price_lkr": 43350.0,
+      "price_lkr": 43095.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -81,10 +81,10 @@
       "side": "selling",
       "unit": "pawn_8g",
       "unit_label": "24ct 8g (1 pawn)",
-      "price_lkr": 346800.0,
+      "price_lkr": 344760.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -95,10 +95,10 @@
       "side": "buying",
       "unit": "gram",
       "unit_label": "22ct 1 gram",
-      "price_lkr": 38958.0,
+      "price_lkr": 38729.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -109,10 +109,10 @@
       "side": "buying",
       "unit": "pawn_8g",
       "unit_label": "22ct 8g (1 pawn)",
-      "price_lkr": 311664.0,
+      "price_lkr": 309832.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -151,10 +151,10 @@
       "side": "selling",
       "unit": "gram",
       "unit_label": "22ct 1 gram",
-      "price_lkr": 39738.0,
+      "price_lkr": 39504.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -165,10 +165,10 @@
       "side": "selling",
       "unit": "pawn_8g",
       "unit_label": "22ct 8g (1 pawn)",
-      "price_lkr": 317904.0,
+      "price_lkr": 316032.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -179,10 +179,10 @@
       "side": "buying",
       "unit": "gram",
       "unit_label": "21ct 1 gram",
-      "price_lkr": 37188.0,
+      "price_lkr": 36969.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -193,10 +193,10 @@
       "side": "buying",
       "unit": "pawn_8g",
       "unit_label": "21ct 8g (1 pawn)",
-      "price_lkr": 297504.0,
+      "price_lkr": 295752.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -235,10 +235,10 @@
       "side": "selling",
       "unit": "gram",
       "unit_label": "21ct 1 gram",
-      "price_lkr": 37931.0,
+      "price_lkr": 37708.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -249,10 +249,10 @@
       "side": "selling",
       "unit": "pawn_8g",
       "unit_label": "21ct 8g (1 pawn)",
-      "price_lkr": 303448.0,
+      "price_lkr": 301664.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -263,10 +263,10 @@
       "side": "buying",
       "unit": "gram",
       "unit_label": "18ct 1 gram",
-      "price_lkr": 31875.0,
+      "price_lkr": 31688.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -277,10 +277,10 @@
       "side": "buying",
       "unit": "pawn_8g",
       "unit_label": "18ct 8g (1 pawn)",
-      "price_lkr": 255000.0,
+      "price_lkr": 253504.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -319,10 +319,10 @@
       "side": "selling",
       "unit": "gram",
       "unit_label": "18ct 1 gram",
-      "price_lkr": 32513.0,
+      "price_lkr": 32321.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -333,10 +333,10 @@
       "side": "selling",
       "unit": "pawn_8g",
       "unit_label": "18ct 8g (1 pawn)",
-      "price_lkr": 260104.0,
+      "price_lkr": 258568.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://cmbgold.lk/gold-price-sri-lanka"
     },
     {
@@ -347,10 +347,10 @@
       "side": "benchmark",
       "unit": "troy_ounce",
       "unit_label": "24ct troy ounce",
-      "price_lkr": 1174481.1843,
+      "price_lkr": 1191076.8883,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://www.cbsl.gov.lk/cbsl_custom/exrates/exrates_results.php"
     },
     {
@@ -361,10 +361,10 @@
       "side": "listed",
       "unit": "gram",
       "unit_label": "24ct 1 gram",
-      "price_lkr": 43125.0,
+      "price_lkr": 42750.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -375,10 +375,10 @@
       "side": "listed",
       "unit": "pawn_8g",
       "unit_label": "24ct 8g (1 pawn)",
-      "price_lkr": 345000.0,
+      "price_lkr": 342000.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -389,10 +389,10 @@
       "side": "listed",
       "unit": "gram",
       "unit_label": "22ct 1 gram",
-      "price_lkr": 39675.0,
+      "price_lkr": 39337.5,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -403,10 +403,10 @@
       "side": "listed",
       "unit": "pawn_8g",
       "unit_label": "22ct 8g (1 pawn)",
-      "price_lkr": 317400.0,
+      "price_lkr": 314700.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -417,10 +417,10 @@
       "side": "listed",
       "unit": "gram",
       "unit_label": "21ct 1 gram",
-      "price_lkr": 37734.38,
+      "price_lkr": 37406.25,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -431,10 +431,10 @@
       "side": "listed",
       "unit": "pawn_8g",
       "unit_label": "21ct 8g (1 pawn)",
-      "price_lkr": 301875.0,
+      "price_lkr": 299250.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -445,10 +445,10 @@
       "side": "listed",
       "unit": "gram",
       "unit_label": "18ct 1 gram",
-      "price_lkr": 32343.75,
+      "price_lkr": 32062.5,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -459,10 +459,10 @@
       "side": "listed",
       "unit": "pawn_8g",
       "unit_label": "18ct 8g (1 pawn)",
-      "price_lkr": 258750.0,
+      "price_lkr": 256500.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-21",
+      "observed_at": "2026-11-23T04:24:00+00:00",
       "source_url": "https://devijewellers.lk/gold-rate"
     },
     {
@@ -475,8 +475,8 @@
       "unit_label": "22ct 1 gram",
       "price_lkr": 39675.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://ravijewellers.lk/"
     },
     {
@@ -489,8 +489,8 @@
       "unit_label": "22ct 8g (1 pawn)",
       "price_lkr": 317400.0,
       "currency": "LKR",
-      "rate_date": "2026-11-20",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "rate_date": "2026-11-23",
+      "observed_at": "2026-11-23T10:50:00+00:00",
       "source_url": "https://ravijewellers.lk/"
     },
     {
@@ -504,7 +504,7 @@
       "price_lkr": 44000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -518,7 +518,7 @@
       "price_lkr": 352000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -532,7 +532,7 @@
       "price_lkr": 44375.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -546,7 +546,7 @@
       "price_lkr": 355000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -560,7 +560,7 @@
       "price_lkr": 40000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -574,7 +574,7 @@
       "price_lkr": 320000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -588,7 +588,7 @@
       "price_lkr": 40625.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -602,7 +602,7 @@
       "price_lkr": 325000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -616,7 +616,7 @@
       "price_lkr": 38125.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -630,7 +630,7 @@
       "price_lkr": 305000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -644,7 +644,7 @@
       "price_lkr": 38750.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -658,7 +658,7 @@
       "price_lkr": 310000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -672,7 +672,7 @@
       "price_lkr": 32625.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -686,7 +686,7 @@
       "price_lkr": 261000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -700,7 +700,7 @@
       "price_lkr": 33250.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     },
     {
@@ -714,7 +714,7 @@
       "price_lkr": 266000.0,
       "currency": "LKR",
       "rate_date": "2026-11-18",
-      "observed_at": "2026-11-20T10:49:00+00:00",
+      "observed_at": "2026-11-23T10:48:00+00:00",
       "source_url": "https://vilvagoldbuyer.lk/gold-price-today-in-sri-lanka"
     }
   ]
