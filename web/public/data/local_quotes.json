@@ -282,23 +282,35 @@
   {
     "date": "2026-11-23",
     "karat": 22,
-    "price_lkr_per_8g": 316716.0,
+    "price_lkr_per_8g": 317400.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "CMB Gold",
       "Ravi Jewellers"
     ],
     "source_urls": [
-      "https://cmbgold.lk/gold-price-sri-lanka",
       "https://ravijewellers.lk/"
     ],
-    "quote_count": 2
+    "quote_count": 1
   },
   {
-    "date": "2026-11-23",
+    "date": "2026-11-24",
+    "karat": 22,
+    "price_lkr_per_8g": 320704.0,
+    "source_type": "dealer",
+    "source": "Published dealer listings",
+    "contributors": [
+      "CMB Gold"
+    ],
+    "source_urls": [
+      "https://cmbgold.lk/gold-price-sri-lanka"
+    ],
+    "quote_count": 1
+  },
+  {
+    "date": "2026-11-24",
     "karat": 24,
-    "price_lkr_per_8g": 344760.0,
+    "price_lkr_per_8g": 349864.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
