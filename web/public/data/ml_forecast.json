@@ -3,203 +3,203 @@
   "model": "standardized ridge regression",
   "target": "forward 7-market-observation log return of the synthetic 22K LKR/8g gold-and-FX benchmark",
   "horizon_market_observations": 7,
-  "market_as_of_date": "2026-11-24",
-  "latest_benchmark_lkr_per_8g": 279368.3485548213,
-  "forecast_log_return": 0.017741201175651262,
-  "forecast_change_percent": 1.7899511102232424,
-  "forecast_lkr_per_8g": 284368.90541139065,
+  "market_as_of_date": "2026-11-25",
+  "latest_benchmark_lkr_per_8g": 277117.9273067559,
+  "forecast_log_return": 0.009080853106379391,
+  "forecast_change_percent": 0.9122209140852711,
+  "forecast_lkr_per_8g": 279645.8549963278,
   "validation_error_band_percent": [
-    -3.3516760849058636,
-    3.893096560857101
+    -3.2739851324019686,
+    3.8740638608663502
   ],
   "validation_error_band_method": "empirical 10th-90th percentile residuals; descriptive, not guaranteed coverage",
   "selected_alpha": 100.0,
   "validation_tuning": [
     {
       "alpha": 0.01,
-      "mae_bps": 221.03453895772827
+      "mae_bps": 220.1329416372542
     },
     {
       "alpha": 0.1,
-      "mae_bps": 221.0335722604478
+      "mae_bps": 220.13204866208523
     },
     {
       "alpha": 1.0,
-      "mae_bps": 221.0242509430636
+      "mae_bps": 220.1234153691998
     },
     {
       "alpha": 10.0,
-      "mae_bps": 220.92105572634895
+      "mae_bps": 220.01886338580002
     },
     {
       "alpha": 100.0,
-      "mae_bps": 220.15818477037993
+      "mae_bps": 219.23520665352845
     }
   ],
   "test_metrics": {
     "ridge": {
-      "mae_bps": 317.32718845196365,
-      "rmse_bps": 418.91933964088923,
-      "directional_accuracy": 0.5261958997722096
+      "mae_bps": 319.59759053493605,
+      "rmse_bps": 422.35638276395247,
+      "directional_accuracy": 0.5239179954441914
     },
     "no_change_baseline": {
-      "mae_bps": 309.55315576151173,
-      "rmse_bps": 408.102752049528,
+      "mae_bps": 311.1913931321024,
+      "rmse_bps": 410.2335320188055,
       "directional_accuracy": 0.0
     },
-    "mae_difference_ridge_minus_baseline_bps": 7.774032690451918,
+    "mae_difference_ridge_minus_baseline_bps": 8.40619740283364,
     "paired_block_bootstrap_95ci_mae_difference_bps": [
-      -6.182206141855215,
-      21.389455387429056
+      -6.052345640244885,
+      21.04620993974194
     ],
     "ridge_beats_baseline_mae": false
   },
   "evaluation": {
-    "source_rows": 2988,
+    "source_rows": 2989,
     "excluded_invalid_or_duplicate_rows": 0,
-    "labeled_samples": 2921,
-    "train_samples": 2037,
+    "labeled_samples": 2922,
+    "train_samples": 2038,
     "validation_samples": 431,
     "test_samples": 439,
-    "train_end_date": "2023-05-10",
-    "validation_start_date": "2023-05-22",
-    "validation_end_date": "2025-02-05",
-    "test_start_date": "2025-02-18",
-    "test_end_date": "2026-11-13",
+    "train_end_date": "2023-05-11",
+    "validation_start_date": "2023-05-23",
+    "validation_end_date": "2025-02-06",
+    "test_start_date": "2025-02-19",
+    "test_end_date": "2026-11-16",
     "target_embargo_market_observations": 7
   },
   "feature_weights": [
     {
       "feature": "fx_return_mean_20",
-      "standardized_coefficient": 0.00471279697532518
+      "standardized_coefficient": 0.004742501920408808
     },
     {
       "feature": "benchmark_return_volatility_60",
-      "standardized_coefficient": -0.004060976545931624
+      "standardized_coefficient": -0.004053240803806688
     },
     {
       "feature": "gold_return_volatility_20",
-      "standardized_coefficient": 0.003447788648010335
+      "standardized_coefficient": 0.00336601653831961
     },
     {
       "feature": "gold_return_volatility_5",
-      "standardized_coefficient": 0.0024567783847925084
-    },
-    {
-      "feature": "benchmark_return_volatility_5",
-      "standardized_coefficient": -0.002436392951576552
+      "standardized_coefficient": 0.002346236286943243
     },
     {
       "feature": "fx_return_volatility_60",
-      "standardized_coefficient": 0.002186438547156053
+      "standardized_coefficient": 0.002243908171633824
+    },
+    {
+      "feature": "benchmark_return_volatility_5",
+      "standardized_coefficient": -0.002228299315481498
     },
     {
       "feature": "benchmark_return_mean_20",
-      "standardized_coefficient": 0.0020669768362790923
+      "standardized_coefficient": 0.002063191767123418
     },
     {
       "feature": "fx_return_volatility_5",
-      "standardized_coefficient": 0.001693413019826423
+      "standardized_coefficient": 0.0015919490595914978
     },
     {
       "feature": "gold_return_mean_20",
-      "standardized_coefficient": -0.0013791628006953678
+      "standardized_coefficient": -0.0014068626310729173
     },
     {
       "feature": "fx_return_lag_0",
-      "standardized_coefficient": -0.00134842839705871
-    },
-    {
-      "feature": "gold_return_mean_5",
-      "standardized_coefficient": -0.0010743709421835554
+      "standardized_coefficient": -0.0013382040822937616
     },
     {
       "feature": "fx_return_volatility_20",
-      "standardized_coefficient": -0.0010227395160494338
+      "standardized_coefficient": -0.0010835075792074269
+    },
+    {
+      "feature": "gold_return_mean_5",
+      "standardized_coefficient": -0.0010265387622707131
     },
     {
       "feature": "fx_return_mean_60",
-      "standardized_coefficient": -0.0009431385352774457
+      "standardized_coefficient": -0.0009689919958784416
     },
     {
       "feature": "benchmark_return_lag_0",
-      "standardized_coefficient": -0.0007767019709473318
+      "standardized_coefficient": -0.0007820831866375847
     },
     {
       "feature": "fx_return_mean_5",
-      "standardized_coefficient": 0.0007383954774813327
+      "standardized_coefficient": 0.0007166640204615425
     },
     {
       "feature": "benchmark_return_mean_60",
-      "standardized_coefficient": -0.0006586110516386537
+      "standardized_coefficient": -0.0006185668382572973
     },
     {
       "feature": "fx_return_lag_9",
-      "standardized_coefficient": -0.0005612044482554494
-    },
-    {
-      "feature": "gold_return_volatility_60",
-      "standardized_coefficient": -0.0005393811146139621
+      "standardized_coefficient": -0.0005935623344996485
     },
     {
       "feature": "gold_return_lag_9",
-      "standardized_coefficient": 0.0005358330638111168
+      "standardized_coefficient": 0.0005422826099930336
+    },
+    {
+      "feature": "gold_return_volatility_60",
+      "standardized_coefficient": -0.0005320769608007926
     },
     {
       "feature": "benchmark_return_mean_5",
-      "standardized_coefficient": -0.000503348948562848
+      "standardized_coefficient": -0.000475293961067324
     },
     {
       "feature": "gold_return_lag_4",
-      "standardized_coefficient": 0.0003364959012710789
+      "standardized_coefficient": 0.00034062827336792426
     },
     {
       "feature": "fx_return_lag_1",
-      "standardized_coefficient": -0.00033356821074873266
+      "standardized_coefficient": -0.0003165201629730208
     },
     {
       "feature": "benchmark_return_lag_4",
-      "standardized_coefficient": 0.00020919904382682571
-    },
-    {
-      "feature": "gold_return_lag_2",
-      "standardized_coefficient": -0.0001899066765070314
-    },
-    {
-      "feature": "gold_return_lag_1",
-      "standardized_coefficient": 0.0001422674632067103
-    },
-    {
-      "feature": "fx_return_lag_4",
-      "standardized_coefficient": -0.00011827289994552565
-    },
-    {
-      "feature": "benchmark_return_lag_2",
-      "standardized_coefficient": -0.00011697651092122442
-    },
-    {
-      "feature": "benchmark_return_lag_9",
-      "standardized_coefficient": 0.00011355357216676819
-    },
-    {
-      "feature": "benchmark_return_volatility_20",
-      "standardized_coefficient": 0.00010922992220656508
+      "standardized_coefficient": 0.00021315513805585687
     },
     {
       "feature": "gold_return_mean_60",
-      "standardized_coefficient": 0.0001058355039730767
+      "standardized_coefficient": 0.0001863374242844356
+    },
+    {
+      "feature": "gold_return_lag_2",
+      "standardized_coefficient": -0.0001579815003516517
+    },
+    {
+      "feature": "gold_return_lag_1",
+      "standardized_coefficient": 0.00013294132314003722
+    },
+    {
+      "feature": "fx_return_lag_4",
+      "standardized_coefficient": -0.00011748529295189724
+    },
+    {
+      "feature": "benchmark_return_lag_2",
+      "standardized_coefficient": -0.00011030243182786565
+    },
+    {
+      "feature": "benchmark_return_lag_9",
+      "standardized_coefficient": 9.987621458538812e-05
     },
     {
       "feature": "benchmark_return_lag_1",
-      "standardized_coefficient": -7.854649291065652e-05
+      "standardized_coefficient": -7.629568863732063e-05
+    },
+    {
+      "feature": "benchmark_return_volatility_20",
+      "standardized_coefficient": 6.817142138539413e-05
     },
     {
       "feature": "fx_return_lag_2",
-      "standardized_coefficient": 6.86570050986638e-05
+      "standardized_coefficient": 3.528833651692184e-05
     },
     {
       "feature": "gold_return_lag_0",
-      "standardized_coefficient": 2.2188221539092726e-05
+      "standardized_coefficient": 8.400970724247484e-06
     }
   ],
   "assumptions": [
