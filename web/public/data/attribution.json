@@ -36,23 +36,6 @@
       ]
     },
     {
-      "date": "2026-11-21",
-      "dealer_price_lkr_per_8g": 314700.0,
-      "world_equivalent_lkr_per_8g": 267733.79356807255,
-      "dealer_premium": 0.1616266247982292,
-      "gold_usd_per_oz": 3515.39990234375,
-      "usd_lkr": 323.0251159667969,
-      "gold_date": "2026-11-20",
-      "fx_date": "2026-11-20",
-      "source": "Published dealer listings",
-      "institutions": [
-        "Devi Jewellers"
-      ],
-      "source_urls": [
-        "https://devijewellers.lk/gold-rate"
-      ]
-    },
-    {
       "date": "2026-11-24",
       "dealer_price_lkr_per_8g": 316032.0,
       "world_equivalent_lkr_per_8g": 270825.87506562227,
@@ -70,19 +53,21 @@
       ]
     },
     {
-      "date": "2026-11-25",
-      "dealer_price_lkr_per_8g": 314700.0,
-      "world_equivalent_lkr_per_8g": 277117.92730675574,
-      "dealer_premium": 0.12717665813117662,
-      "gold_usd_per_oz": 3535.0,
-      "usd_lkr": 332.493408203125,
-      "gold_date": "2026-11-25",
-      "fx_date": "2026-11-25",
+      "date": "2026-11-26",
+      "dealer_price_lkr_per_8g": 315600.0,
+      "world_equivalent_lkr_per_8g": 282234.1602559801,
+      "dealer_premium": 0.11173850707036515,
+      "gold_usd_per_oz": 3598.10009765625,
+      "usd_lkr": 332.6933898925781,
+      "gold_date": "2026-11-26",
+      "fx_date": "2026-11-26",
       "source": "Published dealer listings",
       "institutions": [
+        "Devi Jewellers",
         "Ravi Jewellers"
       ],
       "source_urls": [
+        "https://devijewellers.lk/gold-rate",
         "https://ravijewellers.lk/"
       ]
     }
@@ -108,31 +93,12 @@
       "fx_date": "2026-11-18"
     },
     {
-      "date": "2026-11-21",
-      "previous_date": "2026-11-18",
-      "dealer_log_return": -0.032205378259375195,
-      "world_log_return": -0.062440188702492426,
-      "rupee_log_return": 0.0006374324042542987,
-      "dealer_premium_log_return": 0.029597378038862934,
-      "dealer_price_lkr_per_8g": 314700.0,
-      "world_equivalent_lkr_per_8g": 267733.79356807255,
-      "source": "Published dealer listings",
-      "institutions": [
-        "Devi Jewellers"
-      ],
-      "source_urls": [
-        "https://devijewellers.lk/gold-rate"
-      ],
-      "gold_date": "2026-11-20",
-      "fx_date": "2026-11-20"
-    },
-    {
       "date": "2026-11-24",
-      "previous_date": "2026-11-21",
-      "dealer_log_return": 0.004223670212297748,
-      "world_log_return": 0.013140793923715782,
-      "rupee_log_return": -0.0016578862584901719,
-      "dealer_premium_log_return": -0.007259237452927864,
+      "previous_date": "2026-11-18",
+      "dealer_log_return": -0.027981708047077447,
+      "world_log_return": -0.04929939477877681,
+      "rupee_log_return": -0.0010204538542359575,
+      "dealer_premium_log_return": 0.02233814058593532,
       "dealer_price_lkr_per_8g": 316032.0,
       "world_equivalent_lkr_per_8g": 270825.87506562227,
       "source": "Published dealer listings",
@@ -146,23 +112,25 @@
       "fx_date": "2026-11-24"
     },
     {
-      "date": "2026-11-25",
+      "date": "2026-11-26",
       "previous_date": "2026-11-24",
-      "dealer_log_return": -0.004223670212297748,
-      "world_log_return": -0.007580783592284401,
-      "rupee_log_return": 0.03054784259411074,
-      "dealer_premium_log_return": -0.027190729214124083,
-      "dealer_price_lkr_per_8g": 314700.0,
-      "world_equivalent_lkr_per_8g": 277117.92730675574,
+      "dealer_log_return": -0.0013678853109411193,
+      "world_log_return": 0.010111872560811409,
+      "rupee_log_return": 0.031149122403183044,
+      "dealer_premium_log_return": -0.04262888027493557,
+      "dealer_price_lkr_per_8g": 315600.0,
+      "world_equivalent_lkr_per_8g": 282234.1602559801,
       "source": "Published dealer listings",
       "institutions": [
+        "Devi Jewellers",
         "Ravi Jewellers"
       ],
       "source_urls": [
+        "https://devijewellers.lk/gold-rate",
         "https://ravijewellers.lk/"
       ],
-      "gold_date": "2026-11-25",
-      "fx_date": "2026-11-25"
+      "gold_date": "2026-11-26",
+      "fx_date": "2026-11-26"
     }
   ],
   "suppressed_moves": [],
