@@ -1,8 +1,8 @@
 {
   "world_gold_rows": 2994,
-  "usdlkr_rows": 3098,
+  "usdlkr_rows": 3099,
   "dates_in_gold_not_fx": 4,
-  "dates_in_fx_not_gold": 108,
+  "dates_in_fx_not_gold": 109,
   "market_rows_after_alignment": 2990,
   "risk_engine_close_rows": 2989,
   "fx_cbsl_overrides_applied": 3,
@@ -12,5 +12,5 @@
   "pettah_dates_22k": 14,
   "pettah_joined_rows": 14,
   "max_lag_days": 1,
-  "market_last_date": "2026-11-26"
+  "market_last_date": "2026-11-27"
 }

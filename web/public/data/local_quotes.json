@@ -252,61 +252,37 @@
     "quote_count": 1
   },
   {
-    "date": "2026-11-24",
+    "date": "2026-11-27",
     "karat": 22,
-    "price_lkr_per_8g": 316032.0,
+    "price_lkr_per_8g": 318300.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
-      "CMB Gold"
-    ],
-    "source_urls": [
-      "https://cmbgold.lk/gold-price-sri-lanka"
-    ],
-    "quote_count": 1
-  },
-  {
-    "date": "2026-11-24",
-    "karat": 24,
-    "price_lkr_per_8g": 344760.0,
-    "source_type": "dealer",
-    "source": "Published dealer listings",
-    "contributors": [
-      "CMB Gold"
-    ],
-    "source_urls": [
-      "https://cmbgold.lk/gold-price-sri-lanka"
-    ],
-    "quote_count": 1
-  },
-  {
-    "date": "2026-11-26",
-    "karat": 22,
-    "price_lkr_per_8g": 315600.0,
-    "source_type": "dealer",
-    "source": "Published dealer listings",
-    "contributors": [
+      "CMB Gold",
       "Devi Jewellers",
       "Ravi Jewellers"
     ],
     "source_urls": [
+      "https://cmbgold.lk/gold-price-sri-lanka",
       "https://devijewellers.lk/gold-rate",
       "https://ravijewellers.lk/"
     ],
-    "quote_count": 2
+    "quote_count": 3
   },
   {
-    "date": "2026-11-26",
+    "date": "2026-11-27",
     "karat": 24,
-    "price_lkr_per_8g": 343000.0,
+    "price_lkr_per_8g": 346400.0,
     "source_type": "dealer",
     "source": "Published dealer listings",
     "contributors": [
+      "CMB Gold",
       "Devi Jewellers"
     ],
     "source_urls": [
+      "https://cmbgold.lk/gold-price-sri-lanka",
       "https://devijewellers.lk/gold-rate"
     ],
-    "quote_count": 1
+    "quote_count": 2
   }
 ]
